@@ -1,0 +1,46 @@
+JAVELIN.AI - DQI MODEL REPORT
+==================================================
+
+DATASET SUMMARY
+------------------------------
+Total Subjects: 57997
+Critical Subjects: 6498 (11.2%)
+Features Used: 11
+
+CRITICAL SUBJECT THRESHOLDS
+------------------------------
+  SAE Pending: 4473 subjects
+  Missing Visits: 1393 subjects
+  Missing Pages >=5: 328 subjects
+  Days Outstanding >=30: 400 subjects
+  Days Page Missing >=30: 399 subjects
+  EDRR Issues >=3: 255 subjects
+  Uncoded >=5: 58 subjects
+
+MODEL: Heuristic Weights (TabPFN not available)
+
+FEATURE WEIGHTS (SHAP-derived or Heuristic)
+------------------------------
+  sae_pending_count: 0.2000
+  missing_visit_count: 0.1200
+  sae_total_count: 0.1000
+  max_days_outstanding: 0.1000
+  missing_pages_count: 0.1000
+  max_days_page_missing: 0.0800
+  lab_issues_count: 0.0800
+  uncoded_meddra_count: 0.0600
+  uncoded_whodd_count: 0.0600
+  edrr_open_issues: 0.0500
+  inactivated_forms_count: 0.0500
+
+DQI SCORE STATISTICS
+------------------------------
+Min: 0.000
+Max: 0.749
+Mean: 0.030
+Median: 0.000
+
+RISK DISTRIBUTION
+------------------------------
+  High: 5802 (10.0%)
+  Medium: 52195 (90.0%)

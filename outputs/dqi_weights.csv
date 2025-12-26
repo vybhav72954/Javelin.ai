@@ -1,0 +1,12 @@
+feature,weight
+sae_pending_count,0.2
+missing_visit_count,0.12
+sae_total_count,0.1
+max_days_outstanding,0.1
+missing_pages_count,0.1
+max_days_page_missing,0.08
+lab_issues_count,0.08
+uncoded_meddra_count,0.06
+uncoded_whodd_count,0.06
+edrr_open_issues,0.05
+inactivated_forms_count,0.05
