@@ -1,31 +1,34 @@
 """
 Javelin.AI - Step 3: Calculate Data Quality Index (DQI)
 ========================================================
-This script calculates DQI scores using data-driven weights from TabPFN + SHAP.
 
-Innovation: Instead of arbitrary weights, we:
-1. Define "Critical Subject" as a proxy label from the data
-2. Train TabPFN to predict critical subjects
-3. Extract SHAP feature importance as weights
-4. Use these weights to calculate DQI scores
+REVISED METHODOLOGY (Based on Data Analysis):
+---------------------------------------------
+After analyzing the data, we found that:
+1. DQ issues do NOT predict SAE (negative correlation)
+2. This is because subject_status drives both metrics differently
+3. Trying to use ML to "learn" weights gives meaningless results
 
-Prerequisites:
-    - Run 02_build_master_table.py first
-    - outputs/master_subject.csv must exist
+CORRECT APPROACH:
+Instead of predicting SAE, we directly measure Data Quality Risk using:
+1. Domain knowledge weights (clinical importance of each issue type)
+2. Severity scaling (more issues = exponentially worse)
+3. Timeliness factors (days outstanding matters)
+
+The DQI answers: "How much data quality risk does this subject/site have?"
+NOT: "Will this subject have an SAE?"
+
+This is more honest and more actionable.
 
 Usage:
     python src/03_calculate_dqi.py
 
 Output:
-    - outputs/master_subject_with_dqi.csv  : Subject table with DQI scores
-    - outputs/master_site_with_dqi.csv     : Site table with aggregated DQI
-    - outputs/dqi_weights.csv              : SHAP-derived feature weights
-    - outputs/dqi_model_report.txt         : Model performance report
+    - outputs/master_subject_with_dqi.csv
+    - outputs/master_site_with_dqi.csv
+    - outputs/dqi_weights.csv
+    - outputs/dqi_model_report.txt
 """
-
-# Set environment variable BEFORE any imports
-import os
-os.environ['TABPFN_ALLOW_CPU_LARGE_DATASET'] = '1'
 
 import pandas as pd
 import numpy as np
@@ -40,319 +43,234 @@ warnings.filterwarnings('ignore')
 OUTPUT_DIR = Path("outputs")
 MASTER_SUBJECT_PATH = OUTPUT_DIR / "master_subject.csv"
 
-# Features to use for DQI calculation
-DQI_FEATURES = [
-    'missing_visit_count',
-    'max_days_outstanding',
-    'lab_issues_count',
-    'sae_total_count',
-    'sae_pending_count',
-    'missing_pages_count',
-    'max_days_page_missing',
-    'uncoded_meddra_count',
-    'uncoded_whodd_count',
-    'inactivated_forms_count',
-    'edrr_open_issues',
-]
+# Domain-knowledge based weights
+# These reflect CLINICAL IMPORTANCE of each data quality issue
+# Rationale provided for each
 
-# Thresholds for defining "Critical Subject" (adjustable)
-CRITICAL_THRESHOLDS = {
-    'sae_pending_count': 1,        # Any pending SAE = critical
-    'missing_visit_count': 1,      # Any missing visit = critical
-    'missing_pages_count': 5,      # 5+ missing pages = critical
-    'max_days_outstanding': 30,    # 30+ days outstanding = critical
-    'max_days_page_missing': 30,   # 30+ days page missing = critical
-    'edrr_open_issues': 3,         # 3+ open EDRR issues = critical
-    'total_uncoded_count': 5,      # 5+ uncoded terms = critical
+DQI_WEIGHTS = {
+    # SAFETY-RELATED (Highest Priority)
+    'sae_pending_count': {
+        'weight': 0.25,
+        'rationale': 'Pending SAE reviews are critical safety signals requiring immediate attention'
+    },
+    'uncoded_meddra_count': {
+        'weight': 0.15,
+        'rationale': 'Uncoded adverse events = untracked safety signals'
+    },
+
+    # COMPLETENESS (High Priority)
+    'missing_visit_count': {
+        'weight': 0.12,
+        'rationale': 'Missing visits = missing safety monitoring touchpoints'
+    },
+    'missing_pages_count': {
+        'weight': 0.10,
+        'rationale': 'Missing CRF pages = incomplete subject record'
+    },
+    'lab_issues_count': {
+        'weight': 0.10,
+        'rationale': 'Lab issues can mask safety signals in bloodwork'
+    },
+
+    # TIMELINESS (Medium Priority)
+    'max_days_outstanding': {
+        'weight': 0.08,
+        'rationale': 'Delayed data entry reduces real-time safety visibility'
+    },
+    'max_days_page_missing': {
+        'weight': 0.06,
+        'rationale': 'Long-missing pages indicate systemic site issues'
+    },
+
+    # CODING & RECONCILIATION (Lower Priority)
+    'uncoded_whodd_count': {
+        'weight': 0.06,
+        'rationale': 'Uncoded drug terms affect medication tracking'
+    },
+    'edrr_open_issues': {
+        'weight': 0.05,
+        'rationale': 'External data reconciliation issues'
+    },
+    'inactivated_forms_count': {
+        'weight': 0.03,
+        'rationale': 'Inactivated forms indicate data corrections (lower risk)'
+    },
 }
 
-# Risk score thresholds for categorization
-RISK_CATEGORIES = {
-    'high': 0.7,      # DQI >= 0.7 = High Risk
-    'medium': 0.4,    # DQI >= 0.4 = Medium Risk
-    'low': 0.0,       # DQI < 0.4 = Low Risk
-}
+# Verify weights sum to 1
+assert abs(sum(w['weight'] for w in DQI_WEIGHTS.values()) - 1.0) < 0.001, "Weights must sum to 1"
 
 
 # ============================================================================
-# HELPER FUNCTIONS
+# DQI CALCULATION FUNCTIONS
 # ============================================================================
 
-def create_critical_label(df):
+def normalize_feature(series, method='robust'):
     """
-    Create binary 'is_critical' label based on thresholds.
-    A subject is critical if ANY threshold is exceeded.
+    Normalize a feature to 0-1 scale.
+    Uses robust scaling (percentile-based) to handle outliers.
     """
-    df = df.copy()
+    if series.max() == 0:
+        return pd.Series(0, index=series.index)
 
-    # Initialize as not critical
-    df['is_critical'] = 0
+    if method == 'robust':
+        # Use 95th percentile as max to reduce outlier impact
+        p95 = series.quantile(0.95)
+        if p95 > 0:
+            normalized = series.clip(upper=p95) / p95
+        else:
+            normalized = series / series.max()
+    else:
+        # Simple min-max
+        normalized = series / series.max()
 
-    # Apply each threshold
-    conditions = []
-
-    if 'sae_pending_count' in df.columns:
-        cond = df['sae_pending_count'] >= CRITICAL_THRESHOLDS['sae_pending_count']
-        conditions.append(('SAE Pending', cond.sum()))
-        df.loc[cond, 'is_critical'] = 1
-
-    if 'missing_visit_count' in df.columns:
-        cond = df['missing_visit_count'] >= CRITICAL_THRESHOLDS['missing_visit_count']
-        conditions.append(('Missing Visits', cond.sum()))
-        df.loc[cond, 'is_critical'] = 1
-
-    if 'missing_pages_count' in df.columns:
-        cond = df['missing_pages_count'] >= CRITICAL_THRESHOLDS['missing_pages_count']
-        conditions.append(('Missing Pages >=5', cond.sum()))
-        df.loc[cond, 'is_critical'] = 1
-
-    if 'max_days_outstanding' in df.columns:
-        cond = df['max_days_outstanding'] >= CRITICAL_THRESHOLDS['max_days_outstanding']
-        conditions.append(('Days Outstanding >=30', cond.sum()))
-        df.loc[cond, 'is_critical'] = 1
-
-    if 'max_days_page_missing' in df.columns:
-        cond = df['max_days_page_missing'] >= CRITICAL_THRESHOLDS['max_days_page_missing']
-        conditions.append(('Days Page Missing >=30', cond.sum()))
-        df.loc[cond, 'is_critical'] = 1
-
-    if 'edrr_open_issues' in df.columns:
-        cond = df['edrr_open_issues'] >= CRITICAL_THRESHOLDS['edrr_open_issues']
-        conditions.append(('EDRR Issues >=3', cond.sum()))
-        df.loc[cond, 'is_critical'] = 1
-
-    if 'total_uncoded_count' in df.columns:
-        cond = df['total_uncoded_count'] >= CRITICAL_THRESHOLDS['total_uncoded_count']
-        conditions.append(('Uncoded >=5', cond.sum()))
-        df.loc[cond, 'is_critical'] = 1
-
-    return df, conditions
+    return normalized.clip(0, 1).fillna(0)
 
 
-def normalize_features(df, features):
+def calculate_subject_dqi(df):
     """
-    Normalize features using percentile-based approach.
-    This handles outliers better than min-max.
+    Calculate DQI score for each subject.
+
+    DQI = Weighted sum of normalized issue counts
+    Higher DQI = More data quality issues = Higher risk
     """
     df = df.copy()
 
-    for feat in features:
-        if feat in df.columns:
-            # Use 99th percentile as max to handle outliers
-            max_val = df[feat].quantile(0.99)
-            if max_val > 0:
-                df[f'{feat}_norm'] = df[feat].clip(upper=max_val) / max_val
-            else:
-                df[f'{feat}_norm'] = 0
-            # Ensure values are between 0 and 1
-            df[f'{feat}_norm'] = df[f'{feat}_norm'].clip(0, 1)
+    # Initialize score
+    df['dqi_score'] = 0.0
 
-    return df
+    # Calculate weighted components
+    components = {}
+    for feature, config in DQI_WEIGHTS.items():
+        if feature in df.columns:
+            # Normalize the feature
+            normalized = normalize_feature(df[feature])
+            weighted = normalized * config['weight']
+
+            df[f'{feature}_component'] = weighted
+            df['dqi_score'] += weighted
+
+            components[feature] = {
+                'weight': config['weight'],
+                'non_zero_subjects': (df[feature] > 0).sum(),
+                'mean_raw': df[feature].mean(),
+                'mean_component': weighted.mean()
+            }
+
+    # Add severity multiplier for subjects with multiple issue types
+    issue_features = [f for f in DQI_WEIGHTS.keys() if f in df.columns]
+    df['n_issue_types'] = (df[issue_features] > 0).sum(axis=1)
+
+    # Subjects with 3+ issue types get a severity boost
+    df['severity_multiplier'] = 1.0
+    df.loc[df['n_issue_types'] >= 3, 'severity_multiplier'] = 1.3
+    df.loc[df['n_issue_types'] >= 5, 'severity_multiplier'] = 1.5
+
+    df['dqi_score_adjusted'] = df['dqi_score'] * df['severity_multiplier']
+
+    # Cap at 1.0
+    df['dqi_score_adjusted'] = df['dqi_score_adjusted'].clip(0, 1)
+
+    return df, components
 
 
-def calculate_dqi_with_weights(df, weights, features):
+def assign_risk_categories(df, score_column='dqi_score_adjusted'):
     """
-    Calculate DQI score using weighted sum of normalized features.
-    Higher DQI = more issues = higher risk.
+    Assign risk categories based on DQI score distribution.
+
+    Strategy:
+    - Subjects with ZERO issues = "Low" (no action needed)
+    - Among subjects WITH issues, stratify into High/Medium/Low
+
+    Categories:
+    - High: Top 15% of subjects with issues
+    - Medium: Next 35% of subjects with issues
+    - Low: Everyone else (including zero-issue subjects)
     """
     df = df.copy()
 
-    # Normalize features
-    df = normalize_features(df, features)
+    # First, identify subjects with any issues
+    df['has_issues'] = (df[score_column] > 0).astype(int)
 
-    # Calculate weighted sum
-    dqi_score = np.zeros(len(df))
+    # Get thresholds from subjects WITH issues only
+    scores_with_issues = df[df['has_issues'] == 1][score_column]
 
-    for feat in features:
-        norm_col = f'{feat}_norm'
-        if norm_col in df.columns and feat in weights:
-            weight = weights[feat]
-            dqi_score += df[norm_col].fillna(0) * weight
+    if len(scores_with_issues) > 0:
+        # Top 15% = High, Next 35% = Medium, Bottom 50% of those with issues = Low
+        high_threshold = scores_with_issues.quantile(0.85)
+        medium_threshold = scores_with_issues.quantile(0.50)
 
-    # DQI is already 0-1 since weights sum to 1 and features are normalized
-    df['dqi_score'] = dqi_score
+        # Ensure minimum thresholds make sense
+        high_threshold = max(high_threshold, 0.10)
+        medium_threshold = max(medium_threshold, 0.02)
+    else:
+        high_threshold = 0.10
+        medium_threshold = 0.02
 
-    # Categorize risk based on percentiles
-    # Top 10% = High, Next 20% = Medium, Bottom 70% = Low
-    # But only if score > 0, otherwise it's truly Low risk
-    high_threshold = df[df['dqi_score'] > 0]['dqi_score'].quantile(0.70) if (df['dqi_score'] > 0).any() else 0.5
-    medium_threshold = df[df['dqi_score'] > 0]['dqi_score'].quantile(0.30) if (df['dqi_score'] > 0).any() else 0.2
-
+    # Assign categories
     df['risk_category'] = 'Low'
-    df.loc[df['dqi_score'] > medium_threshold, 'risk_category'] = 'Medium'
-    df.loc[df['dqi_score'] > high_threshold, 'risk_category'] = 'High'
+    df.loc[(df[score_column] > 0) & (df[score_column] <= medium_threshold), 'risk_category'] = 'Low'
+    df.loc[df[score_column] > medium_threshold, 'risk_category'] = 'Medium'
+    df.loc[df[score_column] > high_threshold, 'risk_category'] = 'High'
 
-    return df
+    return df, high_threshold, medium_threshold
 
 
-def try_tabpfn_shap(X, y):
+def aggregate_site_dqi(df):
     """
-    Try to use TabPFN + Permutation Importance for data-driven weights.
-    Returns weights dict or None if not available.
+    Aggregate subject-level DQI to site level.
     """
-    try:
-        from sklearn.model_selection import train_test_split
-        from sklearn.metrics import accuracy_score, roc_auc_score
-        from sklearn.inspection import permutation_importance
-
-        # Try importing TabPFN
-        try:
-            from tabpfn import TabPFNClassifier
-        except ImportError:
-            print("\n   ⚠️ TabPFN not installed. Install with: pip install tabpfn")
-            return None, None
-
-        print("\n   Using TabPFN + Permutation Importance for data-driven weights...")
-
-        # Check for GPU
-        import torch
-        if torch.cuda.is_available():
-            device = 'cuda'
-            gpu_name = torch.cuda.get_device_name(0)
-            print(f"   ✅ GPU detected: {gpu_name}")
-            max_train = 8000  # Can use more samples with GPU
-            max_test = 2000
-        else:
-            device = 'cpu'
-            print("   ⚠️ No GPU detected, using CPU with reduced samples")
-            max_train = 1000  # TabPFN limit on CPU
-            max_test = 200
-
-        # Stratified sample
-        print(f"   Sampling up to {max_train + max_test} subjects for TabPFN (from {len(X)})...")
-
-        # First split to get train/test
-        X_temp, X_test_full, y_temp, y_test_full = train_test_split(
-            X, y, test_size=0.3, random_state=42, stratify=y
-        )
-
-        # Sample training set
-        if len(X_temp) > max_train:
-            indices = np.random.choice(len(X_temp), max_train, replace=False)
-            X_train = X_temp.iloc[indices].reset_index(drop=True)
-            y_train = y_temp.iloc[indices].reset_index(drop=True)
-        else:
-            X_train = X_temp.reset_index(drop=True)
-            y_train = y_temp.reset_index(drop=True)
-
-        # Sample test set
-        if len(X_test_full) > max_test:
-            indices = np.random.choice(len(X_test_full), max_test, replace=False)
-            X_test = X_test_full.iloc[indices].reset_index(drop=True)
-            y_test = y_test_full.iloc[indices].reset_index(drop=True)
-        else:
-            X_test = X_test_full.reset_index(drop=True)
-            y_test = y_test_full.reset_index(drop=True)
-
-        print(f"   Training set: {len(X_train)} samples")
-        print(f"   Test set: {len(X_test)} samples")
-        print(f"   Positive class ratio: {y_train.mean():.2%}")
-
-        # Train TabPFN
-        print(f"   Training TabPFN classifier on {device.upper()}...")
-        print(f"   (This may take 2-5 minutes on first run while model loads...)")
-
-        import time
-        start_time = time.time()
-
-        try:
-            # Try with ignore_pretraining_limits for newer versions
-            clf = TabPFNClassifier(device=device, ignore_pretraining_limits=True)
-        except TypeError:
-            try:
-                # Try with N_ensemble_configurations for older versions
-                clf = TabPFNClassifier(device=device, N_ensemble_configurations=32)
-            except TypeError:
-                # Fallback to defaults
-                clf = TabPFNClassifier(device=device)
-
-        clf.fit(X_train.values, y_train.values)
-
-        train_time = time.time() - start_time
-        print(f"   ✅ TabPFN trained successfully! (took {train_time:.1f} seconds)")
-
-        # Evaluate
-        y_pred = clf.predict(X_test.values)
-        y_prob = clf.predict_proba(X_test.values)[:, 1]
-
-        accuracy = accuracy_score(y_test, y_pred)
-        try:
-            auc = roc_auc_score(y_test, y_prob)
-        except:
-            auc = 0.5
-
-        print(f"   Model Accuracy: {accuracy:.2%}")
-        print(f"   Model AUC-ROC: {auc:.3f}")
-
-        # Get feature importance using permutation importance
-        print("   Calculating feature importance (permutation)...")
-
-        perm_importance = permutation_importance(
-            clf, X_test.values, y_test.values,
-            n_repeats=10, random_state=42, n_jobs=1  # n_jobs=1 for GPU compatibility
-        )
-
-        # Create weights dictionary from permutation importance
-        importance_values = perm_importance.importances_mean
-        importance_values = np.maximum(importance_values, 0)  # No negative weights
-
-        weights = {}
-        for i, feat in enumerate(X.columns):
-            weights[feat] = importance_values[i]
-
-        # Normalize weights to sum to 1
-        total = sum(weights.values())
-        if total > 0:
-            weights = {k: v/total for k, v in weights.items()}
-        else:
-            # If all zero, use equal weights
-            weights = {k: 1/len(weights) for k in weights.keys()}
-
-        print("   ✅ TabPFN feature importance calculated successfully!")
-
-        # Return model info for reporting
-        model_info = {
-            'accuracy': accuracy,
-            'auc': auc,
-            'train_size': len(X_train),
-            'test_size': len(X_test),
-            'positive_ratio': y_train.mean(),
-            'method': 'TabPFN + Permutation Importance'
-        }
-
-        return weights, model_info
-
-    except ImportError as e:
-        print(f"\n   ⚠️ Required package not available: {e}")
-        print("   Falling back to heuristic weights...")
-        return None, None
-    except Exception as e:
-        print(f"\n   ⚠️ Error in TabPFN: {e}")
-        import traceback
-        traceback.print_exc()
-        print("   Falling back to heuristic weights...")
-        return None, None
-
-
-def get_heuristic_weights():
-    """
-    Fallback heuristic weights based on clinical importance.
-    Used when TabPFN/SHAP is not available.
-    """
-    weights = {
-        'sae_pending_count': 0.20,       # Safety issues - highest priority
-        'sae_total_count': 0.10,         # Total SAE count
-        'missing_visit_count': 0.12,     # Missing visits important
-        'max_days_outstanding': 0.10,    # Days outstanding
-        'missing_pages_count': 0.10,     # Missing pages
-        'max_days_page_missing': 0.08,   # Days page missing
-        'lab_issues_count': 0.08,        # Lab issues
-        'uncoded_meddra_count': 0.06,    # Uncoded AE terms
-        'uncoded_whodd_count': 0.06,     # Uncoded drug terms
-        'edrr_open_issues': 0.05,        # EDRR issues
-        'inactivated_forms_count': 0.05, # Inactivated forms
+    # Define aggregations
+    agg_dict = {
+        'subject_id': 'count',
+        'dqi_score': ['mean', 'max', 'std'],
+        'dqi_score_adjusted': ['mean', 'max'],
+        'n_issue_types': 'mean',
     }
-    return weights
+
+    # Add issue counts
+    for feature in DQI_WEIGHTS.keys():
+        if feature in df.columns:
+            agg_dict[feature] = 'sum'
+
+    # Add SAE for reference
+    if 'sae_total_count' in df.columns:
+        agg_dict['sae_total_count'] = 'sum'
+
+    site_agg = df.groupby(['study', 'site_id', 'country', 'region']).agg(agg_dict).reset_index()
+
+    # Flatten column names
+    site_agg.columns = ['_'.join(col).strip('_') if isinstance(col, tuple) else col
+                        for col in site_agg.columns]
+
+    # Rename for clarity
+    site_agg = site_agg.rename(columns={
+        'subject_id_count': 'subject_count',
+        'dqi_score_mean': 'avg_dqi_score',
+        'dqi_score_max': 'max_dqi_score',
+        'dqi_score_std': 'std_dqi_score',
+        'dqi_score_adjusted_mean': 'avg_dqi_adjusted',
+        'dqi_score_adjusted_max': 'max_dqi_adjusted',
+        'n_issue_types_mean': 'avg_issue_types',
+    })
+
+    # Site risk category based on average adjusted score
+    # Use percentiles among sites WITH any issues
+    sites_with_issues = site_agg[site_agg['avg_dqi_adjusted'] > 0]['avg_dqi_adjusted']
+    if len(sites_with_issues) > 0:
+        high_threshold = sites_with_issues.quantile(0.85)
+        medium_threshold = sites_with_issues.quantile(0.50)
+        high_threshold = max(high_threshold, 0.05)
+        medium_threshold = max(medium_threshold, 0.01)
+    else:
+        high_threshold = 0.05
+        medium_threshold = 0.01
+
+    site_agg['site_risk_category'] = 'Low'
+    site_agg.loc[site_agg['avg_dqi_adjusted'] > medium_threshold, 'site_risk_category'] = 'Medium'
+    site_agg.loc[site_agg['avg_dqi_adjusted'] > high_threshold, 'site_risk_category'] = 'High'
+
+    return site_agg
 
 
 # ============================================================================
@@ -363,235 +281,203 @@ def calculate_dqi():
     """Main function to calculate DQI scores."""
 
     print("=" * 70)
-    print("JAVELIN.AI - CALCULATE DATA QUALITY INDEX (DQI)")
+    print("JAVELIN.AI - DATA QUALITY INDEX (DQI) CALCULATION")
     print("=" * 70)
+
+    print("\nMethodology: Domain-Knowledge Based Scoring")
+    print("           (ML prediction not appropriate - see analysis)")
 
     # Check prerequisites
     if not MASTER_SUBJECT_PATH.exists():
-        print(f"\n❌ ERROR: {MASTER_SUBJECT_PATH} not found!")
+        print(f"\nERROR: {MASTER_SUBJECT_PATH} not found!")
         print("   Run 02_build_master_table.py first.")
         return
 
-    # Load master subject table
-    print(f"\n📁 Loading {MASTER_SUBJECT_PATH}...")
+    # Load data
+    print(f"\nLoading {MASTER_SUBJECT_PATH}...")
     df = pd.read_csv(MASTER_SUBJECT_PATH)
-    print(f"   Loaded {len(df)} subjects")
+    print(f"   Loaded {len(df):,} subjects from {df['study'].nunique()} studies")
 
-    # Step 1: Create Critical Subject label
+    # =========================================================================
+    # STEP 1: Display weight rationale
+    # =========================================================================
     print("\n" + "=" * 70)
-    print("STEP 1: CREATE CRITICAL SUBJECT LABEL")
+    print("STEP 1: DQI COMPONENT WEIGHTS (Domain Knowledge)")
     print("=" * 70)
 
-    df, conditions = create_critical_label(df)
+    print(f"\n{'Feature':<30} {'Weight':>8}  Rationale")
+    print("-" * 80)
+    for feature, config in sorted(DQI_WEIGHTS.items(), key=lambda x: -x[1]['weight']):
+        print(f"{feature:<30} {config['weight']:>7.0%}  {config['rationale']}")
 
-    print("\nCritical Subject Thresholds:")
-    for name, count in conditions:
-        print(f"   • {name}: {count} subjects")
-
-    critical_count = df['is_critical'].sum()
-    critical_pct = critical_count / len(df) * 100
-    print(f"\n   TOTAL CRITICAL: {critical_count} / {len(df)} ({critical_pct:.1f}%)")
-
-    # Check class balance
-    if critical_pct < 5:
-        print("   ⚠️ Warning: Low critical rate. Consider adjusting thresholds.")
-    elif critical_pct > 50:
-        print("   ⚠️ Warning: High critical rate. Consider tightening thresholds.")
-    else:
-        print("   ✅ Good class balance for modeling!")
-
-    # Step 2: Get feature weights (TabPFN + SHAP or fallback)
+    # =========================================================================
+    # STEP 2: Calculate subject-level DQI
+    # =========================================================================
     print("\n" + "=" * 70)
-    print("STEP 2: CALCULATE FEATURE WEIGHTS")
+    print("STEP 2: CALCULATE SUBJECT-LEVEL DQI")
     print("=" * 70)
 
-    # Prepare features
-    available_features = [f for f in DQI_FEATURES if f in df.columns]
-    print(f"\n   Available features: {len(available_features)}")
+    df, components = calculate_subject_dqi(df)
 
-    X = df[available_features].fillna(0)
-    y = df['is_critical']
+    print("\nFeature contributions:")
+    print(f"{'Feature':<30} {'Weight':>8} {'Subjects':>10} {'Avg Raw':>10}")
+    print("-" * 65)
+    for feature, stats in sorted(components.items(), key=lambda x: -DQI_WEIGHTS[x[0]]['weight']):
+        print(f"{feature:<30} {stats['weight']:>7.0%} {stats['non_zero_subjects']:>10,} {stats['mean_raw']:>10.2f}")
 
-    # Try TabPFN + SHAP first
-    weights, model_info = try_tabpfn_shap(X, y)
+    # =========================================================================
+    # STEP 3: Assign risk categories
+    # =========================================================================
+    print("\n" + "=" * 70)
+    print("STEP 3: ASSIGN RISK CATEGORIES")
+    print("=" * 70)
 
-    if weights is None:
-        # Fallback to heuristic weights
-        print("\n   Using heuristic weights based on clinical importance...")
-        weights = get_heuristic_weights()
-        # Filter to available features
-        weights = {k: v for k, v in weights.items() if k in available_features}
-        # Renormalize
-        total = sum(weights.values())
-        weights = {k: v/total for k, v in weights.items()}
-        model_info = None
+    df, high_thresh, med_thresh = assign_risk_categories(df)
 
-    # Display weights
-    print("\n   Feature Weights (sorted by importance):")
-    sorted_weights = sorted(weights.items(), key=lambda x: x[1], reverse=True)
-    for feat, weight in sorted_weights:
-        bar = "█" * int(weight * 50)
-        print(f"   {feat:30s} {weight:.3f} {bar}")
+    print(f"\nThresholds:")
+    print(f"  High Risk:   DQI > {high_thresh:.3f}")
+    print(f"  Medium Risk: DQI > {med_thresh:.3f}")
+    print(f"  Low Risk:    DQI <= {med_thresh:.3f}")
+
+    print(f"\nDQI Score Statistics:")
+    print(f"  Min:    {df['dqi_score_adjusted'].min():.3f}")
+    print(f"  Max:    {df['dqi_score_adjusted'].max():.3f}")
+    print(f"  Mean:   {df['dqi_score_adjusted'].mean():.3f}")
+    print(f"  Median: {df['dqi_score_adjusted'].median():.3f}")
+    print(f"  Std:    {df['dqi_score_adjusted'].std():.3f}")
+
+    risk_dist = df['risk_category'].value_counts()
+    print(f"\nRisk Distribution:")
+    for cat in ['High', 'Medium', 'Low']:
+        count = risk_dist.get(cat, 0)
+        pct = count / len(df) * 100
+        print(f"  {cat}: {count:,} subjects ({pct:.1f}%)")
+
+    # =========================================================================
+    # STEP 4: Aggregate to site level
+    # =========================================================================
+    print("\n" + "=" * 70)
+    print("STEP 4: AGGREGATE TO SITE LEVEL")
+    print("=" * 70)
+
+    site_agg = aggregate_site_dqi(df)
+    print(f"\nAggregated to {len(site_agg):,} sites")
+
+    site_risk_dist = site_agg['site_risk_category'].value_counts()
+    print(f"\nSite Risk Distribution:")
+    for cat in ['High', 'Medium', 'Low']:
+        count = site_risk_dist.get(cat, 0)
+        pct = count / len(site_agg) * 100
+        print(f"  {cat}: {count} sites ({pct:.1f}%)")
+
+    # Top 10 highest risk sites
+    print(f"\nTop 10 Highest Risk Sites:")
+    top_sites = site_agg.nlargest(10, 'avg_dqi_adjusted')[
+        ['study', 'site_id', 'subject_count', 'avg_dqi_adjusted', 'site_risk_category']
+    ]
+    print(top_sites.to_string(index=False))
+
+    # =========================================================================
+    # STEP 5: Save outputs
+    # =========================================================================
+    print("\n" + "=" * 70)
+    print("STEP 5: SAVE OUTPUTS")
+    print("=" * 70)
+
+    # Save subject table
+    df.to_csv(OUTPUT_DIR / "master_subject_with_dqi.csv", index=False)
+    print(f"Saved: outputs/master_subject_with_dqi.csv ({len(df):,} subjects)")
+
+    # Save site table
+    site_agg.to_csv(OUTPUT_DIR / "master_site_with_dqi.csv", index=False)
+    print(f"Saved: outputs/master_site_with_dqi.csv ({len(site_agg):,} sites)")
 
     # Save weights
     weights_df = pd.DataFrame([
-        {'feature': k, 'weight': v} for k, v in sorted_weights
-    ])
+        {'feature': k, 'weight': v['weight'], 'rationale': v['rationale']}
+        for k, v in DQI_WEIGHTS.items()
+    ]).sort_values('weight', ascending=False)
     weights_df.to_csv(OUTPUT_DIR / "dqi_weights.csv", index=False)
-    print(f"\n   ✅ Saved: outputs/dqi_weights.csv")
+    print(f"Saved: outputs/dqi_weights.csv")
 
-    # Step 3: Calculate DQI scores
-    print("\n" + "=" * 70)
-    print("STEP 3: CALCULATE DQI SCORES")
-    print("=" * 70)
-
-    df = calculate_dqi_with_weights(df, weights, available_features)
-
-    print(f"\n   DQI Score Statistics:")
-    print(f"   • Min: {df['dqi_score'].min():.3f}")
-    print(f"   • Max: {df['dqi_score'].max():.3f}")
-    print(f"   • Mean: {df['dqi_score'].mean():.3f}")
-    print(f"   • Median: {df['dqi_score'].median():.3f}")
-
-    print(f"\n   Risk Category Distribution:")
-    risk_dist = df['risk_category'].value_counts()
-    for cat in ['High', 'Medium', 'Low']:
-        if cat in risk_dist.index:
-            count = risk_dist[cat]
-            pct = count / len(df) * 100
-            print(f"   • {cat}: {count} ({pct:.1f}%)")
-
-    # Step 4: Create Site-level DQI
-    print("\n" + "=" * 70)
-    print("STEP 4: AGGREGATE SITE-LEVEL DQI")
-    print("=" * 70)
-
-    site_agg = df.groupby(['study', 'site_id', 'country', 'region']).agg({
-        'subject_id': 'count',
-        'dqi_score': ['mean', 'max'],
-        'is_critical': 'sum',
-        'missing_visit_count': 'sum',
-        'sae_pending_count': 'sum',
-        'missing_pages_count': 'sum',
-    }).reset_index()
-
-    # Flatten column names
-    site_agg.columns = ['study', 'site_id', 'country', 'region',
-                        'subject_count', 'avg_dqi_score', 'max_dqi_score',
-                        'critical_subjects', 'total_missing_visits',
-                        'total_sae_pending', 'total_missing_pages']
-
-    # Add site risk category based on percentiles
-    high_threshold = site_agg['avg_dqi_score'].quantile(0.90)
-    medium_threshold = site_agg['avg_dqi_score'].quantile(0.70)
-
-    site_agg['site_risk_category'] = 'Low'
-    site_agg.loc[site_agg['avg_dqi_score'] >= medium_threshold, 'site_risk_category'] = 'Medium'
-    site_agg.loc[site_agg['avg_dqi_score'] >= high_threshold, 'site_risk_category'] = 'High'
-
-    print(f"   ✅ Site-level DQI: {len(site_agg)} sites")
-
-    print(f"\n   Site Risk Distribution:")
-    site_risk_dist = site_agg['site_risk_category'].value_counts()
-    for cat in ['High', 'Medium', 'Low']:
-        if cat in site_risk_dist.index:
-            count = site_risk_dist[cat]
-            pct = count / len(site_agg) * 100
-            print(f"   • {cat}: {count} ({pct:.1f}%)")
-
-    # Step 5: Save outputs
-    print("\n" + "=" * 70)
-    print("SAVING OUTPUTS")
-    print("=" * 70)
-
-    # Save subject table with DQI
-    df.to_csv(OUTPUT_DIR / "master_subject_with_dqi.csv", index=False)
-    print(f"✅ Saved: outputs/master_subject_with_dqi.csv ({len(df)} subjects)")
-
-    # Save site table with DQI
-    site_agg.to_csv(OUTPUT_DIR / "master_site_with_dqi.csv", index=False)
-    print(f"✅ Saved: outputs/master_site_with_dqi.csv ({len(site_agg)} sites)")
-
-    # Save model report
+    # Save report
     report_path = OUTPUT_DIR / "dqi_model_report.txt"
     with open(report_path, 'w', encoding='utf-8') as f:
         f.write("JAVELIN.AI - DQI MODEL REPORT\n")
-        f.write("=" * 50 + "\n\n")
+        f.write("=" * 60 + "\n\n")
+
+        f.write("METHODOLOGY\n")
+        f.write("-" * 40 + "\n")
+        f.write("Approach: Domain-Knowledge Based Scoring\n")
+        f.write("Reason: Signal analysis showed DQ metrics do not predict SAE.\n")
+        f.write("        ML-based weights would be meaningless.\n")
+        f.write("        Domain knowledge provides actionable, interpretable weights.\n\n")
+
+        f.write("WEIGHT RATIONALE\n")
+        f.write("-" * 40 + "\n")
+        for feature, config in sorted(DQI_WEIGHTS.items(), key=lambda x: -x[1]['weight']):
+            f.write(f"{feature}: {config['weight']:.0%}\n")
+            f.write(f"  {config['rationale']}\n\n")
 
         f.write("DATASET SUMMARY\n")
-        f.write("-" * 30 + "\n")
-        f.write(f"Total Subjects: {len(df)}\n")
-        f.write(f"Critical Subjects: {critical_count} ({critical_pct:.1f}%)\n")
-        f.write(f"Features Used: {len(available_features)}\n\n")
+        f.write("-" * 40 + "\n")
+        f.write(f"Total Subjects: {len(df):,}\n")
+        f.write(f"Total Sites: {len(site_agg):,}\n")
+        f.write(f"Studies: {df['study'].nunique()}\n\n")
 
-        f.write("CRITICAL SUBJECT THRESHOLDS\n")
-        f.write("-" * 30 + "\n")
-        for name, count in conditions:
-            f.write(f"  {name}: {count} subjects\n")
-        f.write("\n")
-
-        if model_info:
-            f.write("TABPFN MODEL PERFORMANCE\n")
-            f.write("-" * 30 + "\n")
-            f.write(f"Training Samples: {model_info['train_size']}\n")
-            f.write(f"Test Samples: {model_info['test_size']}\n")
-            f.write(f"Accuracy: {model_info['accuracy']:.2%}\n")
-            f.write(f"AUC-ROC: {model_info['auc']:.3f}\n\n")
-        else:
-            f.write("MODEL: Heuristic Weights (TabPFN not available)\n\n")
-
-        f.write("FEATURE WEIGHTS (SHAP-derived or Heuristic)\n")
-        f.write("-" * 30 + "\n")
-        for feat, weight in sorted_weights:
-            f.write(f"  {feat}: {weight:.4f}\n")
-        f.write("\n")
-
-        f.write("DQI SCORE STATISTICS\n")
-        f.write("-" * 30 + "\n")
-        f.write(f"Min: {df['dqi_score'].min():.3f}\n")
-        f.write(f"Max: {df['dqi_score'].max():.3f}\n")
-        f.write(f"Mean: {df['dqi_score'].mean():.3f}\n")
-        f.write(f"Median: {df['dqi_score'].median():.3f}\n\n")
+        f.write("DQI SCORE DISTRIBUTION\n")
+        f.write("-" * 40 + "\n")
+        f.write(f"Min: {df['dqi_score_adjusted'].min():.3f}\n")
+        f.write(f"Max: {df['dqi_score_adjusted'].max():.3f}\n")
+        f.write(f"Mean: {df['dqi_score_adjusted'].mean():.3f}\n")
+        f.write(f"Median: {df['dqi_score_adjusted'].median():.3f}\n\n")
 
         f.write("RISK DISTRIBUTION\n")
-        f.write("-" * 30 + "\n")
+        f.write("-" * 40 + "\n")
         for cat in ['High', 'Medium', 'Low']:
-            if cat in risk_dist.index:
-                count = risk_dist[cat]
-                pct = count / len(df) * 100
-                f.write(f"  {cat}: {count} ({pct:.1f}%)\n")
+            count = risk_dist.get(cat, 0)
+            pct = count / len(df) * 100
+            f.write(f"  {cat}: {count:,} ({pct:.1f}%)\n")
 
-    print(f"✅ Saved: outputs/dqi_model_report.txt")
+    print(f"Saved: outputs/dqi_model_report.txt")
 
+    # =========================================================================
     # Summary
+    # =========================================================================
     print("\n" + "=" * 70)
     print("SUMMARY")
     print("=" * 70)
 
     print(f"""
-Total Subjects: {len(df)}
-Critical Subjects: {critical_count} ({critical_pct:.1f}%)
+Dataset:
+  - Total Subjects: {len(df):,}
+  - Total Sites: {len(site_agg):,}
+  - Studies: {df['study'].nunique()}
 
-DQI Method: {'TabPFN + SHAP (Data-Driven)' if model_info else 'Heuristic Weights'}
+Methodology:
+  - Domain-knowledge based weights (not ML)
+  - Severity multiplier for subjects with multiple issue types
+  - Interpretable and actionable
+
+Top 3 DQI Components:
+  1. sae_pending_count: 25% (pending SAE reviews)
+  2. uncoded_meddra_count: 15% (uncoded adverse events)
+  3. missing_visit_count: 12% (missing visits)
 
 Risk Distribution:
-  • High Risk: {risk_dist.get('High', 0)} subjects
-  • Medium Risk: {risk_dist.get('Medium', 0)} subjects  
-  • Low Risk: {risk_dist.get('Low', 0)} subjects
-
-Top 3 Risk Factors:
-  1. {sorted_weights[0][0]}: {sorted_weights[0][1]:.1%}
-  2. {sorted_weights[1][0]}: {sorted_weights[1][1]:.1%}
-  3. {sorted_weights[2][0]}: {sorted_weights[2][1]:.1%}
+  - High Risk: {risk_dist.get('High', 0):,} subjects ({risk_dist.get('High', 0)/len(df)*100:.1f}%)
+  - Medium Risk: {risk_dist.get('Medium', 0):,} subjects
+  - Low Risk: {risk_dist.get('Low', 0):,} subjects
 """)
 
     print("=" * 70)
     print("NEXT STEPS")
     print("=" * 70)
     print("""
-1. Review outputs/master_subject_with_dqi.csv
-2. Review outputs/dqi_weights.csv for feature importance
-3. Run: python src/04_build_knowledge_graph.py
+1. Review outputs/dqi_weights.csv - Domain-knowledge weights with rationale
+2. Review outputs/master_subject_with_dqi.csv - Subject-level DQI scores
+3. Review outputs/master_site_with_dqi.csv - Site-level aggregation
+4. Run: python src/04_build_knowledge_graph.py
 """)
 
 
