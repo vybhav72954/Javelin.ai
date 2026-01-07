@@ -1,0 +1,54 @@
+JAVELIN.AI - KNOWLEDGE GRAPH REPORT
+============================================================
+
+GRAPH STRUCTURE
+----------------------------------------
+Total Nodes: 61,520
+Total Edges: 64,867
+
+NODE TYPES
+----------------------------------------
+  Country: 72
+  Region: 4
+  Site: 3,399
+  Study: 23
+  Subject: 57,997
+
+EDGE TYPES
+----------------------------------------
+  ENROLLED_AT: 57,997
+  IN_REGION: 72
+  LOCATED_IN: 3,399
+  PARTICIPATES_IN: 3,399
+
+HIERARCHY
+----------------------------------------
+Region (3)
+  └── Country (71)
+        └── Site (3,399)
+              └── Subject (57,997)
+Study (23)
+  └── Site (3,399)
+        └── Subject (57,997)
+
+RISK DISTRIBUTION BY REGION
+----------------------------------------
+risk_category  High    Low  Medium
+region                            
+AMERICA        2118  18067    1752
+ASIA            759   6031    1714
+EMEA           2386  21653    3475
+
+USE CASES
+----------------------------------------
+1. Drill-down: Study -> Site -> Subject
+2. Geographic analysis: Region -> Country -> Site
+3. Risk hotspots: Filter by risk_category
+4. Site comparison: Compare sites within a study
+5. Trend analysis: Track DQI over time (with timestamps)
+
+EXPORT FORMATS
+----------------------------------------
+1. GraphML: For Gephi, yEd, Cytoscape visualization
+2. CSV (nodes/edges): For Neo4j import
+3. JSON: For web applications
