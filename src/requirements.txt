@@ -4,6 +4,7 @@ httptools==0.7.1
 jaraco.collections==5.1.0
 matplotlib==3.10.8
 openpyxl==3.1.5
+plotly==6.5.0
 shap==0.50.0
 streamlit==1.52.2
 tabpfn==6.2.0
