@@ -637,3 +637,4 @@ cython_debug/
 Data for problem Statement 1
 NEST 2.0 Detailed Problem Statements.pdf
 data
+*/*.graphml
