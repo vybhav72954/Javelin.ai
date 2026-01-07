@@ -1,0 +1,32 @@
+{
+  "statistics": {
+    "total_nodes": 61520,
+    "total_edges": 64867,
+    "node_counts": {
+      "Region": 4,
+      "Country": 72,
+      "Study": 23,
+      "Site": 3399,
+      "Subject": 57997
+    },
+    "edge_counts": {
+      "IN_REGION": 72,
+      "PARTICIPATES_IN": 3399,
+      "LOCATED_IN": 3399,
+      "ENROLLED_AT": 57997
+    },
+    "studies": 23,
+    "sites": 3399,
+    "subjects": 57997,
+    "countries": 72,
+    "regions": 4
+  },
+  "risk_by_country": {
+    "Unknown": {
+      "High": 5264,
+      "Medium": 6949,
+      "Low": 45784,
+      "total": 57997
+    }
+  }
+}
