@@ -1,0 +1,1450 @@
+{
+  "generated_at": "2026-01-07T17:45:36.762509",
+  "ai_model": "mistral",
+  "summary": {
+    "total_subjects": 57997,
+    "total_sites": 3399,
+    "critical_items": 48,
+    "high_priority_items": 339
+  },
+  "site_recommendations": [
+    {
+      "level": "SITE",
+      "study": "Study_1",
+      "site_id": "Site 17",
+      "country": "ESP",
+      "region": "EMEA",
+      "subject_count": 3,
+      "avg_dqi_score": 0.509,
+      "max_dqi_score": 0.715,
+      "high_risk_count": 2,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 8,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        },
+        {
+          "type": "uncoded_meddra_count",
+          "total_count": 4,
+          "priority": "HIGH",
+          "action": "Code adverse event terms to MedDRA dictionary"
+        },
+        {
+          "type": "missing_visit_count",
+          "total_count": 2,
+          "priority": "HIGH",
+          "action": "Contact site to schedule missed visits or document reason"
+        },
+        {
+          "type": "missing_pages_count",
+          "total_count": 8,
+          "priority": "MEDIUM",
+          "action": "Issue data query for missing CRF pages"
+        },
+        {
+          "type": "lab_issues_count",
+          "total_count": 1,
+          "priority": "MEDIUM",
+          "action": "Reconcile lab data with central lab vendor"
+        },
+        {
+          "type": "edrr_open_issues",
+          "total_count": 2,
+          "priority": "LOW",
+          "action": "Resolve external data reconciliation discrepancies"
+        },
+        {
+          "type": "inactivated_forms_count",
+          "total_count": 64,
+          "priority": "LOW",
+          "action": "Review inactivated forms for audit trail compliance"
+        }
+      ],
+      "root_causes": [
+        "Systemic site quality issues - multiple issue types indicate training gaps",
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": "Given the CRITICAL risk level and the DQI score of 0.509 for Site 17 in Study_1 within ESP, it is recommended to prioritize addressing the identified issues immediately to ensure data quality. The top concerns are an excess of SAE pending counts (8 instances), uncoded MedDRA counts (4 instances), missing visit and page counts (2 and 8 instances respectively), and a lab issue count of 1.\n\nTo remedy these issues, site personnel should prioritize the timely resolution of all outstanding SAEs, ensure proper coding of adverse events according to MedDRA standards, thoroughly review and complete missing visits and pages, and resolve any identified lab-related problems promptly. It's essential to provide additional training if necessary to maintain data quality for future study periods.",
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_16",
+      "site_id": "Site 759",
+      "country": "TUR",
+      "region": "EMEA",
+      "subject_count": 1,
+      "avg_dqi_score": 0.388,
+      "max_dqi_score": 0.388,
+      "high_risk_count": 1,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 2,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        },
+        {
+          "type": "lab_issues_count",
+          "total_count": 41,
+          "priority": "MEDIUM",
+          "action": "Reconcile lab data with central lab vendor"
+        },
+        {
+          "type": "edrr_open_issues",
+          "total_count": 8,
+          "priority": "LOW",
+          "action": "Resolve external data reconciliation discrepancies"
+        },
+        {
+          "type": "inactivated_forms_count",
+          "total_count": 4,
+          "priority": "LOW",
+          "action": "Review inactivated forms for audit trail compliance"
+        }
+      ],
+      "root_causes": [
+        "Systemic site quality issues - multiple issue types indicate training gaps",
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": "Given the CRITICAL risk level and the low DQI score (0.388) for Site 759 in TUR during Study_16, immediate attention is required to address the identified issues. The primary concerns are a high number of SAEs pending (2 instances), lab issues (41 instances), open EDRR issues (8 instances), and inactivated forms (4 instances).\n\nRecommendations:\n1. Expedite the resolution of all pending SAEs to minimize potential risks to subjects and ensure timely reporting.\n2. Collaborate with the lab to identify and correct the underlying causes for the 41 lab issues, which may involve retesting or consulting with laboratory staff.\n3. Prioritize resolution of open EDRR issues to maintain data accuracy and compliance.\n4. Ensure all forms are properly activated to avoid any further inactivation issues that could hinder data collection.",
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_1",
+      "site_id": "Site 27",
+      "country": "CHN",
+      "region": "ASIA",
+      "subject_count": 3,
+      "avg_dqi_score": 0.34,
+      "max_dqi_score": 0.505,
+      "high_risk_count": 2,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 37,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        },
+        {
+          "type": "uncoded_meddra_count",
+          "total_count": 2,
+          "priority": "HIGH",
+          "action": "Code adverse event terms to MedDRA dictionary"
+        },
+        {
+          "type": "missing_pages_count",
+          "total_count": 2,
+          "priority": "MEDIUM",
+          "action": "Issue data query for missing CRF pages"
+        },
+        {
+          "type": "uncoded_whodd_count",
+          "total_count": 2,
+          "priority": "LOW",
+          "action": "Code medication terms to WHODrug dictionary"
+        },
+        {
+          "type": "edrr_open_issues",
+          "total_count": 2,
+          "priority": "LOW",
+          "action": "Resolve external data reconciliation discrepancies"
+        },
+        {
+          "type": "inactivated_forms_count",
+          "total_count": 504,
+          "priority": "LOW",
+          "action": "Review inactivated forms for audit trail compliance"
+        }
+      ],
+      "root_causes": [
+        "Systemic site quality issues - multiple issue types indicate training gaps",
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": "Due to the critical data quality issue (DQI Score: 0.340) in Study_1 at Site 27 in CHN, it is essential to prioritize addressing the identified risks promptly. The top issues include a high number of SAE pending instances (37), uncoded MedDRA and WHODD counts (2 each), missing pages, and open EDRR issues (2).\n\nTo mitigate these critical concerns, we recommend:\n\n1. Immediately reviewing all 37 pending SAE cases to ensure proper documentation, coding, and submission, in accordance with the study protocol and Good Clinical Practice (GCP) guidelines.\n2. Instruct site staff to prioritize coding of uncoded MedDRA and WHODD terms using the appropriate terminology database.\n3. Verify the presence of all missing pages from case report forms (CRFs) and, if necessary, request resub",
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_24",
+      "site_id": "Site 2183",
+      "country": "CHN",
+      "region": "ASIA",
+      "subject_count": 6,
+      "avg_dqi_score": 0.243,
+      "max_dqi_score": 0.527,
+      "high_risk_count": 3,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 1,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        },
+        {
+          "type": "uncoded_meddra_count",
+          "total_count": 12,
+          "priority": "HIGH",
+          "action": "Code adverse event terms to MedDRA dictionary"
+        },
+        {
+          "type": "missing_visit_count",
+          "total_count": 1,
+          "priority": "HIGH",
+          "action": "Contact site to schedule missed visits or document reason"
+        },
+        {
+          "type": "missing_pages_count",
+          "total_count": 2,
+          "priority": "MEDIUM",
+          "action": "Issue data query for missing CRF pages"
+        },
+        {
+          "type": "lab_issues_count",
+          "total_count": 66,
+          "priority": "MEDIUM",
+          "action": "Reconcile lab data with central lab vendor"
+        },
+        {
+          "type": "uncoded_whodd_count",
+          "total_count": 14,
+          "priority": "LOW",
+          "action": "Code medication terms to WHODrug dictionary"
+        }
+      ],
+      "root_causes": [
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_11",
+      "site_id": "Site 417",
+      "country": "ITA",
+      "region": "EMEA",
+      "subject_count": 1,
+      "avg_dqi_score": 0.233,
+      "max_dqi_score": 0.233,
+      "high_risk_count": 1,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 2,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        }
+      ],
+      "root_causes": [
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_16",
+      "site_id": "Site 720",
+      "country": "KOR",
+      "region": "ASIA",
+      "subject_count": 3,
+      "avg_dqi_score": 0.22,
+      "max_dqi_score": 0.364,
+      "high_risk_count": 1,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 2,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        },
+        {
+          "type": "missing_visit_count",
+          "total_count": 3,
+          "priority": "HIGH",
+          "action": "Contact site to schedule missed visits or document reason"
+        },
+        {
+          "type": "missing_pages_count",
+          "total_count": 2,
+          "priority": "MEDIUM",
+          "action": "Issue data query for missing CRF pages"
+        },
+        {
+          "type": "inactivated_forms_count",
+          "total_count": 38,
+          "priority": "LOW",
+          "action": "Review inactivated forms for audit trail compliance"
+        }
+      ],
+      "root_causes": [
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_24",
+      "site_id": "Site 10",
+      "country": "HKG",
+      "region": "ASIA",
+      "subject_count": 7,
+      "avg_dqi_score": 0.213,
+      "max_dqi_score": 0.501,
+      "high_risk_count": 2,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 1,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        },
+        {
+          "type": "uncoded_meddra_count",
+          "total_count": 2,
+          "priority": "HIGH",
+          "action": "Code adverse event terms to MedDRA dictionary"
+        },
+        {
+          "type": "missing_visit_count",
+          "total_count": 1,
+          "priority": "HIGH",
+          "action": "Contact site to schedule missed visits or document reason"
+        },
+        {
+          "type": "missing_pages_count",
+          "total_count": 5,
+          "priority": "MEDIUM",
+          "action": "Issue data query for missing CRF pages"
+        },
+        {
+          "type": "lab_issues_count",
+          "total_count": 120,
+          "priority": "MEDIUM",
+          "action": "Reconcile lab data with central lab vendor"
+        },
+        {
+          "type": "uncoded_whodd_count",
+          "total_count": 1,
+          "priority": "LOW",
+          "action": "Code medication terms to WHODrug dictionary"
+        },
+        {
+          "type": "edrr_open_issues",
+          "total_count": 3,
+          "priority": "LOW",
+          "action": "Resolve external data reconciliation discrepancies"
+        }
+      ],
+      "root_causes": [
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_16",
+      "site_id": "Site 637",
+      "country": "BEL",
+      "region": "EMEA",
+      "subject_count": 8,
+      "avg_dqi_score": 0.211,
+      "max_dqi_score": 0.534,
+      "high_risk_count": 4,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 7,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        },
+        {
+          "type": "missing_visit_count",
+          "total_count": 7,
+          "priority": "HIGH",
+          "action": "Contact site to schedule missed visits or document reason"
+        },
+        {
+          "type": "uncoded_whodd_count",
+          "total_count": 1,
+          "priority": "LOW",
+          "action": "Code medication terms to WHODrug dictionary"
+        },
+        {
+          "type": "edrr_open_issues",
+          "total_count": 65,
+          "priority": "LOW",
+          "action": "Resolve external data reconciliation discrepancies"
+        },
+        {
+          "type": "inactivated_forms_count",
+          "total_count": 245,
+          "priority": "LOW",
+          "action": "Review inactivated forms for audit trail compliance"
+        }
+      ],
+      "root_causes": [
+        "Data entry backlog - site may be under-resourced",
+        "Protocol compliance issues - subjects missing scheduled visits",
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_7",
+      "site_id": "Site 14",
+      "country": "CHN",
+      "region": "ASIA",
+      "subject_count": 11,
+      "avg_dqi_score": 0.206,
+      "max_dqi_score": 0.712,
+      "high_risk_count": 4,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 5,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        },
+        {
+          "type": "uncoded_meddra_count",
+          "total_count": 4,
+          "priority": "HIGH",
+          "action": "Code adverse event terms to MedDRA dictionary"
+        },
+        {
+          "type": "missing_pages_count",
+          "total_count": 16,
+          "priority": "MEDIUM",
+          "action": "Issue data query for missing CRF pages"
+        },
+        {
+          "type": "lab_issues_count",
+          "total_count": 648,
+          "priority": "MEDIUM",
+          "action": "Reconcile lab data with central lab vendor"
+        },
+        {
+          "type": "uncoded_whodd_count",
+          "total_count": 38,
+          "priority": "LOW",
+          "action": "Code medication terms to WHODrug dictionary"
+        },
+        {
+          "type": "inactivated_forms_count",
+          "total_count": 1,
+          "priority": "LOW",
+          "action": "Review inactivated forms for audit trail compliance"
+        }
+      ],
+      "root_causes": [
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_24",
+      "site_id": "Site 2030",
+      "country": "USA",
+      "region": "AMERICA",
+      "subject_count": 9,
+      "avg_dqi_score": 0.188,
+      "max_dqi_score": 0.37,
+      "high_risk_count": 4,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 1,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        },
+        {
+          "type": "uncoded_meddra_count",
+          "total_count": 1,
+          "priority": "HIGH",
+          "action": "Code adverse event terms to MedDRA dictionary"
+        },
+        {
+          "type": "missing_pages_count",
+          "total_count": 20,
+          "priority": "MEDIUM",
+          "action": "Issue data query for missing CRF pages"
+        },
+        {
+          "type": "lab_issues_count",
+          "total_count": 283,
+          "priority": "MEDIUM",
+          "action": "Reconcile lab data with central lab vendor"
+        },
+        {
+          "type": "uncoded_whodd_count",
+          "total_count": 5,
+          "priority": "LOW",
+          "action": "Code medication terms to WHODrug dictionary"
+        }
+      ],
+      "root_causes": [
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_1",
+      "site_id": "Site 21",
+      "country": "USA",
+      "region": "AMERICA",
+      "subject_count": 3,
+      "avg_dqi_score": 0.184,
+      "max_dqi_score": 0.452,
+      "high_risk_count": 1,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 3,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        },
+        {
+          "type": "missing_pages_count",
+          "total_count": 19,
+          "priority": "MEDIUM",
+          "action": "Issue data query for missing CRF pages"
+        },
+        {
+          "type": "edrr_open_issues",
+          "total_count": 3,
+          "priority": "LOW",
+          "action": "Resolve external data reconciliation discrepancies"
+        },
+        {
+          "type": "inactivated_forms_count",
+          "total_count": 127,
+          "priority": "LOW",
+          "action": "Review inactivated forms for audit trail compliance"
+        }
+      ],
+      "root_causes": [
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_21",
+      "site_id": "Site 1179",
+      "country": "USA",
+      "region": "AMERICA",
+      "subject_count": 1,
+      "avg_dqi_score": 0.183,
+      "max_dqi_score": 0.183,
+      "high_risk_count": 1,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 1,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        }
+      ],
+      "root_causes": [
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_21",
+      "site_id": "Site 1618",
+      "country": "TUR",
+      "region": "EMEA",
+      "subject_count": 3,
+      "avg_dqi_score": 0.183,
+      "max_dqi_score": 0.183,
+      "high_risk_count": 3,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 3,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        }
+      ],
+      "root_causes": [
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_21",
+      "site_id": "Site 1314",
+      "country": "CHN",
+      "region": "ASIA",
+      "subject_count": 2,
+      "avg_dqi_score": 0.183,
+      "max_dqi_score": 0.183,
+      "high_risk_count": 2,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 2,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        }
+      ],
+      "root_causes": [
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_24",
+      "site_id": "Site 875",
+      "country": "DEU",
+      "region": "EMEA",
+      "subject_count": 23,
+      "avg_dqi_score": 0.182,
+      "max_dqi_score": 0.419,
+      "high_risk_count": 6,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 1,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        },
+        {
+          "type": "uncoded_meddra_count",
+          "total_count": 10,
+          "priority": "HIGH",
+          "action": "Code adverse event terms to MedDRA dictionary"
+        },
+        {
+          "type": "missing_visit_count",
+          "total_count": 2,
+          "priority": "HIGH",
+          "action": "Contact site to schedule missed visits or document reason"
+        },
+        {
+          "type": "missing_pages_count",
+          "total_count": 14,
+          "priority": "MEDIUM",
+          "action": "Issue data query for missing CRF pages"
+        },
+        {
+          "type": "lab_issues_count",
+          "total_count": 667,
+          "priority": "MEDIUM",
+          "action": "Reconcile lab data with central lab vendor"
+        },
+        {
+          "type": "uncoded_whodd_count",
+          "total_count": 3,
+          "priority": "LOW",
+          "action": "Code medication terms to WHODrug dictionary"
+        }
+      ],
+      "root_causes": [
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_24",
+      "site_id": "Site 50",
+      "country": "KOR",
+      "region": "ASIA",
+      "subject_count": 19,
+      "avg_dqi_score": 0.179,
+      "max_dqi_score": 0.513,
+      "high_risk_count": 4,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 1,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        },
+        {
+          "type": "uncoded_meddra_count",
+          "total_count": 2,
+          "priority": "HIGH",
+          "action": "Code adverse event terms to MedDRA dictionary"
+        },
+        {
+          "type": "missing_visit_count",
+          "total_count": 2,
+          "priority": "HIGH",
+          "action": "Contact site to schedule missed visits or document reason"
+        },
+        {
+          "type": "missing_pages_count",
+          "total_count": 5,
+          "priority": "MEDIUM",
+          "action": "Issue data query for missing CRF pages"
+        },
+        {
+          "type": "lab_issues_count",
+          "total_count": 1142,
+          "priority": "MEDIUM",
+          "action": "Reconcile lab data with central lab vendor"
+        },
+        {
+          "type": "uncoded_whodd_count",
+          "total_count": 12,
+          "priority": "LOW",
+          "action": "Code medication terms to WHODrug dictionary"
+        }
+      ],
+      "root_causes": [
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_2",
+      "site_id": "Site 41",
+      "country": "CHN",
+      "region": "ASIA",
+      "subject_count": 2,
+      "avg_dqi_score": 0.175,
+      "max_dqi_score": 0.286,
+      "high_risk_count": 1,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 1,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        },
+        {
+          "type": "missing_pages_count",
+          "total_count": 1,
+          "priority": "MEDIUM",
+          "action": "Issue data query for missing CRF pages"
+        },
+        {
+          "type": "inactivated_forms_count",
+          "total_count": 104,
+          "priority": "LOW",
+          "action": "Review inactivated forms for audit trail compliance"
+        }
+      ],
+      "root_causes": [
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_16",
+      "site_id": "Site 661",
+      "country": "ITA",
+      "region": "EMEA",
+      "subject_count": 8,
+      "avg_dqi_score": 0.162,
+      "max_dqi_score": 0.415,
+      "high_risk_count": 3,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 2,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        },
+        {
+          "type": "missing_visit_count",
+          "total_count": 7,
+          "priority": "HIGH",
+          "action": "Contact site to schedule missed visits or document reason"
+        },
+        {
+          "type": "missing_pages_count",
+          "total_count": 4,
+          "priority": "MEDIUM",
+          "action": "Issue data query for missing CRF pages"
+        },
+        {
+          "type": "edrr_open_issues",
+          "total_count": 29,
+          "priority": "LOW",
+          "action": "Resolve external data reconciliation discrepancies"
+        },
+        {
+          "type": "inactivated_forms_count",
+          "total_count": 70,
+          "priority": "LOW",
+          "action": "Review inactivated forms for audit trail compliance"
+        }
+      ],
+      "root_causes": [
+        "Protocol compliance issues - subjects missing scheduled visits",
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_16",
+      "site_id": "Site 693",
+      "country": "MYS",
+      "region": "ASIA",
+      "subject_count": 2,
+      "avg_dqi_score": 0.154,
+      "max_dqi_score": 0.258,
+      "high_risk_count": 1,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 2,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        },
+        {
+          "type": "inactivated_forms_count",
+          "total_count": 10,
+          "priority": "LOW",
+          "action": "Review inactivated forms for audit trail compliance"
+        }
+      ],
+      "root_causes": [
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "SITE",
+      "study": "Study_21",
+      "site_id": "Site 341",
+      "country": "USA",
+      "region": "AMERICA",
+      "subject_count": 4,
+      "avg_dqi_score": 0.15,
+      "max_dqi_score": 0.233,
+      "high_risk_count": 3,
+      "site_risk_category": "High",
+      "issues": [
+        {
+          "type": "sae_pending_count",
+          "total_count": 5,
+          "priority": "CRITICAL",
+          "action": "Immediate SAE review and regulatory submission required"
+        }
+      ],
+      "root_causes": [
+        "Safety reporting delays - requires immediate escalation"
+      ],
+      "recommendations": [
+        "Schedule urgent site quality call within 48 hours",
+        "Consider triggered monitoring visit",
+        "Review site training records and re-train if needed",
+        "Implement enhanced oversight procedures"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    }
+  ],
+  "study_recommendations": [
+    {
+      "level": "STUDY",
+      "study": "Study_1",
+      "n_sites": 27,
+      "n_subjects": 98,
+      "avg_dqi": 0.149,
+      "total_high_risk": 18,
+      "key_metrics": {
+        "high_risk_rate": 18.4,
+        "pending_sae": 48,
+        "missing_visits": 15,
+        "uncoded_ae": 6
+      },
+      "recommendations": [
+        "URGENT: 48 pending SAE reviews require immediate attention",
+        "Address 15 missing visits across sites",
+        "Clear 6 uncoded adverse event terms"
+      ],
+      "ai_insight": "The data quality status for Study_1 indicates a relatively low average Data Quality Index (DQI) of 0.149, suggesting potential issues with data integrity. A significant number of high-risk subjects (18 out of 98) may be contributing to these concerns.\n\nA key action item would be to focus on implementing enhanced quality control measures at the involved sites to reduce errors and improve overall data quality, particularly for the high-risk subjects identified in this study. This could involve providing additional training, conducting regular audits, or reinforcing data collection protocols.",
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_10",
+      "n_sites": 34,
+      "n_subjects": 81,
+      "avg_dqi": 0.078,
+      "total_high_risk": 3,
+      "key_metrics": {
+        "high_risk_rate": 3.7,
+        "pending_sae": 0,
+        "missing_visits": 6,
+        "uncoded_ae": 8
+      },
+      "recommendations": [
+        "Clear 8 uncoded adverse event terms"
+      ],
+      "ai_insight": "The data quality status of Study_10 is generally good, as indicated by the low average Data Quality Index (DQI) of 0.078. However, there are three high-risk subjects, which necessitates close monitoring to ensure their data does not negatively impact the overall study results. A key action item would be to conduct thorough data quality checks and follow-ups with these high-risk subjects to minimize potential issues.",
+      "priority": "MEDIUM"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_11",
+      "n_sites": 148,
+      "n_subjects": 483,
+      "avg_dqi": 0.013,
+      "total_high_risk": 11,
+      "key_metrics": {
+        "high_risk_rate": 2.3,
+        "pending_sae": 14,
+        "missing_visits": 12,
+        "uncoded_ae": 0
+      },
+      "recommendations": [
+        "URGENT: 14 pending SAE reviews require immediate attention",
+        "Address 12 missing visits across sites"
+      ],
+      "ai_insight": "The data quality status of Study_11 appears to be exceptional, with an average Data Quality Index (DQI) of only 0.013, indicating minimal errors. However, the presence of 11 high-risk subjects suggests a need for increased vigilance and potential targeted training or rechecking of their data entries to maintain this high level of quality.\n\nKey action item: Implement focused training sessions for the high-risk subjects to ensure data accuracy and maintain the study's overall data quality.",
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_13",
+      "n_sites": 13,
+      "n_subjects": 22,
+      "avg_dqi": 0.136,
+      "total_high_risk": 2,
+      "key_metrics": {
+        "high_risk_rate": 9.1,
+        "pending_sae": 0,
+        "missing_visits": 0,
+        "uncoded_ae": 1
+      },
+      "recommendations": [],
+      "ai_insight": "The data quality status of Study_13 shows a relatively low Data Quality Index (DQI) of 0.136, indicating potential issues that need attention. With two high-risk subjects identified, it is crucial to prioritize thorough review and correction of their data entries to ensure the study's integrity.\n\nKey action item: Initiate a comprehensive data quality audit for high-risk subjects and implement corrective measures to address any identified discrepancies promptly.",
+      "priority": "MEDIUM"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_14",
+      "n_sites": 2,
+      "n_subjects": 3,
+      "avg_dqi": 0.147,
+      "total_high_risk": 1,
+      "key_metrics": {
+        "high_risk_rate": 33.3,
+        "pending_sae": 0,
+        "missing_visits": 0,
+        "uncoded_ae": 2
+      },
+      "recommendations": [
+        "High-risk subject rate (33.3%) exceeds threshold"
+      ],
+      "ai_insight": "The data quality status of Study_14 indicates a significant concern, with an average Data Quality Index (DQI) of 0.147. This is well below the acceptable industry standard, suggesting potential issues with data accuracy and completeness. A key action item would be to immediately initiate a thorough data review at both sites to identify and address any discrepancies or errors, aiming to improve the overall DQI.",
+      "priority": "HIGH"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_15",
+      "n_sites": 2,
+      "n_subjects": 93,
+      "avg_dqi": 0.1,
+      "total_high_risk": 1,
+      "key_metrics": {
+        "high_risk_rate": 1.1,
+        "pending_sae": 0,
+        "missing_visits": 0,
+        "uncoded_ae": 1
+      },
+      "recommendations": [],
+      "ai_insight": "The data quality status of Study_15 indicates a relatively low data quality issue, with an average Data Quality Index (DQI) of 0.100. However, the presence of one high-risk subject necessitates immediate attention to ensure accurate and reliable study results.\n\nA key action item would be to conduct a thorough investigation into the high-risk subject's data, possibly involving site visits or additional training, to reduce potential biases and improve overall data quality.",
+      "priority": "MEDIUM"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_16",
+      "n_sites": 176,
+      "n_subjects": 670,
+      "avg_dqi": 0.13,
+      "total_high_risk": 100,
+      "key_metrics": {
+        "high_risk_rate": 14.9,
+        "pending_sae": 25,
+        "missing_visits": 327,
+        "uncoded_ae": 8
+      },
+      "recommendations": [
+        "URGENT: 25 pending SAE reviews require immediate attention",
+        "Address 327 missing visits across sites",
+        "Clear 8 uncoded adverse event terms"
+      ],
+      "ai_insight": "The data quality status for Study_16 indicates a relatively low Data Quality Index (DQI) of 0.130, suggesting potential issues with the data integrity at some sites. A key concern is the high number of subjects identified as high risk (100 out of 670). To ensure accurate and reliable results, it's crucial to focus on addressing these quality concerns by implementing targeted quality control measures at the affected sites and closely monitoring high-risk subjects.",
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_17",
+      "n_sites": 13,
+      "n_subjects": 48,
+      "avg_dqi": 0.211,
+      "total_high_risk": 11,
+      "key_metrics": {
+        "high_risk_rate": 22.9,
+        "pending_sae": 0,
+        "missing_visits": 8,
+        "uncoded_ae": 3
+      },
+      "recommendations": [
+        "High-risk subject rate (22.9%) exceeds threshold"
+      ],
+      "ai_insight": "The data quality status for Study_17 indicates a relatively low overall quality, with an average Data Quality Index (DQI) of 0.211. This suggests that there are significant issues at 13 trial sites, affecting 11 high-risk subjects out of the total 48 enrolled.\n\nA key action item for improving this situation would be to immediately conduct a thorough review and investigation of the data collected from these high-risk subjects, focusing on the underlying causes of the low DQI scores at each site. This will help in identifying and addressing any operational or protocol deviations that may have contributed to the low quality of data.",
+      "priority": "HIGH"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_18",
+      "n_sites": 2,
+      "n_subjects": 213,
+      "avg_dqi": 0.012,
+      "total_high_risk": 0,
+      "key_metrics": {
+        "high_risk_rate": 0.0,
+        "pending_sae": 0,
+        "missing_visits": 0,
+        "uncoded_ae": 12
+      },
+      "recommendations": [
+        "Clear 12 uncoded adverse event terms"
+      ],
+      "ai_insight": "The data quality status of Study_18 is excellent, with an average Data Quality Index (DQI) of 0.012, indicating minimal errors. Given the zero high-risk subjects and pending serious adverse events (SAEs), the study's data integrity appears to be very strong.\n\nA key action item would be to maintain this high standard by ensuring ongoing monitoring and quality control measures to prevent any potential future issues that could affect data quality or integrity. This includes continuous training of site personnel, regular audits, and timely resolution of any data queries or inconsistencies identified during the study.",
+      "priority": "MEDIUM"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_19",
+      "n_sites": 13,
+      "n_subjects": 44,
+      "avg_dqi": 0.227,
+      "total_high_risk": 16,
+      "key_metrics": {
+        "high_risk_rate": 36.4,
+        "pending_sae": 0,
+        "missing_visits": 14,
+        "uncoded_ae": 5
+      },
+      "recommendations": [
+        "High-risk subject rate (36.4%) exceeds threshold",
+        "Address 14 missing visits across sites"
+      ],
+      "ai_insight": "The data quality status of Study_19 indicates a relatively low data quality, with an average Data Quality Index (DQI) of 0.227. This suggests that a significant portion of the collected data might require reevaluation or correction. A key action item could be to prioritize a thorough data quality review and remediation process for the 16 high-risk subjects to improve overall study data integrity.",
+      "priority": "HIGH"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_2",
+      "n_sites": 18,
+      "n_subjects": 79,
+      "avg_dqi": 0.077,
+      "total_high_risk": 1,
+      "key_metrics": {
+        "high_risk_rate": 1.3,
+        "pending_sae": 1,
+        "missing_visits": 2,
+        "uncoded_ae": 0
+      },
+      "recommendations": [
+        "URGENT: 1 pending SAE reviews require immediate attention"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_20",
+      "n_sites": 12,
+      "n_subjects": 22,
+      "avg_dqi": 0.172,
+      "total_high_risk": 4,
+      "key_metrics": {
+        "high_risk_rate": 18.2,
+        "pending_sae": 0,
+        "missing_visits": 0,
+        "uncoded_ae": 16
+      },
+      "recommendations": [
+        "High-risk subject rate (18.2%) exceeds threshold",
+        "Clear 16 uncoded adverse event terms"
+      ],
+      "ai_insight": null,
+      "priority": "HIGH"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_21",
+      "n_sites": 1069,
+      "n_subjects": 26442,
+      "avg_dqi": 0.037,
+      "total_high_risk": 4414,
+      "key_metrics": {
+        "high_risk_rate": 16.7,
+        "pending_sae": 5089,
+        "missing_visits": 354,
+        "uncoded_ae": 115
+      },
+      "recommendations": [
+        "URGENT: 5089 pending SAE reviews require immediate attention",
+        "Address 354 missing visits across sites",
+        "Clear 115 uncoded adverse event terms"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_22",
+      "n_sites": 1059,
+      "n_subjects": 21558,
+      "avg_dqi": 0.013,
+      "total_high_risk": 405,
+      "key_metrics": {
+        "high_risk_rate": 1.9,
+        "pending_sae": 76,
+        "missing_visits": 727,
+        "uncoded_ae": 138
+      },
+      "recommendations": [
+        "URGENT: 76 pending SAE reviews require immediate attention",
+        "Address 727 missing visits across sites",
+        "Clear 138 uncoded adverse event terms"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_23",
+      "n_sites": 34,
+      "n_subjects": 2914,
+      "avg_dqi": 0.028,
+      "total_high_risk": 1,
+      "key_metrics": {
+        "high_risk_rate": 0.0,
+        "pending_sae": 0,
+        "missing_visits": 5,
+        "uncoded_ae": 1
+      },
+      "recommendations": [],
+      "ai_insight": null,
+      "priority": "MEDIUM"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_24",
+      "n_sites": 112,
+      "n_subjects": 661,
+      "avg_dqi": 0.172,
+      "total_high_risk": 169,
+      "key_metrics": {
+        "high_risk_rate": 25.6,
+        "pending_sae": 9,
+        "missing_visits": 78,
+        "uncoded_ae": 176
+      },
+      "recommendations": [
+        "URGENT: 9 pending SAE reviews require immediate attention",
+        "Address 78 missing visits across sites",
+        "Clear 176 uncoded adverse event terms"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_25",
+      "n_sites": 225,
+      "n_subjects": 1374,
+      "avg_dqi": 0.054,
+      "total_high_risk": 0,
+      "key_metrics": {
+        "high_risk_rate": 0.0,
+        "pending_sae": 0,
+        "missing_visits": 0,
+        "uncoded_ae": 0
+      },
+      "recommendations": [],
+      "ai_insight": null,
+      "priority": "MEDIUM"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_4",
+      "n_sites": 169,
+      "n_subjects": 1554,
+      "avg_dqi": 0.008,
+      "total_high_risk": 26,
+      "key_metrics": {
+        "high_risk_rate": 1.7,
+        "pending_sae": 122,
+        "missing_visits": 1,
+        "uncoded_ae": 4
+      },
+      "recommendations": [
+        "URGENT: 122 pending SAE reviews require immediate attention"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_5",
+      "n_sites": 112,
+      "n_subjects": 678,
+      "avg_dqi": 0.107,
+      "total_high_risk": 50,
+      "key_metrics": {
+        "high_risk_rate": 7.4,
+        "pending_sae": 0,
+        "missing_visits": 21,
+        "uncoded_ae": 2
+      },
+      "recommendations": [
+        "Address 21 missing visits across sites"
+      ],
+      "ai_insight": null,
+      "priority": "MEDIUM"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_6",
+      "n_sites": 14,
+      "n_subjects": 53,
+      "avg_dqi": 0.198,
+      "total_high_risk": 14,
+      "key_metrics": {
+        "high_risk_rate": 26.4,
+        "pending_sae": 0,
+        "missing_visits": 12,
+        "uncoded_ae": 4
+      },
+      "recommendations": [
+        "High-risk subject rate (26.4%) exceeds threshold",
+        "Address 12 missing visits across sites"
+      ],
+      "ai_insight": null,
+      "priority": "HIGH"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_7",
+      "n_sites": 13,
+      "n_subjects": 33,
+      "avg_dqi": 0.147,
+      "total_high_risk": 8,
+      "key_metrics": {
+        "high_risk_rate": 24.2,
+        "pending_sae": 5,
+        "missing_visits": 0,
+        "uncoded_ae": 13
+      },
+      "recommendations": [
+        "URGENT: 5 pending SAE reviews require immediate attention",
+        "Clear 13 uncoded adverse event terms"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_8",
+      "n_sites": 123,
+      "n_subjects": 652,
+      "avg_dqi": 0.036,
+      "total_high_risk": 5,
+      "key_metrics": {
+        "high_risk_rate": 0.8,
+        "pending_sae": 18,
+        "missing_visits": 24,
+        "uncoded_ae": 15
+      },
+      "recommendations": [
+        "URGENT: 18 pending SAE reviews require immediate attention",
+        "Address 24 missing visits across sites",
+        "Clear 15 uncoded adverse event terms"
+      ],
+      "ai_insight": null,
+      "priority": "CRITICAL"
+    },
+    {
+      "level": "STUDY",
+      "study": "Study_9",
+      "n_sites": 9,
+      "n_subjects": 180,
+      "avg_dqi": 0.059,
+      "total_high_risk": 3,
+      "key_metrics": {
+        "high_risk_rate": 1.7,
+        "pending_sae": 0,
+        "missing_visits": 0,
+        "uncoded_ae": 0
+      },
+      "recommendations": [],
+      "ai_insight": null,
+      "priority": "MEDIUM"
+    }
+  ]
+}

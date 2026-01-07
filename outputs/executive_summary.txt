@@ -1,0 +1,98 @@
+
+================================================================================
+JAVELIN.AI - DATA QUALITY EXECUTIVE SUMMARY
+Generated: 2026-01-07 17:45:36
+================================================================================
+
+OVERVIEW
+--------
+Total Subjects: 57,997
+Total Sites: 3,399
+Studies: 23
+
+RISK DISTRIBUTION
+-----------------
+Subject Level:
+  * High Risk: 5,264 subjects (9.1%)
+  * Medium Risk: 6,949 subjects (12.0%)
+  * Low Risk: 45,784 subjects
+
+Site Level:
+  * High Risk Sites: 387 (11.4%)
+
+AI-GENERATED INSIGHT
+--------------------
+Executive Summary:
+
+The current clinical trial portfolio consists of 23 studies involving 57,997 subjects across 3399 sites. Notably, there are significant data quality concerns, with 9.1% of subjects categorized as high risk, 48 critical sites, and a backlog of 5407 pending Serious Adverse Event (SAE) reviews.
+
+The top three issue categories include Max Days Outstanding (29,694), Lab Issues Count (7,427), and SAE Pending Count (5,407). To mitigate these risks and ensure data integrity, priority actions for this week include:
+
+1. Expediting the review of pending SAEs to address potential patient safety concerns and ensure timely reporting.
+2. Implementing measures to reduce Max Days Outstanding by focusing on sites with high outstanding days and improving communication between study teams and sponsors.
+3. Collaborating with lab partners to rectify lab issues and implement quality control checks to minimize future occurrences.
+
+By addressing these critical areas, we aim to improve the overall data quality and reduce risks across the portfolio.
+
+CRITICAL ITEMS REQUIRING IMMEDIATE ACTION
+-----------------------------------------
+[!] PENDING SAE REVIEWS: 5407 subjects have SAE records awaiting review
+    Action: Immediate pharmacovigilance review required
+
+[!] CRITICAL SUBJECTS: 4473 subjects require immediate intervention
+[!] CRITICAL SITES: 48 sites flagged for urgent quality review
+
+TOP PRIORITIES THIS WEEK
+------------------------
+1. [CRITICAL] Study_1 - Site 17 (ESP)
+   DQI Score: 0.509 | High-risk subjects: 2
+   AI Insight: Given the CRITICAL risk level and the DQI score of 0.509 for Site 17 in Study_1 within ESP, it is recommended to prioritize addressing the identified issues immediately to ensure data quality. The top...
+
+2. [CRITICAL] Study_16 - Site 759 (TUR)
+   DQI Score: 0.388 | High-risk subjects: 1
+   AI Insight: Given the CRITICAL risk level and the low DQI score (0.388) for Site 759 in TUR during Study_16, immediate attention is required to address the identified issues. The primary concerns are a high numbe...
+
+3. [CRITICAL] Study_1 - Site 27 (CHN)
+   DQI Score: 0.340 | High-risk subjects: 2
+   AI Insight: Due to the critical data quality issue (DQI Score: 0.340) in Study_1 at Site 27 in CHN, it is essential to prioritize addressing the identified risks promptly. The top issues include a high number of ...
+
+4. [CRITICAL] Study_24 - Site 2183 (CHN)
+   DQI Score: 0.243 | High-risk subjects: 3
+   Action: Schedule urgent site quality call within 48 hours
+
+5. [CRITICAL] Study_11 - Site 417 (ITA)
+   DQI Score: 0.233 | High-risk subjects: 1
+   Action: Schedule urgent site quality call within 48 hours
+
+
+RECOMMENDATIONS BY CATEGORY
+---------------------------
+* Max Days Outstanding: 29694 instances
+  Priority: MEDIUM | Action: Escalate data entry delays to site
+
+* Lab Issues Count: 7427 instances
+  Priority: MEDIUM | Action: Reconcile lab data with central lab vendor
+
+* Sae Pending Count: 5407 instances
+  Priority: CRITICAL | Action: Immediate SAE review and regulatory submission required
+
+* Inactivated Forms Count: 4558 instances
+  Priority: LOW | Action: Review inactivated forms for audit trail compliance
+
+* Missing Pages Count: 2569 instances
+  Priority: MEDIUM | Action: Issue data query for missing CRF pages
+
+* Missing Visit Count: 867 instances
+  Priority: HIGH | Action: Contact site to schedule missed visits or document reason
+
+* Edrr Open Issues: 475 instances
+  Priority: LOW | Action: Resolve external data reconciliation discrepancies
+
+* Uncoded Whodd Count: 418 instances
+  Priority: LOW | Action: Code medication terms to WHODrug dictionary
+
+* Uncoded Meddra Count: 303 instances
+  Priority: HIGH | Action: Code adverse event terms to MedDRA dictionary
+
+
+================================================================================
