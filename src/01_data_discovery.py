@@ -26,8 +26,12 @@ warnings.filterwarnings('ignore')
 # CONFIGURATION
 # ============================================================================
 
-DATA_DIR = Path("data")
-OUTPUT_DIR = Path("outputs")
+# Get the directory where this script is located
+SCRIPT_DIR = Path(__file__).parent.resolve()
+PROJECT_ROOT = SCRIPT_DIR.parent  # Go up one level to project root
+
+DATA_DIR = PROJECT_ROOT / "data"
+OUTPUT_DIR = PROJECT_ROOT / "outputs"
 
 # File type patterns - order matters (first match wins)
 FILE_PATTERNS = {
@@ -159,25 +163,19 @@ def classify_file(filename):
 def get_excel_columns(filepath):
     """Read Excel file and return column names from the first sheet."""
     try:
-        # Try reading with header at row 0
         df = pd.read_excel(filepath, sheet_name=0, nrows=5)
-        
-        # Check if columns look like headers or if we need to skip rows
-        # If first column is like "Project Name" or has "Unnamed", it's a header
+
         first_col = str(df.columns[0])
-        
+
         if 'Unnamed' in first_col or first_col in ['Project Name', 'Study', 'Country']:
-            # Check if actual data might be lower
             df_raw = pd.read_excel(filepath, sheet_name=0, header=None, nrows=10)
-            
-            # Look for row with "Subject" in it
+
             for i in range(min(5, len(df_raw))):
                 row_str = ' '.join(df_raw.iloc[i].astype(str).tolist())
                 if 'Subject' in row_str or 'Patient' in row_str:
-                    # Re-read with this row as header
                     df = pd.read_excel(filepath, sheet_name=0, header=i, nrows=5)
                     break
-        
+
         return list(df.columns), None
     except Exception as e:
         return [], str(e)
@@ -187,7 +185,7 @@ def find_column_mapping(actual_columns, expected_columns_dict):
     """Map actual columns to expected canonical names."""
     mapping = {}
     missing = []
-    
+
     for canonical_name, variations in expected_columns_dict.items():
         found = False
         for actual_col in actual_columns:
@@ -201,7 +199,7 @@ def find_column_mapping(actual_columns, expected_columns_dict):
                 break
         if not found:
             missing.append(canonical_name)
-    
+
     return mapping, missing
 
 
@@ -211,20 +209,19 @@ def find_column_mapping(actual_columns, expected_columns_dict):
 
 def run_discovery():
     """Main function to discover and classify all files."""
-    
+
     print("=" * 70)
     print("JAVELIN.AI - DATA DISCOVERY")
     print("=" * 70)
-    
-    # Ensure output directory exists
+    print(f"\nProject Root: {PROJECT_ROOT}")
+    print(f"Looking for data in: {DATA_DIR}")
+
     OUTPUT_DIR.mkdir(exist_ok=True)
-    
-    # Storage for results
+
     file_mapping = []
     column_report = []
     issues = []
-    
-    # Check if data directory exists
+
     if not DATA_DIR.exists():
         print(f"\n❌ ERROR: Data directory '{DATA_DIR}' not found!")
         print(f"   Please create it and add your study folders.")
@@ -234,55 +231,48 @@ def run_discovery():
         print(f"   ├── Study 2_CPID_Input Files - Anonymization/")
         print(f"   └── ...")
         return
-    
-    # Get all study folders
+
     study_folders = [f for f in DATA_DIR.iterdir() if f.is_dir()]
-    
+
     if not study_folders:
         print(f"\n❌ ERROR: No study folders found in '{DATA_DIR}'!")
         return
-    
+
     print(f"\n📁 Found {len(study_folders)} study folders")
-    
-    # Process each study folder
+
     for study_folder in sorted(study_folders):
         study_name = extract_study_name(study_folder.name)
         print(f"\n{'─' * 50}")
         print(f"📂 Processing: {study_name}")
-        
-        # Get all Excel files in this folder
+
         excel_files = list(study_folder.glob("*.xlsx")) + list(study_folder.glob("*.xls"))
-        
+
         if not excel_files:
             issues.append(f"WARNING: No Excel files found in {study_folder.name}")
             continue
-        
+
         print(f"   Found {len(excel_files)} Excel files")
-        
-        # Classify each file
+
         classified_count = defaultdict(int)
-        
+
         for excel_file in excel_files:
             file_type = classify_file(excel_file.name)
             classified_count[file_type] += 1
-            
-            # Get columns
+
             columns, error = get_excel_columns(excel_file)
-            
+
             if error:
                 issues.append(f"ERROR reading {excel_file.name}: {error}")
                 columns = []
-            
-            # Check column mapping if file type is known
+
             column_mapping = {}
             missing_columns = []
             if file_type != 'unknown' and columns:
                 column_mapping, missing_columns = find_column_mapping(
-                    columns, 
+                    columns,
                     EXPECTED_COLUMNS.get(file_type, {})
                 )
-            
-            # Store file mapping
+
             file_mapping.append({
                 'study': study_name,
                 'folder': study_folder.name,
@@ -291,56 +281,45 @@ def run_discovery():
                 'filepath': str(excel_file),
                 'num_columns': len(columns),
             })
-            
-            # Store column info
+
             column_report.append({
                 'study': study_name,
                 'filename': excel_file.name,
                 'file_type': file_type,
-                'columns_found': '|'.join(columns[:20]),  # First 20 columns
+                'columns_found': '|'.join(columns[:20]),
                 'subject_id_col': column_mapping.get('subject_id', 'NOT FOUND'),
                 'site_id_col': column_mapping.get('site_id', 'NOT FOUND'),
                 'missing_expected': '|'.join(missing_columns) if missing_columns else 'None',
             })
-            
-            # Flag issues
+
             if file_type == 'unknown':
                 issues.append(f"UNKNOWN FILE TYPE: {study_name}/{excel_file.name}")
-            
+
             if missing_columns and file_type != 'unknown':
                 issues.append(f"MISSING COLUMNS in {study_name}/{excel_file.name} ({file_type}): {missing_columns}")
-        
-        # Check if we have all 9 file types
+
         for expected_type in FILE_PATTERNS.keys():
             if classified_count[expected_type] == 0:
                 issues.append(f"MISSING FILE TYPE: {study_name} has no {expected_type} file")
-        
-        # Report classification
+
         print(f"   Classification: ", end="")
         for ftype, count in sorted(classified_count.items()):
             symbol = "✓" if ftype != 'unknown' else "?"
             print(f"{ftype}:{count}{symbol} ", end="")
         print()
-    
-    # =========================================================================
-    # SAVE OUTPUTS
-    # =========================================================================
-    
+
     print("\n" + "=" * 70)
     print("SAVING RESULTS")
     print("=" * 70)
-    
-    # Save file mapping
+
     df_files = pd.DataFrame(file_mapping)
     df_files.to_csv(OUTPUT_DIR / "file_mapping.csv", index=False)
-    print(f"\n✅ Saved: outputs/file_mapping.csv ({len(df_files)} files)")
-    
-    # Save column report
+    print(f"\n✅ Saved: {OUTPUT_DIR / 'file_mapping.csv'} ({len(df_files)} files)")
+
     df_columns = pd.DataFrame(column_report)
     df_columns.to_csv(OUTPUT_DIR / "column_report.csv", index=False)
-    print(f"✅ Saved: outputs/column_report.csv")
-    
-    # Save issues
+    print(f"✅ Saved: {OUTPUT_DIR / 'column_report.csv'}")
+
     with open(OUTPUT_DIR / "discovery_issues.txt", 'w') as f:
         f.write("JAVELIN.AI - DATA DISCOVERY ISSUES\n")
         f.write("=" * 50 + "\n\n")
@@ -349,37 +328,31 @@ def run_discovery():
                 f.write(f"• {issue}\n")
         else:
             f.write("No issues found! All files classified successfully.\n")
-    print(f"✅ Saved: outputs/discovery_issues.txt ({len(issues)} issues)")
-    
-    # =========================================================================
-    # SUMMARY
-    # =========================================================================
-    
+    print(f"✅ Saved: {OUTPUT_DIR / 'discovery_issues.txt'} ({len(issues)} issues)")
+
     print("\n" + "=" * 70)
     print("SUMMARY")
     print("=" * 70)
-    
-    # File type distribution
+
     print("\nFile Type Distribution:")
     type_counts = df_files['file_type'].value_counts()
     for ftype, count in type_counts.items():
         symbol = "✅" if ftype != 'unknown' else "⚠️"
         print(f"  {symbol} {ftype}: {count} files")
-    
-    # Studies summary
+
     print(f"\nStudies: {df_files['study'].nunique()}")
     print(f"Total Files: {len(df_files)}")
     print(f"Issues Found: {len(issues)}")
-    
+
     if issues:
         print("\n⚠️  ISSUES REQUIRING ATTENTION:")
-        for issue in issues[:10]:  # Show first 10
+        for issue in issues[:10]:
             print(f"   • {issue}")
         if len(issues) > 10:
             print(f"   ... and {len(issues) - 10} more (see discovery_issues.txt)")
     else:
         print("\n🎉 All files classified successfully!")
-    
+
     print("\n" + "=" * 70)
     print("NEXT STEPS")
     print("=" * 70)
@@ -391,10 +364,6 @@ def run_discovery():
 5. Run: python src/02_build_master_table.py
 """)
 
-
-# ============================================================================
-# ENTRY POINT
-# ============================================================================
 
 if __name__ == "__main__":
     run_discovery()

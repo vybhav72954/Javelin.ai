@@ -29,8 +29,10 @@ warnings.filterwarnings('ignore')
 # CONFIGURATION
 # ============================================================================
 
-DATA_DIR = Path("data")
-OUTPUT_DIR = Path("outputs")
+SCRIPT_DIR = Path(__file__).parent.resolve()
+PROJECT_ROOT = SCRIPT_DIR.parent
+DATA_DIR = PROJECT_ROOT / "data"
+OUTPUT_DIR = PROJECT_ROOT / "outputs"
 FILE_MAPPING_PATH = OUTPUT_DIR / "file_mapping.csv"
 
 # Column name variations for each file type

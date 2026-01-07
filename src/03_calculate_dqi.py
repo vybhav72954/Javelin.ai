@@ -49,7 +49,10 @@ warnings.filterwarnings('ignore')
 # CONFIGURATION
 # ============================================================================
 
-OUTPUT_DIR = Path("outputs")
+SCRIPT_DIR = Path(__file__).parent.resolve()
+PROJECT_ROOT = SCRIPT_DIR.parent
+DATA_DIR = PROJECT_ROOT / "data"
+OUTPUT_DIR = PROJECT_ROOT / "outputs"
 MASTER_SUBJECT_PATH = OUTPUT_DIR / "master_subject.csv"
 
 # Feature weights based on clinical importance

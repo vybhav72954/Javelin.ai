@@ -49,7 +49,10 @@ warnings.filterwarnings('ignore')
 # CONFIGURATION
 # ============================================================================
 
-OUTPUT_DIR = Path("outputs")
+SCRIPT_DIR = Path(__file__).parent.resolve()
+PROJECT_ROOT = SCRIPT_DIR.parent
+DATA_DIR = PROJECT_ROOT / "data"
+OUTPUT_DIR = PROJECT_ROOT / "outputs"
 SUBJECT_PATH = OUTPUT_DIR / "master_subject_with_dqi.csv"
 SITE_PATH = OUTPUT_DIR / "master_site_with_dqi.csv"
 
