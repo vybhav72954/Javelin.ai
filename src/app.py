@@ -22,23 +22,44 @@ st.markdown("""
         text-align: center;
         padding: 1rem;
     }
-    .metric-card {
-        background-color: #f0f2f6;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #1f77b4;
+    .site-card {
+        padding: 0.75rem;
+        border-radius: 0.3rem;
+        margin-bottom: 0.75rem;
     }
-    .critical-alert {
+    .site-card h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.1rem;
+    }
+    .site-card p {
+        margin: 0.25rem 0;
+        color: #333;
+        font-size: 0.9rem;
+    }
+    .critical-card {
         background-color: #ffebee;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #d32f2f;
+        padding: 0.75rem;
+        border-radius: 0.3rem;
+        border-left: 3px solid #d32f2f;
+        margin-bottom: 0.75rem;
     }
-    .high-alert {
-        background-color: #fff3e0;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #f57c00;
+    .critical-card h4 {
+        margin: 0 0 0.5rem 0;
+        color: #d32f2f;
+        font-size: 1.1rem;
+    }
+    .critical-card p {
+        margin: 0.25rem 0;
+        color: #333;
+        font-size: 0.9rem;
+    }
+    .action-list {
+        margin: 0.5rem 0 0 1rem;
+        color: #333;
+    }
+    .action-list li {
+        margin: 0.25rem 0;
+        font-size: 0.9rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -136,7 +157,7 @@ if page == "Executive Overview":
 
     with col4:
         critical_sites = len(filtered_df[filtered_df['priority'] == 'CRITICAL'])
-        st.metric("Critical Sites", critical_sites, delta_color="inverse")
+        st.metric("Critical Sites", critical_sites)
 
     st.markdown("---")
 
@@ -207,64 +228,65 @@ if page == "Executive Overview":
     if "AI-GENERATED INSIGHT" in exec_summary:
         insight_section = exec_summary.split("AI-GENERATED INSIGHT")[1].split("CRITICAL ITEMS")[0]
         st.info(insight_section.strip())
-    else:
-        st.info("AI insights not available in executive summary.")
 
 elif page == "Site Analysis":
     st.header("Site-Level Analysis")
 
-    st.subheader("Top 10 Critical Sites")
-    top_critical = filtered_df[filtered_df['priority'].isin(['CRITICAL', 'HIGH'])].nlargest(10, 'high_risk_count')
+    st.subheader("Top 20 Critical Sites")
+    top_critical = filtered_df[filtered_df['priority'].isin(['CRITICAL', 'HIGH'])].nlargest(20, 'avg_dqi_score')
 
     for idx, row in top_critical.iterrows():
         priority_color = "#d32f2f" if row['priority'] == 'CRITICAL' else "#f57c00"
+        bg_color = "#ffebee" if row['priority'] == 'CRITICAL' else "#fff3e0"
 
-        with st.container():
-            st.markdown(f"""
-            <div style="background-color: {'#ffebee' if row['priority'] == 'CRITICAL' else '#fff3e0'}; 
-                        padding: 1rem; border-radius: 0.5rem; border-left: 4px solid {priority_color}; margin-bottom: 1rem;">
-                <h4 style="margin: 0; color: {priority_color};">[{row['priority']}] {row['study']} - {row['site_id']} ({row['country']})</h4>
-                <p style="margin: 0.5rem 0;"><strong>DQI Score:</strong> {row['avg_dqi_score']:.3f} | 
-                <strong>High-Risk Subjects:</strong> {row['high_risk_count']} | 
-                <strong>Top Issue:</strong> {row['top_issue']}</p>
-                <p style="margin: 0;"><strong>Recommendation:</strong> {row['top_recommendation']}</p>
-            </div>
-            """, unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="site-card" style="background-color: {bg_color}; border-left: 3px solid {priority_color};">
+            <h4 style="color: {priority_color};">[{row['priority']}] {row['study']} - {row['site_id']} ({row['country']})</h4>
+            <p><strong>DQI:</strong> {row['avg_dqi_score']:.3f} | 
+               <strong>High-Risk:</strong> {row['high_risk_count']}/{row['subject_count']} | 
+               <strong>Issue:</strong> {row['top_issue']}</p>
+            <p><strong>Action:</strong> {row['top_recommendation']}</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-            if pd.notna(row['ai_insight']):
-                with st.expander("View AI Insight"):
-                    st.write(row['ai_insight'])
+        if pd.notna(row['ai_insight']) and len(str(row['ai_insight'])) > 50:
+            with st.expander("View AI Insight"):
+                st.write(row['ai_insight'])
 
     st.markdown("---")
 
-    st.subheader("DQI Score Distribution")
-    fig_dqi = px.histogram(
-        filtered_df,
-        x='avg_dqi_score',
-        nbins=30,
-        labels={'avg_dqi_score': 'DQI Score'},
-        color_discrete_sequence=['#1f77b4']
-    )
-    fig_dqi.update_layout(showlegend=False)
-    st.plotly_chart(fig_dqi, use_container_width=True)
+    col1, col2 = st.columns(2)
 
-    st.subheader("High-Risk Subject Distribution")
-    fig_risk = px.scatter(
-        filtered_df,
-        x='subject_count',
-        y='high_risk_count',
-        color='priority',
-        size='avg_dqi_score',
-        hover_data=['study', 'site_id', 'country'],
-        color_discrete_map={
-            'CRITICAL': '#d32f2f',
-            'HIGH': '#f57c00',
-            'MEDIUM': '#fbc02d',
-            'LOW': '#388e3c'
-        },
-        labels={'subject_count': 'Total Subjects', 'high_risk_count': 'High-Risk Subjects'}
-    )
-    st.plotly_chart(fig_risk, use_container_width=True)
+    with col1:
+        st.subheader("DQI Score Distribution")
+        fig_dqi = px.histogram(
+            filtered_df,
+            x='avg_dqi_score',
+            nbins=30,
+            labels={'avg_dqi_score': 'DQI Score'},
+            color_discrete_sequence=['#1f77b4']
+        )
+        fig_dqi.update_layout(showlegend=False, height=400)
+        st.plotly_chart(fig_dqi, use_container_width=True)
+
+    with col2:
+        st.subheader("High-Risk Subjects by Priority")
+        priority_risk = filtered_df.groupby('priority')['high_risk_count'].sum().reset_index()
+        fig_risk_bar = px.bar(
+            priority_risk,
+            x='priority',
+            y='high_risk_count',
+            color='priority',
+            color_discrete_map={
+                'CRITICAL': '#d32f2f',
+                'HIGH': '#f57c00',
+                'MEDIUM': '#fbc02d',
+                'LOW': '#388e3c'
+            },
+            labels={'high_risk_count': 'High-Risk Subjects', 'priority': 'Priority Level'}
+        )
+        fig_risk_bar.update_layout(showlegend=False, height=400)
+        st.plotly_chart(fig_risk_bar, use_container_width=True)
 
 elif page == "Study Analysis":
     st.header("Study-Level Analysis")
@@ -272,42 +294,51 @@ elif page == "Study Analysis":
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("Subjects by Study")
+        st.subheader("Top Studies by Subject Count")
+        top_studies = study_df.nlargest(10, 'subject_count')
         fig_subjects = px.bar(
-            study_df.nlargest(15, 'subject_count'),
+            top_studies,
             x='study',
             y='subject_count',
             color='subject_count',
             color_continuous_scale='Blues',
             labels={'subject_count': 'Number of Subjects'}
         )
-        fig_subjects.update_layout(xaxis_tickangle=-45, showlegend=False)
+        fig_subjects.update_layout(xaxis_tickangle=-45, showlegend=False, height=400)
         st.plotly_chart(fig_subjects, use_container_width=True)
 
     with col2:
-        st.subheader("Sites by Study")
+        st.subheader("Top Studies by Site Count")
+        top_sites_study = study_df.nlargest(10, 'site_count')
         fig_sites = px.bar(
-            study_df.nlargest(15, 'site_count'),
+            top_sites_study,
             x='study',
             y='site_count',
             color='site_count',
             color_continuous_scale='Greens',
             labels={'site_count': 'Number of Sites'}
         )
-        fig_sites.update_layout(xaxis_tickangle=-45, showlegend=False)
+        fig_sites.update_layout(xaxis_tickangle=-45, showlegend=False, height=400)
         st.plotly_chart(fig_sites, use_container_width=True)
 
     st.markdown("---")
 
-    st.subheader("Critical Metrics Heatmap")
-    heatmap_data = study_df[['study', 'sae_pending_count', 'missing_visit_count', 'lab_issues_count', 'missing_pages_count']].set_index('study')
+    st.subheader("Critical Metrics by Study")
+
+    study_metrics = study_df[['study', 'sae_pending_count', 'missing_visit_count',
+                               'lab_issues_count', 'missing_pages_count']].set_index('study')
+
+    study_metrics_sorted = study_metrics.sort_values('sae_pending_count', ascending=False).head(15)
 
     fig_heatmap = px.imshow(
-        heatmap_data.T,
+        study_metrics_sorted.T,
         labels=dict(x="Study", y="Metric", color="Count"),
         color_continuous_scale='Reds',
-        aspect='auto'
+        aspect='auto',
+        text_auto=True
     )
+    fig_heatmap.update_layout(height=400)
+    fig_heatmap.update_xaxes(tickangle=-45)
     st.plotly_chart(fig_heatmap, use_container_width=True)
 
 elif page == "Critical Actions":
@@ -315,32 +346,30 @@ elif page == "Critical Actions":
 
     if isinstance(action_items, dict):
         study_actions = action_items.get('study_recommendations', [])
-        site_actions = action_items.get('site_recommendations', [])
     else:
         study_actions = []
-        site_actions = []
 
-    st.subheader("Critical Studies")
     critical_studies = [s for s in study_actions if s.get('priority') == 'CRITICAL']
 
     if critical_studies:
         for study in critical_studies[:10]:
+            actions_html = ""
+            if study.get('recommendations'):
+                actions_html = "<ul class='action-list'>"
+                for rec in study['recommendations']:
+                    actions_html += f"<li>{rec}</li>"
+                actions_html += "</ul>"
+
             st.markdown(f"""
-            <div class="critical-alert">
-                <h4 style="margin: 0; color: #d32f2f;">[CRITICAL] {study.get('study', 'N/A')}</h4>
+            <div class="critical-card">
+                <h4>{study.get('study', 'N/A')}</h4>
                 <p><strong>Sites:</strong> {study.get('n_sites', 0)} | 
-                <strong>Subjects:</strong> {study.get('n_subjects', 0)} | 
-                <strong>Avg DQI:</strong> {study.get('avg_dqi', 0):.3f}</p>
-                <p><strong>High-Risk Subjects:</strong> {study.get('total_high_risk', 0)}</p>
+                   <strong>Subjects:</strong> {study.get('n_subjects', 0)} | 
+                   <strong>High-Risk:</strong> {study.get('total_high_risk', 0)} | 
+                   <strong>Avg DQI:</strong> {study.get('avg_dqi', 0):.3f}</p>
+                {actions_html}
             </div>
             """, unsafe_allow_html=True)
-
-            if study.get('recommendations'):
-                st.write("**Recommendations:**")
-                for rec in study['recommendations']:
-                    st.write(f"- {rec}")
-
-            st.markdown("<br>", unsafe_allow_html=True)
     else:
         st.info("No critical study actions found.")
 
@@ -351,12 +380,13 @@ elif page == "Critical Actions":
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.metric("Total Pending SAEs", f"{total_pending_sae:,}", delta_color="inverse")
+        st.metric("Total Pending SAEs", f"{total_pending_sae:,}")
     with col2:
         studies_with_sae = len(study_df[study_df['sae_pending_count'] > 0])
         st.metric("Studies Affected", studies_with_sae)
     with col3:
-        st.metric("Action Required", "IMMEDIATE", delta_color="inverse")
+        critical_sae = len(study_df[study_df['sae_pending_count'] > 100])
+        st.metric("Critical SAE Studies", critical_sae)
 
     sae_studies = study_df[study_df['sae_pending_count'] > 0].nlargest(10, 'sae_pending_count')
     fig_sae = px.bar(
@@ -365,9 +395,11 @@ elif page == "Critical Actions":
         y='sae_pending_count',
         color='sae_pending_count',
         color_continuous_scale='Reds',
-        labels={'sae_pending_count': 'Pending SAE Count'}
+        labels={'sae_pending_count': 'Pending SAE Count'},
+        text='sae_pending_count'
     )
-    fig_sae.update_layout(xaxis_tickangle=-45)
+    fig_sae.update_traces(texttemplate='%{text}', textposition='outside')
+    fig_sae.update_layout(xaxis_tickangle=-45, showlegend=False, height=400)
     st.plotly_chart(fig_sae, use_container_width=True)
 
 elif page == "Detailed Reports":
@@ -383,6 +415,8 @@ elif page == "Detailed Reports":
         use_container_width=True,
         height=400
     )
+
+    st.markdown("---")
 
     st.subheader("Download Reports")
 
@@ -416,8 +450,17 @@ elif page == "Detailed Reports":
 
     st.markdown("---")
 
-    st.subheader("Full Executive Summary")
-    st.text(exec_summary)
+    st.subheader("Executive Summary Preview")
+
+    if "OVERVIEW" in exec_summary and "CRITICAL ITEMS" in exec_summary:
+        overview = exec_summary.split("OVERVIEW")[1].split("AI-GENERATED INSIGHT")[0]
+        st.text(overview.strip())
+
+        with st.expander("View Full Executive Summary"):
+            st.text(exec_summary)
+    else:
+        with st.expander("View Executive Summary"):
+            st.text(exec_summary)
 
 st.markdown("---")
 st.markdown("""
