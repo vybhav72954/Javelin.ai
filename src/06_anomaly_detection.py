@@ -41,7 +41,6 @@ from collections import defaultdict
 from typing import List, Dict, Tuple, Optional
 import json
 import warnings
-
 warnings.filterwarnings('ignore')
 
 # ============================================================================
@@ -59,29 +58,29 @@ SITE_DQI_PATH = OUTPUT_DIR / "master_site_with_dqi.csv"
 # Anomaly Detection Thresholds
 THRESHOLDS = {
     # Statistical outlier thresholds
-    'zscore_threshold':2.5,  # Standard deviations from mean
-    'iqr_multiplier':1.5,  # IQR multiplier for outlier detection
-    'extreme_iqr_multiplier':3.0,  # Extreme outlier threshold
+    'zscore_threshold': 2.5,          # Standard deviations from mean
+    'iqr_multiplier': 1.5,            # IQR multiplier for outlier detection
+    'extreme_iqr_multiplier': 3.0,    # Extreme outlier threshold
 
     # Pattern anomaly thresholds
-    'min_issues_for_pattern':3,  # Minimum issues to check patterns
-    'pattern_correlation_threshold':0.3,  # Expected correlation minimum
+    'min_issues_for_pattern': 3,      # Minimum issues to check patterns
+    'pattern_correlation_threshold': 0.3,  # Expected correlation minimum
 
     # Regional anomaly thresholds
-    'regional_zscore_threshold':2.0,  # Z-score for regional comparison
-    'min_sites_per_region':3,  # Minimum sites for regional analysis
-    'min_sites_per_country':2,  # Minimum sites for country analysis
+    'regional_zscore_threshold': 2.0, # Z-score for regional comparison
+    'min_sites_per_region': 3,        # Minimum sites for regional analysis
+    'min_sites_per_country': 2,       # Minimum sites for country analysis
 
     # Cross-study thresholds
-    'cross_study_risk_threshold':0.5,  # High risk in multiple studies
+    'cross_study_risk_threshold': 0.5, # High risk in multiple studies
 
     # Velocity/density thresholds
-    'issue_density_threshold':0.8,  # Issues per subject ratio
-    'concentration_threshold':0.7,  # % of study issues in one site
+    'issue_density_threshold': 0.8,   # Issues per subject ratio
+    'concentration_threshold': 0.7,   # % of study issues in one site
 }
 
-# Issue columns to analyze
-ISSUE_COLUMNS = [
+# Issue columns to analyze (subject level)
+ISSUE_COLUMNS_SUBJECT = [
     'sae_pending_count',
     'uncoded_meddra_count',
     'missing_visit_count',
@@ -93,12 +92,26 @@ ISSUE_COLUMNS = [
     'inactivated_forms_count'
 ]
 
+# Issue columns at site level (aggregated with _sum suffix)
+ISSUE_COLUMNS_SITE = [
+    'sae_pending_count_sum',
+    'uncoded_meddra_count_sum',
+    'missing_visit_count_sum',
+    'missing_pages_count_sum',
+    'lab_issues_count_sum',
+    'max_days_outstanding_sum',
+    'max_days_page_missing_sum',
+    'uncoded_whodd_count_sum',
+    'edrr_open_issues_sum',
+    'inactivated_forms_count_sum'
+]
+
 # Anomaly severity levels
 SEVERITY_LEVELS = {
-    'CRITICAL':4,
-    'HIGH':3,
-    'MEDIUM':2,
-    'LOW':1
+    'CRITICAL': 4,
+    'HIGH': 3,
+    'MEDIUM': 2,
+    'LOW': 1
 }
 
 
@@ -110,7 +123,7 @@ def calculate_zscore(series: pd.Series) -> pd.Series:
     """Calculate z-scores for a series."""
     mean = series.mean()
     std = series.std()
-    if std==0:
+    if std == 0:
         return pd.Series(0, index=series.index)
     return (series - mean) / std
 
@@ -144,14 +157,16 @@ def detect_statistical_outliers(df: pd.DataFrame, level: str = 'site') -> List[D
     anomalies = []
 
     # Determine which columns to analyze based on level
-    if level=='site':
+    if level == 'site':
         id_col = 'site_id'
         dqi_col = 'avg_dqi_score'
-        numeric_cols = ['avg_dqi_score', 'subject_count', 'high_risk_count', 'high_risk_pct']
+        numeric_cols = ['avg_dqi_score', 'subject_count', 'high_risk_count', 'subjects_with_issues']
+        # Add issue columns
+        numeric_cols.extend([col for col in ISSUE_COLUMNS_SITE if col in df.columns])
     else:
         id_col = 'subject_id'
         dqi_col = 'dqi_score'
-        numeric_cols = ['dqi_score'] + [col for col in ISSUE_COLUMNS if col in df.columns]
+        numeric_cols = ['dqi_score'] + [col for col in ISSUE_COLUMNS_SUBJECT if col in df.columns]
 
     # Analyze each numeric column
     for col in numeric_cols:
@@ -161,7 +176,7 @@ def detect_statistical_outliers(df: pd.DataFrame, level: str = 'site') -> List[D
         series = df[col].fillna(0)
 
         # Skip if no variance
-        if series.std()==0:
+        if series.std() == 0:
             continue
 
         # Method 1: Z-score outliers
@@ -174,21 +189,21 @@ def detect_statistical_outliers(df: pd.DataFrame, level: str = 'site') -> List[D
             severity = 'CRITICAL' if abs(z) > 4 else 'HIGH' if abs(z) > 3 else 'MEDIUM'
 
             anomalies.append({
-                'anomaly_type':'STATISTICAL_OUTLIER',
-                'detection_method':'Z-Score',
-                'level':level,
-                'study':row.get('study', 'Unknown'),
-                'site_id':row.get('site_id', row.get('subject_id', 'Unknown')),
-                'country':row.get('country', 'Unknown'),
-                'region':row.get('region', 'Unknown'),
-                'metric':col,
-                'value':row[col],
-                'zscore':round(z, 2),
-                'mean':round(series.mean(), 3),
-                'std':round(series.std(), 3),
-                'severity':severity,
-                'description':f"{col} is {abs(z):.1f} standard deviations {direction} the mean ({row[col]:.3f} vs mean {series.mean():.3f})",
-                'recommendation':f"Investigate why {col} is unusually {'high' if z > 0 else 'low'} at this {level}"
+                'anomaly_type': 'STATISTICAL_OUTLIER',
+                'detection_method': 'Z-Score',
+                'level': level,
+                'study': row.get('study', 'Unknown'),
+                'site_id': row.get('site_id', row.get('subject_id', 'Unknown')),
+                'country': row.get('country', 'Unknown'),
+                'region': row.get('region', 'Unknown'),
+                'metric': col,
+                'value': row[col],
+                'zscore': round(z, 2),
+                'mean': round(series.mean(), 3),
+                'std': round(series.std(), 3),
+                'severity': severity,
+                'description': f"{col} is {abs(z):.1f} standard deviations {direction} the mean ({row[col]:.3f} vs mean {series.mean():.3f})",
+                'recommendation': f"Investigate why {col} is unusually {'high' if z > 0 else 'low'} at this {level}"
             })
 
         # Method 2: IQR outliers (more robust)
@@ -208,20 +223,20 @@ def detect_statistical_outliers(df: pd.DataFrame, level: str = 'site') -> List[D
             severity = 'HIGH' if is_extreme else 'MEDIUM'
 
             anomalies.append({
-                'anomaly_type':'STATISTICAL_OUTLIER',
-                'detection_method':'IQR',
-                'level':level,
-                'study':row.get('study', 'Unknown'),
-                'site_id':row.get('site_id', row.get('subject_id', 'Unknown')),
-                'country':row.get('country', 'Unknown'),
-                'region':row.get('region', 'Unknown'),
-                'metric':col,
-                'value':row[col],
-                'lower_bound':round(lower, 3),
-                'upper_bound':round(upper, 3),
-                'severity':severity,
-                'description':f"{col} ({row[col]:.3f}) is outside IQR bounds [{lower:.3f}, {upper:.3f}]",
-                'recommendation':f"Review {level} for unusual {col} pattern"
+                'anomaly_type': 'STATISTICAL_OUTLIER',
+                'detection_method': 'IQR',
+                'level': level,
+                'study': row.get('study', 'Unknown'),
+                'site_id': row.get('site_id', row.get('subject_id', 'Unknown')),
+                'country': row.get('country', 'Unknown'),
+                'region': row.get('region', 'Unknown'),
+                'metric': col,
+                'value': row[col],
+                'lower_bound': round(lower, 3),
+                'upper_bound': round(upper, 3),
+                'severity': severity,
+                'description': f"{col} ({row[col]:.3f}) is outside IQR bounds [{lower:.3f}, {upper:.3f}]",
+                'recommendation': f"Review {level} for unusual {col} pattern"
             })
 
     return anomalies
@@ -257,60 +272,60 @@ def detect_pattern_anomalies(df: pd.DataFrame) -> List[Dict]:
     for idx, row in df.iterrows():
         site_anomalies = []
 
-        # Get issue values with defaults
-        sae = row.get('total_sae_pending', row.get('sae_pending_count', 0)) or 0
-        missing_visits = row.get('total_missing_visits', row.get('missing_visit_count', 0)) or 0
-        missing_pages = row.get('total_missing_pages', row.get('missing_pages_count', 0)) or 0
-        lab_issues = row.get('total_lab_issues', row.get('lab_issues_count', 0)) or 0
+        # Get issue values with defaults (using actual column names)
+        sae = row.get('sae_pending_count_sum', 0) or 0
+        missing_visits = row.get('missing_visit_count_sum', 0) or 0
+        missing_pages = row.get('missing_pages_count_sum', 0) or 0
+        lab_issues = row.get('lab_issues_count_sum', 0) or 0
         subjects = row.get('subject_count', 1) or 1
         dqi = row.get('avg_dqi_score', 0) or 0
         high_risk = row.get('high_risk_count', 0) or 0
 
         # Pattern 1: High SAE but site not flagged as high risk
-        if sae > 5 and row.get('site_risk_category')!='High':
+        if sae > 5 and row.get('site_risk_category') != 'High':
             site_anomalies.append({
-                'pattern':'SAE_NOT_FLAGGED',
-                'severity':'CRITICAL',
-                'description':f"Site has {sae} pending SAE but not classified as High risk",
-                'recommendation':"Immediately review SAE processing at this site"
+                'pattern': 'SAE_NOT_FLAGGED',
+                'severity': 'CRITICAL',
+                'description': f"Site has {sae} pending SAE but not classified as High risk",
+                'recommendation': "Immediately review SAE processing at this site"
             })
 
         # Pattern 2: Very high subject count but zero issues (suspicious)
-        if subjects > 50 and dqi==0:
+        if subjects > 50 and dqi == 0:
             site_anomalies.append({
-                'pattern':'ZERO_ISSUES_HIGH_VOLUME',
-                'severity':'MEDIUM',
-                'description':f"Site has {subjects} subjects but zero DQI issues detected",
-                'recommendation':"Verify data completeness - may indicate missing source data"
+                'pattern': 'ZERO_ISSUES_HIGH_VOLUME',
+                'severity': 'MEDIUM',
+                'description': f"Site has {subjects} subjects but zero DQI issues detected",
+                'recommendation': "Verify data completeness - may indicate missing source data"
             })
 
         # Pattern 3: High missing data but very old (not being addressed)
-        max_days = row.get('max_days_outstanding', 0) or 0
-        max_page_days = row.get('max_days_page_missing', 0) or 0
+        max_days = row.get('max_days_outstanding_sum', 0) or 0
+        max_page_days = row.get('max_days_page_missing_sum', 0) or 0
         if (missing_visits > 10 or missing_pages > 20) and max(max_days, max_page_days) > 60:
             site_anomalies.append({
-                'pattern':'STALE_MISSING_DATA',
-                'severity':'HIGH',
-                'description':f"Site has {missing_visits} missing visits, {missing_pages} missing pages outstanding for {max(max_days, max_page_days):.0f}+ days",
-                'recommendation':"Escalate to site - missing data not being resolved"
+                'pattern': 'STALE_MISSING_DATA',
+                'severity': 'HIGH',
+                'description': f"Site has {missing_visits} missing visits, {missing_pages} missing pages outstanding for {max(max_days, max_page_days):.0f}+ days",
+                'recommendation': "Escalate to site - missing data not being resolved"
             })
 
         # Pattern 4: Disproportionate high-risk subjects
         high_risk_pct = (high_risk / subjects * 100) if subjects > 0 else 0
         if subjects >= 10 and high_risk_pct > 50:
             site_anomalies.append({
-                'pattern':'MAJORITY_HIGH_RISK',
-                'severity':'HIGH',
-                'description':f"{high_risk_pct:.1f}% of subjects ({high_risk}/{subjects}) are high risk",
-                'recommendation':"Site-wide intervention needed - systemic quality issues"
+                'pattern': 'MAJORITY_HIGH_RISK',
+                'severity': 'HIGH',
+                'description': f"{high_risk_pct:.1f}% of subjects ({high_risk}/{subjects}) are high risk",
+                'recommendation': "Site-wide intervention needed - systemic quality issues"
             })
 
         # Pattern 5: Single issue type dominance (>80% of issues from one source)
         issue_counts = {
-            'sae':sae,
-            'missing_visits':missing_visits,
-            'missing_pages':missing_pages,
-            'lab_issues':lab_issues,
+            'sae': sae,
+            'missing_visits': missing_visits,
+            'missing_pages': missing_pages,
+            'lab_issues': lab_issues,
         }
         total_issues = sum(issue_counts.values())
 
@@ -318,27 +333,27 @@ def detect_pattern_anomalies(df: pd.DataFrame) -> List[Dict]:
             for issue_type, count in issue_counts.items():
                 if count / total_issues > 0.8:
                     site_anomalies.append({
-                        'pattern':'SINGLE_ISSUE_DOMINANCE',
-                        'severity':'MEDIUM',
-                        'description':f"{issue_type} represents {count / total_issues * 100:.0f}% of all issues ({count}/{total_issues})",
-                        'recommendation':f"Focus intervention on {issue_type} - appears to be primary problem"
+                        'pattern': 'SINGLE_ISSUE_DOMINANCE',
+                        'severity': 'MEDIUM',
+                        'description': f"{issue_type} represents {count/total_issues*100:.0f}% of all issues ({count}/{total_issues})",
+                        'recommendation': f"Focus intervention on {issue_type} - appears to be primary problem"
                     })
 
         # Add anomalies for this site
         for anomaly in site_anomalies:
             anomalies.append({
-                'anomaly_type':'PATTERN_ANOMALY',
-                'detection_method':anomaly['pattern'],
-                'level':'site',
-                'study':row.get('study', 'Unknown'),
-                'site_id':row.get('site_id', 'Unknown'),
-                'country':row.get('country', 'Unknown'),
-                'region':row.get('region', 'Unknown'),
-                'severity':anomaly['severity'],
-                'description':anomaly['description'],
-                'recommendation':anomaly['recommendation'],
-                'value':None,
-                'metric':anomaly['pattern']
+                'anomaly_type': 'PATTERN_ANOMALY',
+                'detection_method': anomaly['pattern'],
+                'level': 'site',
+                'study': row.get('study', 'Unknown'),
+                'site_id': row.get('site_id', 'Unknown'),
+                'country': row.get('country', 'Unknown'),
+                'region': row.get('region', 'Unknown'),
+                'severity': anomaly['severity'],
+                'description': anomaly['description'],
+                'recommendation': anomaly['recommendation'],
+                'value': None,
+                'metric': anomaly['pattern']
             })
 
     return anomalies
@@ -370,16 +385,16 @@ def detect_regional_anomalies(df: pd.DataFrame) -> List[Dict]:
 
     # Calculate regional statistics
     regional_stats = df.groupby('region').agg({
-        'avg_dqi_score':['mean', 'std', 'count'],
-        'site_id':'count'
+        'avg_dqi_score': ['mean', 'std', 'count'],
+        'site_id': 'count'
     }).reset_index()
     regional_stats.columns = ['region', 'region_mean_dqi', 'region_std_dqi', 'region_count', 'site_count']
 
     # Calculate country statistics
     country_stats = df.groupby(['region', 'country']).agg({
-        'avg_dqi_score':['mean', 'std', 'count'],
-        'high_risk_count':'sum',
-        'subject_count':'sum'
+        'avg_dqi_score': ['mean', 'std', 'count'],
+        'high_risk_count': 'sum',
+        'subject_count': 'sum'
     }).reset_index()
     country_stats.columns = ['region', 'country', 'country_mean_dqi', 'country_std_dqi',
                              'site_count', 'high_risk_total', 'subject_total']
@@ -417,19 +432,19 @@ def detect_regional_anomalies(df: pd.DataFrame) -> List[Dict]:
             severity = 'HIGH' if abs(regional_zscore) > 3 else 'MEDIUM'
 
             anomalies.append({
-                'anomaly_type':'REGIONAL_ANOMALY',
-                'detection_method':'COUNTRY_VS_REGION',
-                'level':'country',
-                'study':'All',
-                'site_id':f"{row['country']} ({row['site_count']} sites)",
-                'country':row['country'],
-                'region':row['region'],
-                'metric':'avg_dqi_score',
-                'value':round(row['country_mean_dqi'], 4),
-                'zscore':round(regional_zscore, 2),
-                'severity':severity,
-                'description':f"{row['country']} DQI ({row['country_mean_dqi']:.3f}) is {abs(regional_zscore):.1f}σ {direction} than {row['region']} average ({row['region_mean_dqi']:.3f})",
-                'recommendation':f"Investigate {row['country']} sites - may need regional training or support"
+                'anomaly_type': 'REGIONAL_ANOMALY',
+                'detection_method': 'COUNTRY_VS_REGION',
+                'level': 'country',
+                'study': 'All',
+                'site_id': f"{row['country']} ({row['site_count']} sites)",
+                'country': row['country'],
+                'region': row['region'],
+                'metric': 'avg_dqi_score',
+                'value': round(row['country_mean_dqi'], 4),
+                'zscore': round(regional_zscore, 2),
+                'severity': severity,
+                'description': f"{row['country']} DQI ({row['country_mean_dqi']:.3f}) is {abs(regional_zscore):.1f}σ {direction} than {row['region']} average ({row['region_mean_dqi']:.3f})",
+                'recommendation': f"Investigate {row['country']} sites - may need regional training or support"
             })
 
         # Also flag if significantly different from portfolio
@@ -439,25 +454,25 @@ def detect_regional_anomalies(df: pd.DataFrame) -> List[Dict]:
 
             # Don't duplicate if already caught by regional comparison
             already_flagged = any(
-                a['country']==row['country'] and a['detection_method']=='COUNTRY_VS_REGION'
+                a['country'] == row['country'] and a['detection_method'] == 'COUNTRY_VS_REGION'
                 for a in anomalies
             )
 
             if not already_flagged:
                 anomalies.append({
-                    'anomaly_type':'REGIONAL_ANOMALY',
-                    'detection_method':'COUNTRY_VS_PORTFOLIO',
-                    'level':'country',
-                    'study':'All',
-                    'site_id':f"{row['country']} ({row['site_count']} sites)",
-                    'country':row['country'],
-                    'region':row['region'],
-                    'metric':'avg_dqi_score',
-                    'value':round(row['country_mean_dqi'], 4),
-                    'zscore':round(portfolio_zscore, 2),
-                    'severity':severity,
-                    'description':f"{row['country']} DQI ({row['country_mean_dqi']:.3f}) is {abs(portfolio_zscore):.1f}σ {direction} than portfolio average ({portfolio_mean:.3f})",
-                    'recommendation':f"Country-wide review recommended for {row['country']}"
+                    'anomaly_type': 'REGIONAL_ANOMALY',
+                    'detection_method': 'COUNTRY_VS_PORTFOLIO',
+                    'level': 'country',
+                    'study': 'All',
+                    'site_id': f"{row['country']} ({row['site_count']} sites)",
+                    'country': row['country'],
+                    'region': row['region'],
+                    'metric': 'avg_dqi_score',
+                    'value': round(row['country_mean_dqi'], 4),
+                    'zscore': round(portfolio_zscore, 2),
+                    'severity': severity,
+                    'description': f"{row['country']} DQI ({row['country_mean_dqi']:.3f}) is {abs(portfolio_zscore):.1f}σ {direction} than portfolio average ({portfolio_mean:.3f})",
+                    'recommendation': f"Country-wide review recommended for {row['country']}"
                 })
 
     # Detect region-level anomalies
@@ -475,19 +490,19 @@ def detect_regional_anomalies(df: pd.DataFrame) -> List[Dict]:
             severity = 'HIGH' if abs(region_zscore) > 2.5 else 'MEDIUM'
 
             anomalies.append({
-                'anomaly_type':'REGIONAL_ANOMALY',
-                'detection_method':'REGION_VS_PORTFOLIO',
-                'level':'region',
-                'study':'All',
-                'site_id':f"{row['region']} ({row['site_count']} sites)",
-                'country':'Multiple',
-                'region':row['region'],
-                'metric':'avg_dqi_score',
-                'value':round(row['region_mean_dqi'], 4),
-                'zscore':round(region_zscore, 2),
-                'severity':severity,
-                'description':f"{row['region']} region DQI ({row['region_mean_dqi']:.3f}) is {abs(region_zscore):.1f}σ {direction} than portfolio average ({portfolio_mean:.3f})",
-                'recommendation':f"Regional review needed for {row['region']} - consider targeted training"
+                'anomaly_type': 'REGIONAL_ANOMALY',
+                'detection_method': 'REGION_VS_PORTFOLIO',
+                'level': 'region',
+                'study': 'All',
+                'site_id': f"{row['region']} ({row['site_count']} sites)",
+                'country': 'Multiple',
+                'region': row['region'],
+                'metric': 'avg_dqi_score',
+                'value': round(row['region_mean_dqi'], 4),
+                'zscore': round(region_zscore, 2),
+                'severity': severity,
+                'description': f"{row['region']} region DQI ({row['region_mean_dqi']:.3f}) is {abs(region_zscore):.1f}σ {direction} than portfolio average ({portfolio_mean:.3f})",
+                'recommendation': f"Regional review needed for {row['region']} - consider targeted training"
             })
 
     return anomalies
@@ -519,13 +534,13 @@ def detect_cross_study_anomalies(df: pd.DataFrame) -> List[Dict]:
 
     # Group by site_id to find sites in multiple studies
     site_studies = df.groupby('site_id').agg({
-        'study':lambda x:list(x.unique()),
-        'avg_dqi_score':'mean',
-        'high_risk_count':'sum',
-        'subject_count':'sum',
-        'site_risk_category':lambda x:list(x),
-        'country':'first',
-        'region':'first'
+        'study': lambda x: list(x.unique()),
+        'avg_dqi_score': 'mean',
+        'high_risk_count': 'sum',
+        'subject_count': 'sum',
+        'site_risk_category': lambda x: list(x),
+        'country': 'first',
+        'region': 'first'
     }).reset_index()
 
     site_studies['num_studies'] = site_studies['study'].apply(len)
@@ -540,38 +555,38 @@ def detect_cross_study_anomalies(df: pd.DataFrame) -> List[Dict]:
 
         # Flag if high risk in majority of studies
         if high_risk_count >= len(studies) * THRESHOLDS['cross_study_risk_threshold']:
-            severity = 'CRITICAL' if high_risk_count==len(studies) else 'HIGH'
+            severity = 'CRITICAL' if high_risk_count == len(studies) else 'HIGH'
 
             anomalies.append({
-                'anomaly_type':'CROSS_STUDY_ANOMALY',
-                'detection_method':'REPEAT_HIGH_RISK',
-                'level':'site',
-                'study':', '.join(studies),
-                'site_id':row['site_id'],
-                'country':row['country'],
-                'region':row['region'],
-                'metric':'multi_study_risk',
-                'value':high_risk_count,
-                'severity':severity,
-                'description':f"Site {row['site_id']} is high risk in {high_risk_count}/{len(studies)} studies: {', '.join(studies)}",
-                'recommendation':"Cross-functional review needed - site shows consistent quality issues across programs"
+                'anomaly_type': 'CROSS_STUDY_ANOMALY',
+                'detection_method': 'REPEAT_HIGH_RISK',
+                'level': 'site',
+                'study': ', '.join(studies),
+                'site_id': row['site_id'],
+                'country': row['country'],
+                'region': row['region'],
+                'metric': 'multi_study_risk',
+                'value': high_risk_count,
+                'severity': severity,
+                'description': f"Site {row['site_id']} is high risk in {high_risk_count}/{len(studies)} studies: {', '.join(studies)}",
+                'recommendation': "Cross-functional review needed - site shows consistent quality issues across programs"
             })
 
         # Flag sites with high overall DQI across studies
         if row['avg_dqi_score'] > 0.3 and row['num_studies'] >= 2:
             anomalies.append({
-                'anomaly_type':'CROSS_STUDY_ANOMALY',
-                'detection_method':'CONSISTENT_HIGH_DQI',
-                'level':'site',
-                'study':', '.join(studies),
-                'site_id':row['site_id'],
-                'country':row['country'],
-                'region':row['region'],
-                'metric':'avg_dqi_across_studies',
-                'value':round(row['avg_dqi_score'], 3),
-                'severity':'HIGH',
-                'description':f"Site {row['site_id']} has elevated DQI ({row['avg_dqi_score']:.3f}) across {len(studies)} studies",
-                'recommendation':"Consider site capability assessment - persistent quality challenges"
+                'anomaly_type': 'CROSS_STUDY_ANOMALY',
+                'detection_method': 'CONSISTENT_HIGH_DQI',
+                'level': 'site',
+                'study': ', '.join(studies),
+                'site_id': row['site_id'],
+                'country': row['country'],
+                'region': row['region'],
+                'metric': 'avg_dqi_across_studies',
+                'value': round(row['avg_dqi_score'], 3),
+                'severity': 'HIGH',
+                'description': f"Site {row['site_id']} has elevated DQI ({row['avg_dqi_score']:.3f}) across {len(studies)} studies",
+                'recommendation': "Consider site capability assessment - persistent quality challenges"
             })
 
     return anomalies
@@ -598,15 +613,8 @@ def detect_velocity_anomalies(df: pd.DataFrame) -> List[Dict]:
     """
     anomalies = []
 
-    # Calculate total issues per site
-    issue_cols = [col for col in ['total_sae_pending', 'total_missing_visits',
-                                  'total_missing_pages', 'total_lab_issues',
-                                  'total_uncoded_meddra', 'total_uncoded_whodd']
-                  if col in df.columns]
-
-    if not issue_cols:
-        # Try alternate column names
-        issue_cols = [col for col in ISSUE_COLUMNS if col in df.columns]
+    # Use the actual column names from the data
+    issue_cols = [col for col in ISSUE_COLUMNS_SITE if col in df.columns]
 
     if not issue_cols or 'subject_count' not in df.columns:
         return anomalies
@@ -634,25 +642,25 @@ def detect_velocity_anomalies(df: pd.DataFrame) -> List[Dict]:
             severity = 'HIGH' if density_zscore > 3 else 'MEDIUM'
 
             anomalies.append({
-                'anomaly_type':'VELOCITY_ANOMALY',
-                'detection_method':'HIGH_ISSUE_DENSITY',
-                'level':'site',
-                'study':row.get('study', 'Unknown'),
-                'site_id':row.get('site_id', 'Unknown'),
-                'country':row.get('country', 'Unknown'),
-                'region':row.get('region', 'Unknown'),
-                'metric':'issue_density',
-                'value':round(row['issue_density'], 2),
-                'zscore':round(density_zscore, 2),
-                'severity':severity,
-                'description':f"Site has {row['issue_density']:.1f} issues per subject ({row['total_issues']:.0f} issues / {row['subject_count']} subjects), {density_zscore:.1f}σ above average",
-                'recommendation':"High issue concentration - prioritize for immediate intervention"
+                'anomaly_type': 'VELOCITY_ANOMALY',
+                'detection_method': 'HIGH_ISSUE_DENSITY',
+                'level': 'site',
+                'study': row.get('study', 'Unknown'),
+                'site_id': row.get('site_id', 'Unknown'),
+                'country': row.get('country', 'Unknown'),
+                'region': row.get('region', 'Unknown'),
+                'metric': 'issue_density',
+                'value': round(row['issue_density'], 2),
+                'zscore': round(density_zscore, 2),
+                'severity': severity,
+                'description': f"Site has {row['issue_density']:.1f} issues per subject ({row['total_issues']:.0f} issues / {row['subject_count']} subjects), {density_zscore:.1f}σ above average",
+                'recommendation': "High issue concentration - prioritize for immediate intervention"
             })
 
     # Study-level concentration analysis
     if 'study' in df.columns:
         for study in df['study'].unique():
-            study_df = df[df['study']==study]
+            study_df = df[df['study'] == study]
             study_total_issues = study_df['total_issues'].sum()
 
             if study_total_issues < 10:
@@ -663,18 +671,18 @@ def detect_velocity_anomalies(df: pd.DataFrame) -> List[Dict]:
 
                 if site_pct > THRESHOLDS['concentration_threshold']:
                     anomalies.append({
-                        'anomaly_type':'VELOCITY_ANOMALY',
-                        'detection_method':'ISSUE_CONCENTRATION',
-                        'level':'site',
-                        'study':study,
-                        'site_id':row.get('site_id', 'Unknown'),
-                        'country':row.get('country', 'Unknown'),
-                        'region':row.get('region', 'Unknown'),
-                        'metric':'study_issue_concentration',
-                        'value':round(site_pct, 3),
-                        'severity':'HIGH',
-                        'description':f"Site accounts for {site_pct * 100:.1f}% of all issues in {study} ({row['total_issues']:.0f}/{study_total_issues:.0f})",
-                        'recommendation':f"Single site driving majority of {study} issues - immediate site review needed"
+                        'anomaly_type': 'VELOCITY_ANOMALY',
+                        'detection_method': 'ISSUE_CONCENTRATION',
+                        'level': 'site',
+                        'study': study,
+                        'site_id': row.get('site_id', 'Unknown'),
+                        'country': row.get('country', 'Unknown'),
+                        'region': row.get('region', 'Unknown'),
+                        'metric': 'study_issue_concentration',
+                        'value': round(site_pct, 3),
+                        'severity': 'HIGH',
+                        'description': f"Site accounts for {site_pct*100:.1f}% of all issues in {study} ({row['total_issues']:.0f}/{study_total_issues:.0f})",
+                        'recommendation': f"Single site driving majority of {study} issues - immediate site review needed"
                     })
 
     return anomalies
@@ -701,19 +709,19 @@ def calculate_anomaly_score(anomalies: List[Dict], df: pd.DataFrame) -> pd.DataF
         DataFrame with anomaly scores
     """
     # Initialize scores
-    site_scores = defaultdict(lambda:{
-        'anomaly_count':0,
-        'critical_count':0,
-        'high_count':0,
-        'medium_count':0,
-        'low_count':0,
-        'anomaly_types':set(),
-        'anomalies':[]
+    site_scores = defaultdict(lambda: {
+        'anomaly_count': 0,
+        'critical_count': 0,
+        'high_count': 0,
+        'medium_count': 0,
+        'low_count': 0,
+        'anomaly_types': set(),
+        'anomalies': []
     })
 
     # Aggregate anomalies per site
     for anomaly in anomalies:
-        if anomaly['level']!='site':
+        if anomaly['level'] != 'site':
             continue
 
         site_key = (anomaly['study'], anomaly['site_id'])
@@ -722,11 +730,11 @@ def calculate_anomaly_score(anomalies: List[Dict], df: pd.DataFrame) -> pd.DataF
         site_scores[site_key]['anomalies'].append(anomaly)
 
         severity = anomaly.get('severity', 'LOW')
-        if severity=='CRITICAL':
+        if severity == 'CRITICAL':
             site_scores[site_key]['critical_count'] += 1
-        elif severity=='HIGH':
+        elif severity == 'HIGH':
             site_scores[site_key]['high_count'] += 1
-        elif severity=='MEDIUM':
+        elif severity == 'MEDIUM':
             site_scores[site_key]['medium_count'] += 1
         else:
             site_scores[site_key]['low_count'] += 1
@@ -736,10 +744,10 @@ def calculate_anomaly_score(anomalies: List[Dict], df: pd.DataFrame) -> pd.DataF
     for (study, site_id), data in site_scores.items():
         # Weighted score: Critical=4, High=3, Medium=2, Low=1
         weighted_score = (
-                data['critical_count'] * 4 +
-                data['high_count'] * 3 +
-                data['medium_count'] * 2 +
-                data['low_count'] * 1
+            data['critical_count'] * 4 +
+            data['high_count'] * 3 +
+            data['medium_count'] * 2 +
+            data['low_count'] * 1
         )
 
         # Type diversity bonus
@@ -753,17 +761,17 @@ def calculate_anomaly_score(anomalies: List[Dict], df: pd.DataFrame) -> pd.DataF
         final_score = anomaly_score * (1 + 0.1 * type_diversity)
 
         rows.append({
-            'study':study,
-            'site_id':site_id,
-            'anomaly_count':data['anomaly_count'],
-            'critical_count':data['critical_count'],
-            'high_count':data['high_count'],
-            'medium_count':data['medium_count'],
-            'low_count':data['low_count'],
-            'anomaly_types':', '.join(sorted(data['anomaly_types'])),
-            'type_diversity':type_diversity,
-            'anomaly_score':round(final_score, 3),
-            'top_anomalies':'; '.join([a['description'][:100] for a in data['anomalies'][:3]])
+            'study': study,
+            'site_id': site_id,
+            'anomaly_count': data['anomaly_count'],
+            'critical_count': data['critical_count'],
+            'high_count': data['high_count'],
+            'medium_count': data['medium_count'],
+            'low_count': data['low_count'],
+            'anomaly_types': ', '.join(sorted(data['anomaly_types'])),
+            'type_diversity': type_diversity,
+            'anomaly_score': round(final_score, 3),
+            'top_anomalies': '; '.join([a['description'][:100] for a in data['anomalies'][:3]])
         })
 
     score_df = pd.DataFrame(rows)
@@ -778,9 +786,9 @@ def calculate_anomaly_score(anomalies: List[Dict], df: pd.DataFrame) -> pd.DataF
 # ============================================================================
 
 def generate_anomaly_report(
-        anomalies: List[Dict],
-        score_df: pd.DataFrame,
-        site_df: pd.DataFrame
+    anomalies: List[Dict],
+    score_df: pd.DataFrame,
+    site_df: pd.DataFrame
 ) -> str:
     """Generate markdown report of anomalies."""
 
@@ -796,9 +804,9 @@ def generate_anomaly_report(
 |--------|-------|
 | Total Anomalies Detected | {len(anomalies)} |
 | Sites with Anomalies | {len(score_df)} |
-| Critical Anomalies | {sum(1 for a in anomalies if a.get('severity')=='CRITICAL')} |
-| High Severity Anomalies | {sum(1 for a in anomalies if a.get('severity')=='HIGH')} |
-| Medium Severity Anomalies | {sum(1 for a in anomalies if a.get('severity')=='MEDIUM')} |
+| Critical Anomalies | {sum(1 for a in anomalies if a.get('severity') == 'CRITICAL')} |
+| High Severity Anomalies | {sum(1 for a in anomalies if a.get('severity') == 'HIGH')} |
+| Medium Severity Anomalies | {sum(1 for a in anomalies if a.get('severity') == 'MEDIUM')} |
 
 ---
 
@@ -811,7 +819,7 @@ def generate_anomaly_report(
     for a in anomalies:
         type_counts[a['anomaly_type']] += 1
 
-    for atype, count in sorted(type_counts.items(), key=lambda x:-x[1]):
+    for atype, count in sorted(type_counts.items(), key=lambda x: -x[1]):
         report += f"- **{atype}**: {count} anomalies\n"
 
     report += """
@@ -835,7 +843,7 @@ def generate_anomaly_report(
 
 """
 
-    critical = [a for a in anomalies if a.get('severity')=='CRITICAL']
+    critical = [a for a in anomalies if a.get('severity') == 'CRITICAL']
     if critical:
         for i, a in enumerate(critical[:20], 1):
             report += f"""
@@ -856,7 +864,7 @@ def generate_anomaly_report(
 
 """
 
-    regional = [a for a in anomalies if a['anomaly_type']=='REGIONAL_ANOMALY']
+    regional = [a for a in anomalies if a['anomaly_type'] == 'REGIONAL_ANOMALY']
     if regional:
         for a in regional:
             report += f"- **{a['country']}** ({a['region']}): {a['description']}\n"
@@ -871,7 +879,7 @@ def generate_anomaly_report(
 
 """
 
-    cross_study = [a for a in anomalies if a['anomaly_type']=='CROSS_STUDY_ANOMALY']
+    cross_study = [a for a in anomalies if a['anomaly_type'] == 'CROSS_STUDY_ANOMALY']
     if cross_study:
         for a in cross_study:
             report += f"- **{a['site_id']}**: {a['description']}\n"
@@ -956,7 +964,7 @@ def run_anomaly_detection():
 
     # Severity breakdown
     for sev in ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']:
-        count = sum(1 for a in stat_anomalies if a.get('severity')==sev)
+        count = sum(1 for a in stat_anomalies if a.get('severity') == sev)
         if count > 0:
             print(f"   {sev}: {count}")
 
@@ -974,7 +982,7 @@ def run_anomaly_detection():
     patterns = defaultdict(int)
     for a in pattern_anomalies:
         patterns[a['detection_method']] += 1
-    for pattern, count in sorted(patterns.items(), key=lambda x:-x[1]):
+    for pattern, count in sorted(patterns.items(), key=lambda x: -x[1]):
         print(f"   {pattern}: {count}")
 
     # =========================================================================
@@ -1023,11 +1031,11 @@ def run_anomaly_detection():
 
     # Combine all anomalies
     all_anomalies = (
-            stat_anomalies +
-            pattern_anomalies +
-            regional_anomalies +
-            cross_study_anomalies +
-            velocity_anomalies
+        stat_anomalies +
+        pattern_anomalies +
+        regional_anomalies +
+        cross_study_anomalies +
+        velocity_anomalies
     )
 
     print(f"\n📊 Total Anomalies Detected: {len(all_anomalies)}")
@@ -1039,8 +1047,7 @@ def run_anomaly_detection():
     if not score_df.empty:
         print(f"\nTop 5 Sites by Anomaly Score:")
         for i, row in score_df.head(5).iterrows():
-            print(
-                f"   {row['study']} - {row['site_id']}: Score {row['anomaly_score']:.3f} ({row['anomaly_count']} anomalies, {row['critical_count']} critical)")
+            print(f"   {row['study']} - {row['site_id']}: Score {row['anomaly_score']:.3f} ({row['anomaly_count']} anomalies, {row['critical_count']} critical)")
 
     # =========================================================================
     # Step 8: Save Outputs
@@ -1064,23 +1071,23 @@ def run_anomaly_detection():
 
     # 3. Save summary JSON
     summary = {
-        'generated_at':datetime.now().isoformat(),
-        'total_anomalies':len(all_anomalies),
-        'sites_with_anomalies':len(score_df),
-        'by_severity':{
-            'critical':sum(1 for a in all_anomalies if a.get('severity')=='CRITICAL'),
-            'high':sum(1 for a in all_anomalies if a.get('severity')=='HIGH'),
-            'medium':sum(1 for a in all_anomalies if a.get('severity')=='MEDIUM'),
-            'low':sum(1 for a in all_anomalies if a.get('severity')=='LOW'),
+        'generated_at': datetime.now().isoformat(),
+        'total_anomalies': len(all_anomalies),
+        'sites_with_anomalies': len(score_df),
+        'by_severity': {
+            'critical': sum(1 for a in all_anomalies if a.get('severity') == 'CRITICAL'),
+            'high': sum(1 for a in all_anomalies if a.get('severity') == 'HIGH'),
+            'medium': sum(1 for a in all_anomalies if a.get('severity') == 'MEDIUM'),
+            'low': sum(1 for a in all_anomalies if a.get('severity') == 'LOW'),
         },
-        'by_type':{
-            'statistical_outlier':sum(1 for a in all_anomalies if a['anomaly_type']=='STATISTICAL_OUTLIER'),
-            'pattern_anomaly':sum(1 for a in all_anomalies if a['anomaly_type']=='PATTERN_ANOMALY'),
-            'regional_anomaly':sum(1 for a in all_anomalies if a['anomaly_type']=='REGIONAL_ANOMALY'),
-            'cross_study_anomaly':sum(1 for a in all_anomalies if a['anomaly_type']=='CROSS_STUDY_ANOMALY'),
-            'velocity_anomaly':sum(1 for a in all_anomalies if a['anomaly_type']=='VELOCITY_ANOMALY'),
+        'by_type': {
+            'statistical_outlier': sum(1 for a in all_anomalies if a['anomaly_type'] == 'STATISTICAL_OUTLIER'),
+            'pattern_anomaly': sum(1 for a in all_anomalies if a['anomaly_type'] == 'PATTERN_ANOMALY'),
+            'regional_anomaly': sum(1 for a in all_anomalies if a['anomaly_type'] == 'REGIONAL_ANOMALY'),
+            'cross_study_anomaly': sum(1 for a in all_anomalies if a['anomaly_type'] == 'CROSS_STUDY_ANOMALY'),
+            'velocity_anomaly': sum(1 for a in all_anomalies if a['anomaly_type'] == 'VELOCITY_ANOMALY'),
         },
-        'top_sites':score_df.head(10).to_dict('records') if not score_df.empty else []
+        'top_sites': score_df.head(10).to_dict('records') if not score_df.empty else []
     }
 
     summary_path = OUTPUT_DIR / "anomaly_summary.json"
@@ -1145,7 +1152,7 @@ Sites Requiring Investigation: {len(score_df)}
 # ENTRY POINT
 # ============================================================================
 
-if __name__=="__main__":
+if __name__ == "__main__":
     success = run_anomaly_detection()
     if not success:
         exit(1)
