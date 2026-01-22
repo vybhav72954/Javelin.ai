@@ -1,0 +1,414 @@
+{
+  "generated_at": "2026-01-22T12:43:38.157289",
+  "sites_analyzed": 100,
+  "cooccurrence_patterns": {
+    "strong_associations": [
+      {
+        "issue_1": "Missing Visits",
+        "issue_2": "Stale Queries (Days)",
+        "cooccurrence_count": 707,
+        "lift": 4.74,
+        "interpretation": "Sites with Missing Visits are 4.7x more likely to have Stale Queries (Days)"
+      },
+      {
+        "issue_1": "Lab Data Issues",
+        "issue_2": "Stale Missing Pages (Days)",
+        "cooccurrence_count": 135,
+        "lift": 4.36,
+        "interpretation": "Sites with Lab Data Issues are 4.4x more likely to have Stale Missing Pages (Days)"
+      },
+      {
+        "issue_1": "Uncoded MedDRA Terms",
+        "issue_2": "Uncoded Drug Terms",
+        "cooccurrence_count": 94,
+        "lift": 3.83,
+        "interpretation": "Sites with Uncoded MedDRA Terms are 3.8x more likely to have Uncoded Drug Terms"
+      },
+      {
+        "issue_1": "Lab Data Issues",
+        "issue_2": "Uncoded Drug Terms",
+        "cooccurrence_count": 85,
+        "lift": 3.65,
+        "interpretation": "Sites with Lab Data Issues are 3.7x more likely to have Uncoded Drug Terms"
+      },
+      {
+        "issue_1": "Missing CRF Pages",
+        "issue_2": "Stale Missing Pages (Days)",
+        "cooccurrence_count": 440,
+        "lift": 3.45,
+        "interpretation": "Sites with Missing CRF Pages are 3.5x more likely to have Stale Missing Pages (Days)"
+      },
+      {
+        "issue_1": "Uncoded MedDRA Terms",
+        "issue_2": "Lab Data Issues",
+        "cooccurrence_count": 61,
+        "lift": 3.44,
+        "interpretation": "Sites with Uncoded MedDRA Terms are 3.4x more likely to have Lab Data Issues"
+      },
+      {
+        "issue_1": "Missing CRF Pages",
+        "issue_2": "Lab Data Issues",
+        "cooccurrence_count": 177,
+        "lift": 2.56,
+        "interpretation": "Sites with Missing CRF Pages are 2.6x more likely to have Lab Data Issues"
+      },
+      {
+        "issue_1": "Missing CRF Pages",
+        "issue_2": "Stale Queries (Days)",
+        "cooccurrence_count": 492,
+        "lift": 2.4,
+        "interpretation": "Sites with Missing CRF Pages are 2.4x more likely to have Stale Queries (Days)"
+      },
+      {
+        "issue_1": "Uncoded MedDRA Terms",
+        "issue_2": "Stale Missing Pages (Days)",
+        "cooccurrence_count": 78,
+        "lift": 2.39,
+        "interpretation": "Sites with Uncoded MedDRA Terms are 2.4x more likely to have Stale Missing Pages (Days)"
+      },
+      {
+        "issue_1": "Missing Visits",
+        "issue_2": "Missing CRF Pages",
+        "cooccurrence_count": 494,
+        "lift": 2.38,
+        "interpretation": "Sites with Missing Visits are 2.4x more likely to have Missing CRF Pages"
+      }
+    ],
+    "symptom_clusters": [],
+    "independent_issues": []
+  },
+  "factor_attribution": {
+    "regional_factors": {},
+    "study_factors": {
+      "Study_1": {
+        "avg_dqi": 0.1493,
+        "vs_overall": "235.3% higher than average",
+        "site_count": 27,
+        "high_risk_rate": "66.7%",
+        "classification": "STUDY_WIDE_ISSUE"
+      },
+      "Study_13": {
+        "avg_dqi": 0.1358,
+        "vs_overall": "204.9% higher than average",
+        "site_count": 13,
+        "high_risk_rate": "15.4%",
+        "classification": "STUDY_WIDE_ISSUE"
+      },
+      "Study_14": {
+        "avg_dqi": 0.1472,
+        "vs_overall": "230.5% higher than average",
+        "site_count": 2,
+        "high_risk_rate": "50.0%",
+        "classification": "STUDY_WIDE_ISSUE"
+      },
+      "Study_15": {
+        "avg_dqi": 0.0997,
+        "vs_overall": "123.9% higher than average",
+        "site_count": 2,
+        "high_risk_rate": "50.0%",
+        "classification": "STUDY_WIDE_ISSUE"
+      },
+      "Study_16": {
+        "avg_dqi": 0.1302,
+        "vs_overall": "192.4% higher than average",
+        "site_count": 176,
+        "high_risk_rate": "56.8%",
+        "classification": "STUDY_WIDE_ISSUE"
+      },
+      "Study_17": {
+        "avg_dqi": 0.2107,
+        "vs_overall": "373.1% higher than average",
+        "site_count": 13,
+        "high_risk_rate": "84.6%",
+        "classification": "STUDY_WIDE_ISSUE"
+      },
+      "Study_19": {
+        "avg_dqi": 0.2273,
+        "vs_overall": "410.4% higher than average",
+        "site_count": 13,
+        "high_risk_rate": "123.1%",
+        "classification": "STUDY_WIDE_ISSUE"
+      },
+      "Study_20": {
+        "avg_dqi": 0.1721,
+        "vs_overall": "286.5% higher than average",
+        "site_count": 12,
+        "high_risk_rate": "33.3%",
+        "classification": "STUDY_WIDE_ISSUE"
+      },
+      "Study_24": {
+        "avg_dqi": 0.1718,
+        "vs_overall": "285.8% higher than average",
+        "site_count": 112,
+        "high_risk_rate": "150.9%",
+        "classification": "STUDY_WIDE_ISSUE"
+      },
+      "Study_5": {
+        "avg_dqi": 0.1065,
+        "vs_overall": "139.2% higher than average",
+        "site_count": 112,
+        "high_risk_rate": "44.6%",
+        "classification": "STUDY_WIDE_ISSUE"
+      },
+      "Study_6": {
+        "avg_dqi": 0.1977,
+        "vs_overall": "344.0% higher than average",
+        "site_count": 14,
+        "high_risk_rate": "100.0%",
+        "classification": "STUDY_WIDE_ISSUE"
+      },
+      "Study_7": {
+        "avg_dqi": 0.1469,
+        "vs_overall": "229.9% higher than average",
+        "site_count": 13,
+        "high_risk_rate": "61.5%",
+        "classification": "STUDY_WIDE_ISSUE"
+      }
+    },
+    "volume_factors": {
+      "volume_dqi_correlation": -0.177,
+      "interpretation": "No significant correlation between site volume and DQI"
+    },
+    "factor_importance": [
+      {
+        "factor": "Study",
+        "variance_explained": 136.9
+      },
+      {
+        "factor": "Country",
+        "variance_explained": 12.1
+      },
+      {
+        "factor": "Region",
+        "variance_explained": 4.0
+      }
+    ]
+  },
+  "dqi_contributions": {
+    "category_contributions": {
+      "SAFETY": {
+        "sites_affected": 1092,
+        "pct_of_portfolio": 32.1,
+        "avg_in_high_risk": 1.18,
+        "issues": [
+          "Pending SAE Reviews",
+          "Uncoded MedDRA Terms"
+        ]
+      },
+      "COMPLETENESS": {
+        "sites_affected": 1257,
+        "pct_of_portfolio": 37.0,
+        "avg_in_high_risk": 61.16,
+        "issues": [
+          "Missing Visits",
+          "Missing CRF Pages",
+          "Lab Data Issues"
+        ]
+      },
+      "TIMELINESS": {
+        "sites_affected": 984,
+        "pct_of_portfolio": 28.9,
+        "avg_in_high_risk": 90.86,
+        "issues": [
+          "Stale Queries (Days)",
+          "Stale Missing Pages (Days)"
+        ]
+      },
+      "CODING": {
+        "sites_affected": 740,
+        "pct_of_portfolio": 21.8,
+        "avg_in_high_risk": 3.85,
+        "issues": [
+          "Uncoded Drug Terms",
+          "Open EDRR Issues"
+        ]
+      },
+      "ADMINISTRATIVE": {
+        "sites_affected": 961,
+        "pct_of_portfolio": 28.3,
+        "avg_in_high_risk": 37.72,
+        "issues": [
+          "Inactivated Forms"
+        ]
+      }
+    },
+    "top_drivers": [
+      {
+        "issue": "Missing CRF Pages",
+        "column": "missing_pages_count_sum",
+        "sites_affected": 985,
+        "pct_affected": 29.0,
+        "avg_value": 6.2
+      },
+      {
+        "issue": "Inactivated Forms",
+        "column": "inactivated_forms_count_sum",
+        "sites_affected": 961,
+        "pct_affected": 28.3,
+        "avg_value": 69.46
+      },
+      {
+        "issue": "Pending SAE Reviews",
+        "column": "sae_pending_count_sum",
+        "sites_affected": 931,
+        "pct_affected": 27.4,
+        "avg_value": 5.81
+      },
+      {
+        "issue": "Missing Visits",
+        "column": "missing_visit_count_sum",
+        "sites_affected": 717,
+        "pct_affected": 21.1,
+        "avg_value": 2.24
+      },
+      {
+        "issue": "Stale Queries (Days)",
+        "column": "max_days_outstanding_sum",
+        "sites_affected": 707,
+        "pct_affected": 20.8,
+        "avg_value": 59.88
+      },
+      {
+        "issue": "Open EDRR Issues",
+        "column": "edrr_open_issues_sum",
+        "sites_affected": 487,
+        "pct_affected": 14.3,
+        "avg_value": 4.41
+      },
+      {
+        "issue": "Stale Missing Pages (Days)",
+        "column": "max_days_page_missing_sum",
+        "sites_affected": 440,
+        "pct_affected": 12.9,
+        "avg_value": 116.9
+      },
+      {
+        "issue": "Uncoded Drug Terms",
+        "column": "uncoded_whodd_count_sum",
+        "sites_affected": 331,
+        "pct_affected": 9.7,
+        "avg_value": 3.02
+      },
+      {
+        "issue": "Uncoded MedDRA Terms",
+        "column": "uncoded_meddra_count_sum",
+        "sites_affected": 252,
+        "pct_affected": 7.4,
+        "avg_value": 2.1
+      },
+      {
+        "issue": "Lab Data Issues",
+        "column": "lab_issues_count_sum",
+        "sites_affected": 239,
+        "pct_affected": 7.0,
+        "avg_value": 86.43
+      }
+    ],
+    "portfolio_breakdown": {
+      "SAFETY": {
+        "issue_instances": 1183,
+        "pct_of_total": 19.6
+      },
+      "COMPLETENESS": {
+        "issue_instances": 1941,
+        "pct_of_total": 32.1
+      },
+      "TIMELINESS": {
+        "issue_instances": 1147,
+        "pct_of_total": 19.0
+      },
+      "CODING": {
+        "issue_instances": 818,
+        "pct_of_total": 13.5
+      },
+      "ADMINISTRATIVE": {
+        "issue_instances": 961,
+        "pct_of_total": 15.9
+      }
+    }
+  },
+  "systemic_patterns": {
+    "systemic_issues": [
+      {
+        "cause_type": "STUDY_DESIGN_ISSUE",
+        "sites_affected": 94,
+        "pct_of_analyzed": 94.0,
+        "description": "Study-wide pattern suggests protocol or design challenges",
+        "portfolio_intervention": "Escalate to study management for protocol review"
+      }
+    ],
+    "isolated_issues": [
+      {
+        "cause_type": "REGULATORY_COMPLEXITY",
+        "sites_affected": 2,
+        "pct_of_analyzed": 2.0
+      },
+      {
+        "cause_type": "UNKNOWN",
+        "sites_affected": 2,
+        "pct_of_analyzed": 2.0
+      },
+      {
+        "cause_type": "TRAINING_GAP",
+        "sites_affected": 1,
+        "pct_of_analyzed": 1.0
+      },
+      {
+        "cause_type": "PROCESS_BREAKDOWN",
+        "sites_affected": 1,
+        "pct_of_analyzed": 1.0
+      }
+    ],
+    "root_cause_distribution": {
+      "REGULATORY_COMPLEXITY": 2,
+      "STUDY_DESIGN_ISSUE": 94,
+      "UNKNOWN": 2,
+      "TRAINING_GAP": 1,
+      "PROCESS_BREAKDOWN": 1
+    },
+    "intervention_priority": [
+      {
+        "intervention": "Escalate to study management for protocol review",
+        "sites_benefiting": 96,
+        "priority": "HIGH"
+      },
+      {
+        "intervention": "Schedule targeted training session on identified gap areas",
+        "sites_benefiting": 86,
+        "priority": "HIGH"
+      },
+      {
+        "intervention": "Implement enhanced oversight and escalation procedures",
+        "sites_benefiting": 48,
+        "priority": "HIGH"
+      },
+      {
+        "intervention": "Engage IT support for system diagnostics",
+        "sites_benefiting": 11,
+        "priority": "MEDIUM"
+      },
+      {
+        "intervention": "Provide pharmacovigilance support and expedited review",
+        "sites_benefiting": 2,
+        "priority": "LOW"
+      },
+      {
+        "intervention": "Conduct detailed site assessment to identify root cause",
+        "sites_benefiting": 2,
+        "priority": "LOW"
+      },
+      {
+        "intervention": "Review and remediate specific process workflow",
+        "sites_benefiting": 1,
+        "priority": "LOW"
+      }
+    ]
+  },
+  "root_cause_summary": {
+    "REGULATORY_COMPLEXITY": 2,
+    "STUDY_DESIGN_ISSUE": 94,
+    "UNKNOWN": 2,
+    "TRAINING_GAP": 1,
+    "PROCESS_BREAKDOWN": 1
+  }
+}
