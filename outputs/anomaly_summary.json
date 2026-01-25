@@ -1,29 +1,29 @@
 {
-  "generated_at": "2026-01-21T15:27:40.937141",
+  "generated_at": "2026-01-26T03:26:57.547235",
   "version": "2.0",
   "thresholds": {
     "zscore": 3.0,
     "zscore_critical": 4.0
   },
-  "total_anomalies": 2428,
-  "sites_with_anomalies": 1451,
+  "total_anomalies": 2560,
+  "sites_with_anomalies": 1503,
   "by_severity": {
-    "critical": 747,
-    "high": 479,
-    "medium": 1202,
+    "critical": 792,
+    "high": 547,
+    "medium": 1221,
     "low": 0
   },
   "by_type": {
-    "statistical_outlier": 451,
-    "pattern_anomaly": 1885,
+    "statistical_outlier": 465,
+    "pattern_anomaly": 2008,
     "regional_anomaly": 3,
-    "cross_study_anomaly": 70,
-    "velocity_anomaly": 19
+    "cross_study_anomaly": 63,
+    "velocity_anomaly": 21
   },
   "top_sites": [
     {
-      "study": "Study_21",
-      "site_id": "Site 522",
+      "study": "Study_22",
+      "site_id": "Site 543",
       "anomaly_count": 2,
       "critical_count": 2,
       "high_count": 0,
@@ -32,11 +32,11 @@
       "anomaly_types": "PATTERN_ANOMALY, STATISTICAL_OUTLIER",
       "type_diversity": 2,
       "anomaly_score": 1.2,
-      "top_anomalies": "Max Days Page Missing is 8.3\u03c3 above average (616 vs mean 15.1); Site has 4 pending SAE reviews but is classified as 'Low' risk (should be High)"
+      "top_anomalies": "Subject Count is 5.3\u03c3 above average (144 vs mean 16.9); Site has 5 pending SAE reviews but is classified as 'Low' risk (should be High)"
     },
     {
-      "study": "Study_24, Study_8",
-      "site_id": "Site 425",
+      "study": "Study_11, Study_19",
+      "site_id": "Site 493",
       "anomaly_count": 1,
       "critical_count": 1,
       "high_count": 0,
@@ -45,11 +45,50 @@
       "anomaly_types": "CROSS_STUDY_ANOMALY",
       "type_diversity": 1,
       "anomaly_score": 1.1,
-      "top_anomalies": "Site is high risk in 2/2 studies: Study_24, Study_8"
+      "top_anomalies": "Site is high risk in 2/2 studies: Study_11, Study_19"
+    },
+    {
+      "study": "Study_22",
+      "site_id": "Site 22",
+      "anomaly_count": 1,
+      "critical_count": 1,
+      "high_count": 0,
+      "medium_count": 0,
+      "low_count": 0,
+      "anomaly_types": "PATTERN_ANOMALY",
+      "type_diversity": 1,
+      "anomaly_score": 1.1,
+      "top_anomalies": "Site has 4 pending SAE reviews but is classified as 'Low' risk (should be High)"
+    },
+    {
+      "study": "Study_22",
+      "site_id": "Site 58",
+      "anomaly_count": 1,
+      "critical_count": 1,
+      "high_count": 0,
+      "medium_count": 0,
+      "low_count": 0,
+      "anomaly_types": "PATTERN_ANOMALY",
+      "type_diversity": 1,
+      "anomaly_score": 1.1,
+      "top_anomalies": "Site has 9 pending SAE reviews but is classified as 'Low' risk (should be High)"
     },
     {
       "study": "Study_21",
-      "site_id": "Site 944",
+      "site_id": "Site 998",
+      "anomaly_count": 1,
+      "critical_count": 1,
+      "high_count": 0,
+      "medium_count": 0,
+      "low_count": 0,
+      "anomaly_types": "PATTERN_ANOMALY",
+      "type_diversity": 1,
+      "anomaly_score": 1.1,
+      "top_anomalies": "Site has 3 pending SAE reviews but is classified as 'Medium' risk (should be High)"
+    },
+    {
+      "study": "Study_21",
+      "site_id": "Site 995",
       "anomaly_count": 1,
       "critical_count": 1,
       "high_count": 0,
@@ -62,7 +101,7 @@
     },
     {
       "study": "Study_21",
-      "site_id": "Site 943",
+      "site_id": "Site 993",
       "anomaly_count": 1,
       "critical_count": 1,
       "high_count": 0,
@@ -71,63 +110,11 @@
       "anomaly_types": "PATTERN_ANOMALY",
       "type_diversity": 1,
       "anomaly_score": 1.1,
-      "top_anomalies": "Site has 3 pending SAE reviews but is classified as 'Low' risk (should be High)"
+      "top_anomalies": "Site has 5 pending SAE reviews but is classified as 'Low' risk (should be High)"
     },
     {
-      "study": "Study_21",
-      "site_id": "Site 941",
-      "anomaly_count": 1,
-      "critical_count": 1,
-      "high_count": 0,
-      "medium_count": 0,
-      "low_count": 0,
-      "anomaly_types": "PATTERN_ANOMALY",
-      "type_diversity": 1,
-      "anomaly_score": 1.1,
-      "top_anomalies": "Site has 10 pending SAE reviews but is classified as 'Low' risk (should be High)"
-    },
-    {
-      "study": "Study_21",
-      "site_id": "Site 94",
-      "anomaly_count": 1,
-      "critical_count": 1,
-      "high_count": 0,
-      "medium_count": 0,
-      "low_count": 0,
-      "anomaly_types": "PATTERN_ANOMALY",
-      "type_diversity": 1,
-      "anomaly_score": 1.1,
-      "top_anomalies": "Site has 3 pending SAE reviews but is classified as 'Low' risk (should be High)"
-    },
-    {
-      "study": "Study_21",
-      "site_id": "Site 938",
-      "anomaly_count": 1,
-      "critical_count": 1,
-      "high_count": 0,
-      "medium_count": 0,
-      "low_count": 0,
-      "anomaly_types": "PATTERN_ANOMALY",
-      "type_diversity": 1,
-      "anomaly_score": 1.1,
-      "top_anomalies": "Site has 3 pending SAE reviews but is classified as 'Low' risk (should be High)"
-    },
-    {
-      "study": "Study_21",
-      "site_id": "Site 936",
-      "anomaly_count": 1,
-      "critical_count": 1,
-      "high_count": 0,
-      "medium_count": 0,
-      "low_count": 0,
-      "anomaly_types": "PATTERN_ANOMALY",
-      "type_diversity": 1,
-      "anomaly_score": 1.1,
-      "top_anomalies": "Site has 8 pending SAE reviews but is classified as 'Medium' risk (should be High)"
-    },
-    {
-      "study": "Study_21",
-      "site_id": "Site 929",
+      "study": "Study_22",
+      "site_id": "Site 1704",
       "anomaly_count": 1,
       "critical_count": 1,
       "high_count": 0,
@@ -140,7 +127,7 @@
     },
     {
       "study": "Study_21",
-      "site_id": "Site 805",
+      "site_id": "Site 988",
       "anomaly_count": 1,
       "critical_count": 1,
       "high_count": 0,
@@ -149,7 +136,20 @@
       "anomaly_types": "PATTERN_ANOMALY",
       "type_diversity": 1,
       "anomaly_score": 1.1,
-      "top_anomalies": "Site has 4 pending SAE reviews but is classified as 'Low' risk (should be High)"
+      "top_anomalies": "Site has 5 pending SAE reviews but is classified as 'Low' risk (should be High)"
+    },
+    {
+      "study": "Study_21",
+      "site_id": "Site 982",
+      "anomaly_count": 1,
+      "critical_count": 1,
+      "high_count": 0,
+      "medium_count": 0,
+      "low_count": 0,
+      "anomaly_types": "PATTERN_ANOMALY",
+      "type_diversity": 1,
+      "anomaly_score": 1.1,
+      "top_anomalies": "Site has 4 pending SAE reviews but is classified as 'Medium' risk (should be High)"
     }
   ]
 }
