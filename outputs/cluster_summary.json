@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-01-22T12:37:44.064976",
+  "generated_at": "2026-01-26T03:47:04.603980",
   "method": "gmm",
   "n_clusters": 3,
-  "total_sites": 3399,
+  "total_sites": 3424,
   "features_used": [
     "avg_dqi_score",
     "high_risk_pct",
@@ -19,213 +19,227 @@
   ],
   "scores": {
     "silhouette": {
-      "3": 0.8867977083878846,
-      "4": 0.8441275067526656,
-      "5": 0.8496029418090488,
-      "6": 0.8203754706233782,
-      "7": 0.814916818291117,
-      "8": 0.8131851210513233,
-      "9": 0.8221764767271091,
-      "10": 0.7950808372127361,
-      "11": 0.7962109994601217,
-      "12": 0.7918416235125253
+      "3": 0.907176762630668,
+      "4": 0.8580900312575795,
+      "5": 0.8619423980035136,
+      "6": 0.8457165128382915,
+      "7": 0.8232040914434382,
+      "8": 0.8446127777871322,
+      "9": 0.7869242145991832,
+      "10": 0.7883852690322674,
+      "11": 0.7976976948270958,
+      "12": 0.8137513760591946
     },
     "calinski_harabasz": {
-      "3": 2156.0390514117885,
-      "4": 2085.8443079396507,
-      "5": 2000.8427537464133,
-      "6": 1998.2200196770868,
-      "7": 2123.237967144598,
-      "8": 2122.9442982294145,
-      "9": 2154.973364278885,
-      "10": 2220.4651798860627,
-      "11": 2267.1146313069053,
-      "12": 2315.4966752177243
+      "3": 4574.619037417171,
+      "4": 4370.461365682697,
+      "5": 4353.235039245405,
+      "6": 4209.930576522041,
+      "7": 4113.6172068583155,
+      "8": 4280.885985437999,
+      "9": 4459.080446047057,
+      "10": 4433.926144304735,
+      "11": 4568.4388483557805,
+      "12": 4623.2299130165675
     },
     "davies_bouldin": {
-      "3": 0.6810633908295588,
-      "4": 0.8688223520370959,
-      "5": 0.7052579836777364,
-      "6": 0.7712886404946002,
-      "7": 0.6875208942908556,
-      "8": 0.732446271407684,
-      "9": 0.6933633810950749,
-      "10": 0.7549488882948987,
-      "11": 0.7318397640057125,
-      "12": 0.7114120306633058
+      "3": 0.5771587343465113,
+      "4": 0.6202127478086721,
+      "5": 0.6040583101608205,
+      "6": 0.6265470427061773,
+      "7": 0.7701267553890283,
+      "8": 0.7197857135828216,
+      "9": 0.6897689140348549,
+      "10": 0.6002993252494299,
+      "11": 0.6115582613174791,
+      "12": 0.6064747853292854
     },
     "inertia": {
-      "3": 1404345.4079494402,
-      "4": 1121116.7739387015,
-      "5": 949203.9034034831,
-      "6": 808066.3967344256,
-      "7": 670247.8017591382,
-      "8": 592214.4104711772,
-      "9": 523790.1407891102,
-      "10": 462174.5272661261,
-      "11": 414415.10902391135,
-      "12": 374118.6910497715
+      "3": 1392103.533358431,
+      "4": 1058227.039196493,
+      "5": 839520.5786285613,
+      "6": 714564.954232962,
+      "7": 622043.3704698145,
+      "8": 523437.517124175,
+      "9": 446902.91075770685,
+      "10": 403128.6808221104,
+      "11": 355582.0755440979,
+      "12": 321611.0336366355
     }
   },
   "cluster_sizes": {
-    "cluster_0": 2209,
-    "cluster_1": 353,
-    "cluster_2": 837
+    "cluster_0": 1920,
+    "cluster_1": 848,
+    "cluster_2": 656
   },
   "patterns": {
     "cluster_stability": {},
     "inter_cluster_distances": {},
     "feature_importance": {
-      "avg_days_page_missing": 124.16533564367974,
-      "lab_issues_rate": 7.039960147158347,
-      "avg_days_outstanding": 5.372195081031683,
-      "issue_diversity": 1.5511731630846946,
-      "missing_pages_rate": 1.29229453932317,
-      "log_subject_count": 0.3753492748628266,
-      "medium_risk_pct": 0.09638093988955564,
-      "missing_visit_rate": 0.025743474999493258,
-      "high_risk_pct": 0.006225007800297982,
-      "avg_dqi_score": 0.004976322252763122
+      "avg_days_page_missing": 49.14593430474779,
+      "lab_issues_rate": 6.365645393594575,
+      "avg_days_outstanding": 3.4617975842998256,
+      "issue_diversity": 1.530951629914265,
+      "missing_pages_rate": 0.5896910096101747,
+      "sae_rate": 0.025339928263874375,
+      "medium_risk_pct": 0.015371464731239542,
+      "high_risk_pct": 0.012100392668858864,
+      "missing_visit_rate": 0.010860914723079271,
+      "log_subject_count": 0.007356817784770123
     },
     "anomaly_concentration": {
       "cluster_0": {
-        "total_anomalies": 3055,
-        "sites_with_anomalies": 1208,
-        "avg_anomalies_per_site": 1.3829787234042554
+        "total_anomalies": 2763,
+        "sites_with_anomalies": 1057,
+        "avg_anomalies_per_site": 1.4390625
       },
       "cluster_1": {
-        "total_anomalies": 996,
-        "sites_with_anomalies": 316,
-        "avg_anomalies_per_site": 2.821529745042493
+        "total_anomalies": 1442,
+        "sites_with_anomalies": 529,
+        "avg_anomalies_per_site": 1.7004716981132075
       },
       "cluster_2": {
-        "total_anomalies": 1590,
-        "sites_with_anomalies": 542,
-        "avg_anomalies_per_site": 1.8996415770609318
+        "total_anomalies": 1715,
+        "sites_with_anomalies": 539,
+        "avg_anomalies_per_site": 2.614329268292683
       }
     },
     "regional_patterns": {
       "cluster_0": {
-        "EMEA": 44.228157537347215,
-        "AMERICA": 36.75871435038479,
-        "ASIA": 19.013128112267992
+        "EMEA": 42.65625,
+        "AMERICA": 37.604166666666664,
+        "ASIA": 18.489583333333336,
+        "Unknown": 1.25
       },
       "cluster_1": {
-        "EMEA": 36.54390934844193,
-        "ASIA": 35.69405099150141,
-        "AMERICA": 27.762039660056658
+        "EMEA": 45.28301886792453,
+        "AMERICA": 33.25471698113208,
+        "ASIA": 21.462264150943398
       },
       "cluster_2": {
-        "EMEA": 44.44444444444444,
-        "AMERICA": 38.47072879330944,
-        "ASIA": 17.084826762246117
+        "EMEA": 41.920731707317074,
+        "AMERICA": 34.756097560975604,
+        "ASIA": 23.170731707317074,
+        "Unknown": 0.1524390243902439
+      }
+    },
+    "country_patterns": {
+      "cluster_0": {
+        "USA": 511,
+        "CHN": 118,
+        "ESP": 88,
+        "FRA": 61,
+        "CAN": 59
+      },
+      "cluster_1": {
+        "USA": 179,
+        "ESP": 47,
+        "DEU": 42,
+        "JPN": 40,
+        "CHN": 38
+      },
+      "cluster_2": {
+        "USA": 149,
+        "CHN": 49,
+        "ESP": 28,
+        "DEU": 27,
+        "CAN": 27
       }
     },
     "study_patterns": {
-      "Study_1": {
-        "dominant_cluster": 1,
-        "concentration": "51.9%"
-      },
       "Study_11": {
         "dominant_cluster": 0,
-        "concentration": "82.4%"
+        "concentration": "53.0%"
       },
       "Study_13": {
         "dominant_cluster": 1,
-        "concentration": "92.3%"
+        "concentration": "71.4%"
       },
-      "Study_15": {
-        "dominant_cluster": 1,
-        "concentration": "100.0%"
+      "Study_14": {
+        "dominant_cluster": 0,
+        "concentration": "66.7%"
       },
-      "Study_16": {
-        "dominant_cluster": 1,
-        "concentration": "61.4%"
-      },
-      "Study_17": {
-        "dominant_cluster": 1,
-        "concentration": "84.6%"
+      "Study_18": {
+        "dominant_cluster": 2,
+        "concentration": "66.7%"
       },
       "Study_19": {
-        "dominant_cluster": 1,
-        "concentration": "76.9%"
-      },
-      "Study_2": {
-        "dominant_cluster": 0,
-        "concentration": "55.6%"
+        "dominant_cluster": 2,
+        "concentration": "66.7%"
       },
       "Study_20": {
         "dominant_cluster": 1,
-        "concentration": "100.0%"
+        "concentration": "53.8%"
       },
       "Study_21": {
         "dominant_cluster": 0,
-        "concentration": "78.3%"
+        "concentration": "75.7%"
       },
       "Study_22": {
         "dominant_cluster": 0,
-        "concentration": "58.1%"
+        "concentration": "54.7%"
       },
       "Study_23": {
         "dominant_cluster": 0,
-        "concentration": "88.2%"
+        "concentration": "88.9%"
+      },
+      "Study_24": {
+        "dominant_cluster": 2,
+        "concentration": "87.6%"
       },
       "Study_25": {
         "dominant_cluster": 0,
-        "concentration": "98.7%"
-      },
-      "Study_4": {
-        "dominant_cluster": 0,
-        "concentration": "96.4%"
+        "concentration": "96.5%"
       },
       "Study_5": {
         "dominant_cluster": 1,
-        "concentration": "69.6%"
+        "concentration": "51.3%"
       },
       "Study_6": {
-        "dominant_cluster": 1,
-        "concentration": "92.9%"
+        "dominant_cluster": 2,
+        "concentration": "60.0%"
       },
       "Study_7": {
         "dominant_cluster": 1,
-        "concentration": "76.9%"
+        "concentration": "57.1%"
       },
       "Study_8": {
-        "dominant_cluster": 0,
-        "concentration": "67.5%"
+        "dominant_cluster": 1,
+        "concentration": "84.7%"
       },
       "Study_9": {
         "dominant_cluster": 0,
-        "concentration": "88.9%"
+        "concentration": "90.0%"
       }
-    }
+    },
+    "risk_context": {}
   },
   "recommendations": [
     {
       "cluster_id": 0,
       "cluster_name": "Cluster_0_Low_Risk",
       "priority": "LOW",
-      "n_sites": 2209,
+      "n_sites": 1920,
       "recommendation": "Monitor: Cluster within normal parameters - maintain standard oversight",
       "action_type": "MONITORING",
       "estimated_effort": "High"
     },
     {
       "cluster_id": 1,
-      "cluster_name": "Cluster_1_High_Risk_Elevated_DQI",
-      "priority": "CRITICAL",
-      "n_sites": 353,
-      "recommendation": "CRITICAL: 274 high-risk sites (77.6%) - prioritize for immediate intervention; Data Completeness: High missing data rate - implement targeted data entry support",
-      "action_type": "INTERVENTION",
+      "cluster_name": "Cluster_1_Completeness_Issues",
+      "priority": "MEDIUM",
+      "n_sites": 848,
+      "recommendation": "Data Completeness: High missing data rate - implement targeted data entry support",
+      "action_type": "MONITORING",
       "estimated_effort": "High"
     },
     {
       "cluster_id": 2,
-      "cluster_name": "Cluster_2_Average",
-      "priority": "MEDIUM",
-      "n_sites": 837,
-      "recommendation": "Data Completeness: High missing data rate - implement targeted data entry support",
-      "action_type": "MONITORING",
+      "cluster_name": "Cluster_2_High_Risk_Elevated_DQI",
+      "priority": "CRITICAL",
+      "n_sites": 656,
+      "recommendation": "CRITICAL: 263 high-risk sites (40.1%) - prioritize for immediate intervention; SAE Alert: Cluster has elevated SAE rate - expedite pharmacovigilance review; Data Completeness: High missing data rate - implement targeted data entry support",
+      "action_type": "INTERVENTION",
       "estimated_effort": "High"
     }
   ]

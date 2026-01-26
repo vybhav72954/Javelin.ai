@@ -1,0 +1,11 @@
+issue_number,issue_name,items_found
+1,fillna_impact,8
+2,empty_categoricals,46
+3,left_join_loss,8
+4,duplicates,131
+5,inconsistent_metadata,0
+6,id_format_mismatch,0
+7,file_load_failures,31
+8,invalid_values,0
+9,small_samples,23
+10,outliers,72

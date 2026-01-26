@@ -55,6 +55,9 @@ OUTPUT_DIR = PROJECT_ROOT / "outputs"
 # Input files from previous steps
 SUBJECT_DQI_PATH = OUTPUT_DIR / "master_subject_with_dqi.csv"
 SITE_DQI_PATH = OUTPUT_DIR / "master_site_with_dqi.csv"
+STUDY_DQI_PATH = OUTPUT_DIR / "master_study_with_dqi.csv"
+REGION_DQI_PATH = OUTPUT_DIR / "master_region_with_dqi.csv"
+COUNTRY_DQI_PATH = OUTPUT_DIR / "master_country_with_dqi.csv"
 
 # Anomaly Detection Thresholds (v2.0 - tightened)
 THRESHOLDS = {
@@ -360,7 +363,7 @@ def detect_pattern_anomalies(df: pd.DataFrame) -> List[Dict]:
 # REGIONAL ANOMALY DETECTION (v2.0 - Fixed)
 # ============================================================================
 
-def detect_regional_anomalies(df: pd.DataFrame) -> List[Dict]:
+def detect_regional_anomalies(df: pd.DataFrame, region_df: pd.DataFrame = None, country_df: pd.DataFrame = None) -> List[Dict]:
     """
     Detect countries/regions with unusual data quality patterns.
 
@@ -369,8 +372,13 @@ def detect_regional_anomalies(df: pd.DataFrame) -> List[Dict]:
     - Properly handle NaN/missing regions
     - Add issue-specific regional comparisons
 
+    v3.0 Enhancement:
+    - Optionally use pre-computed region/country data for consistency
+
     Args:
         df: Site-level DataFrame
+        region_df: Pre-computed region-level data (optional)
+        country_df: Pre-computed country-level data (optional)
 
     Returns:
         List of anomaly dictionaries
@@ -398,19 +406,30 @@ def detect_regional_anomalies(df: pd.DataFrame) -> List[Dict]:
     # -------------------------------------------------------------------------
     # COUNTRY-LEVEL ANALYSIS
     # -------------------------------------------------------------------------
-    country_stats = df_clean.groupby('country').agg({
-        'avg_dqi_score': 'mean',
-        'high_risk_rate': 'mean',
-        'high_risk_count': 'sum',
-        'subject_count': 'sum',
-        'site_id': 'count',
-        'region': 'first'
-    }).reset_index()
-    country_stats.columns = ['country', 'country_mean_dqi', 'country_mean_risk_rate',
-                             'country_high_risk', 'country_subjects', 'site_count', 'region']
-
-    # Filter to countries with enough sites
-    country_stats = country_stats[country_stats['site_count'] >= THRESHOLDS['min_sites_per_country']]
+    if country_df is not None and len(country_df) > 0:
+        # Use pre-computed country data
+        country_stats = country_df.copy()
+        country_stats = country_stats.rename(columns={
+            'avg_dqi_score': 'country_mean_dqi',
+            'high_risk_rate': 'country_mean_risk_rate',
+            'high_risk_subjects': 'country_high_risk',
+            'subject_count': 'country_subjects'
+        })
+        # Filter to countries with enough sites
+        country_stats = country_stats[country_stats['site_count'] >= THRESHOLDS['min_sites_per_country']]
+    else:
+        # Compute from site data (original logic)
+        country_stats = df_clean.groupby('country').agg({
+            'avg_dqi_score': 'mean',
+            'high_risk_rate': 'mean',
+            'high_risk_count': 'sum',
+            'subject_count': 'sum',
+            'site_id': 'count',
+            'region': 'first'
+        }).reset_index()
+        country_stats.columns = ['country', 'country_mean_dqi', 'country_mean_risk_rate',
+                                 'country_high_risk', 'country_subjects', 'site_count', 'region']
+        country_stats = country_stats[country_stats['site_count'] >= THRESHOLDS['min_sites_per_country']]
 
     for idx, row in country_stats.iterrows():
         # Calculate z-scores vs portfolio
@@ -432,7 +451,7 @@ def detect_regional_anomalies(df: pd.DataFrame) -> List[Dict]:
                 'detection_method': 'COUNTRY_HIGH_DQI',
                 'level': 'country',
                 'study': 'Portfolio',
-                'site_id': f"{row['country']} ({row['site_count']} sites)",
+                'site_id': f"{row['country']} ({int(row['site_count'])} sites)",
                 'country': row['country'],
                 'region': row['region'],
                 'metric': 'country_avg_dqi',
@@ -440,7 +459,7 @@ def detect_regional_anomalies(df: pd.DataFrame) -> List[Dict]:
                 'zscore': round(dqi_zscore, 2),
                 'severity': severity,
                 'description': f"{row['country']} average DQI ({row['country_mean_dqi']:.3f}) is {dqi_zscore:.1f}σ above portfolio average ({portfolio_mean_dqi:.3f})",
-                'recommendation': f"Country-wide review for {row['country']} - elevated data quality issues across {row['site_count']} sites"
+                'recommendation': f"Country-wide review for {row['country']} - elevated data quality issues across {int(row['site_count'])} sites"
             })
 
         # Flag countries with high risk rate
@@ -458,25 +477,35 @@ def detect_regional_anomalies(df: pd.DataFrame) -> List[Dict]:
                 'value': round(row['country_mean_risk_rate'], 4),
                 'zscore': round(risk_zscore, 2),
                 'severity': 'HIGH',
-                'description': f"{row['country']} has {actual_rate:.1f}% high-risk subject rate ({row['country_high_risk']}/{row['country_subjects']} subjects)",
+                'description': f"{row['country']} has {actual_rate:.1f}% high-risk subject rate ({int(row['country_high_risk'])}/{int(row['country_subjects'])} subjects)",
                 'recommendation': f"Prioritize {row['country']} for regional training and site support"
             })
 
     # -------------------------------------------------------------------------
     # REGION-LEVEL ANALYSIS
     # -------------------------------------------------------------------------
-    region_stats = df_clean.groupby('region').agg({
-        'avg_dqi_score': 'mean',
-        'high_risk_rate': 'mean',
-        'high_risk_count': 'sum',
-        'subject_count': 'sum',
-        'site_id': 'count'
-    }).reset_index()
-    region_stats.columns = ['region', 'region_mean_dqi', 'region_mean_risk_rate',
-                            'region_high_risk', 'region_subjects', 'site_count']
-
-    # Filter to regions with enough sites
-    region_stats = region_stats[region_stats['site_count'] >= THRESHOLDS['min_sites_per_region']]
+    if region_df is not None and len(region_df) > 0:
+        # Use pre-computed region data
+        region_stats = region_df.copy()
+        region_stats = region_stats.rename(columns={
+            'avg_dqi_score': 'region_mean_dqi',
+            'high_risk_rate': 'region_mean_risk_rate',
+            'high_risk_subjects': 'region_high_risk',
+            'subject_count': 'region_subjects'
+        })
+        region_stats = region_stats[region_stats['site_count'] >= THRESHOLDS['min_sites_per_region']]
+    else:
+        # Compute from site data (original logic)
+        region_stats = df_clean.groupby('region').agg({
+            'avg_dqi_score': 'mean',
+            'high_risk_rate': 'mean',
+            'high_risk_count': 'sum',
+            'subject_count': 'sum',
+            'site_id': 'count'
+        }).reset_index()
+        region_stats.columns = ['region', 'region_mean_dqi', 'region_mean_risk_rate',
+                                'region_high_risk', 'region_subjects', 'site_count']
+        region_stats = region_stats[region_stats['site_count'] >= THRESHOLDS['min_sites_per_region']]
 
     # Compare regions to each other
     if len(region_stats) >= 2:
@@ -498,7 +527,7 @@ def detect_regional_anomalies(df: pd.DataFrame) -> List[Dict]:
                     'detection_method': 'REGION_COMPARISON',
                     'level': 'region',
                     'study': 'Portfolio',
-                    'site_id': f"{row['region']} ({row['site_count']} sites)",
+                    'site_id': f"{row['region']} ({int(row['site_count'])} sites)",
                     'country': 'Multiple',
                     'region': row['region'],
                     'metric': 'region_avg_dqi',
@@ -961,6 +990,23 @@ def run_anomaly_detection():
         subject_df = pd.read_csv(SUBJECT_DQI_PATH)
         print(f"✅ Loaded subject data: {len(subject_df):,} subjects")
 
+    # Load pre-computed aggregated data (optional - enhances regional analysis)
+    study_df = None
+    region_df = None
+    country_df = None
+
+    if STUDY_DQI_PATH.exists():
+        study_df = pd.read_csv(STUDY_DQI_PATH)
+        print(f"✅ Loaded study data: {len(study_df)} studies (pre-computed)")
+
+    if REGION_DQI_PATH.exists():
+        region_df = pd.read_csv(REGION_DQI_PATH)
+        print(f"✅ Loaded region data: {len(region_df)} regions (pre-computed)")
+
+    if COUNTRY_DQI_PATH.exists():
+        country_df = pd.read_csv(COUNTRY_DQI_PATH)
+        print(f"✅ Loaded country data: {len(country_df)} countries (pre-computed)")
+
     print(f"\nStudies: {site_df['study'].nunique()}")
     print(f"Countries: {site_df['country'].nunique()}")
     print(f"Regions: {site_df['region'].nunique()}")
@@ -1003,7 +1049,7 @@ def run_anomaly_detection():
     print("STEP 4: DETECT REGIONAL ANOMALIES")
     print("=" * 70)
 
-    regional_anomalies = detect_regional_anomalies(site_df)
+    regional_anomalies = detect_regional_anomalies(site_df, region_df, country_df)
     print(f"\n✅ Detected {len(regional_anomalies)} regional anomalies")
 
     for a in regional_anomalies[:5]:

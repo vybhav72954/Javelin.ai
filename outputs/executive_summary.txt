@@ -1,99 +1,124 @@
-
 ================================================================================
 JAVELIN.AI - DATA QUALITY EXECUTIVE SUMMARY
-Generated: 2026-01-07 20:33:31
+Generated: 2026-01-25 23:08:18
 ================================================================================
 
 OVERVIEW
 --------
 Total Subjects: 57,997
-Total Sites: 3,399
+Total Sites: 3,424
 Studies: 23
 
 RISK DISTRIBUTION
 -----------------
 Subject Level:
-  * High Risk: 5,264 subjects (9.1%)
-  * Medium Risk: 6,949 subjects (12.0%)
-  * Low Risk: 45,784 subjects
+  * High Risk: 5,370 subjects (9.3%)
+  * Medium Risk: 7,488 subjects (12.9%)
+  * Low Risk: 45,139 subjects
 
 Site Level:
-  * High Risk Sites: 387 (11.4%)
+  * High Risk Sites: 403 (11.8%)
+
+REGIONAL ANALYSIS
+-----------------
+  ⚠️ ASIA: 13 countries, 689 sites, 8,504 subjects
+     DQI: 0.067 | High-risk rate: 9.5% | vs Portfolio: +33.7%
+  ⚠️ EMEA: 49 countries, 1478 sites, 27,514 subjects
+     DQI: 0.050 | High-risk rate: 8.7% | vs Portfolio: -0.1%
+  ⚠️ AMERICA: 7 countries, 1232 sites, 21,937 subjects
+     DQI: 0.042 | High-risk rate: 9.8% | vs Portfolio: -17.2%
+  ✓ Unknown: 3 countries, 25 sites, 42 subjects
+     DQI: 0.012 | High-risk rate: 2.4% | vs Portfolio: -76.6%
+
+COUNTRIES REQUIRING ATTENTION
+-----------------------------
+  [CRITICAL] DEU (EMEA): 90 sites, DQI=0.113, High-risk=13.3%
+        → URGENT: 41 pending SAE reviews in DEU
+  [CRITICAL] ISR (EMEA): 50 sites, DQI=0.097, High-risk=14.1%
+        → URGENT: 66 pending SAE reviews in ISR
+  [CRITICAL] TUR (EMEA): 59 sites, DQI=0.096, High-risk=9.5%
+        → URGENT: 62 pending SAE reviews in TUR
+  [CRITICAL] KOR (ASIA): 57 sites, DQI=0.095, High-risk=12.6%
+        → URGENT: 84 pending SAE reviews in KOR
+  [CRITICAL] AUS (ASIA): 64 sites, DQI=0.095, High-risk=13.5%
+        → URGENT: 95 pending SAE reviews in AUS
+  [CRITICAL] TWN (ASIA): 45 sites, DQI=0.079, High-risk=9.4%
+        → URGENT: 42 pending SAE reviews in TWN
+  [CRITICAL] SGP (ASIA): 25 sites, DQI=0.079, High-risk=15.9%
+        → URGENT: 34 pending SAE reviews in SGP
+  [CRITICAL] GRC (EMEA): 27 sites, DQI=0.078, High-risk=6.4%
+        → URGENT: 7 pending SAE reviews in GRC
+  [CRITICAL] BEL (EMEA): 35 sites, DQI=0.076, High-risk=19.7%
+        → URGENT: 82 pending SAE reviews in BEL
+  [CRITICAL] JPN (ASIA): 105 sites, DQI=0.071, High-risk=5.1%
+        → URGENT: 9 pending SAE reviews in JPN
 
 AI-GENERATED INSIGHT
 --------------------
 Executive Summary:
 
-Our clinical trial portfolio, comprising 23 studies with a total of 57,997 subjects across 3,399 sites, is currently experiencing several quality control issues that require immediate attention. The risk status indicates 9.1% of subjects are high risk, with 48 critical sites and 5,407 pending serious adverse event (SAE) reviews.
+The current clinical trial portfolio encompasses 57,997 subjects across 3424 sites, spanning 23 studies. Notably, 9.3% of subjects exhibit high risk status, with 51 critical sites identified. Key concerns include an outstanding Max Days issue affecting 27,640 records, lab issues totaling 6,846, and a substantial backlog of 6,496 pending serious adverse event (SAE) reviews.
 
-The top issue categories include Max Days Outstanding (29,694 cases), Lab Issues Count (7,427), and SAE Pending Count (5,407). To mitigate these risks effectively, we recommend the following actions for this week:
-
-1. Expedite SAE reviews to minimize delays in subject enrollment and study progression at critical sites.
-2. Implement targeted interventions to address lab issues across affected sites, ensuring compliance with standard operating procedures (SOPs) and proper sample handling.
-3. Prioritize follow-up on Max Days Outstanding cases to ensure data integrity and accurate reporting, focusing on reducing the outstanding days to meet regulatory requirements.
-
-By addressing these priority areas, we aim to improve data quality across our clinical trial portfolio, ensuring efficient study conduct and compliance with regulatory standards.
+To mitigate these risks, priority actions for this week should focus on expediting the resolution of Max Days outstanding to minimize potential study disruptions. Additionally, addressing lab issues and clearing the backlog of SAE reviews are critical to maintaining data quality and ensuring regulatory compliance. Collaboration with relevant teams is essential to ensure swift progress in these areas. Furthermore, a detailed analysis of critical sites should be conducted to develop remediation plans aimed at improving overall site performance and reducing high-risk subjects.
 
 CRITICAL ITEMS REQUIRING IMMEDIATE ACTION
 -----------------------------------------
-[!] PENDING SAE REVIEWS: 5407 subjects have SAE records awaiting review
+[!] PENDING SAE REVIEWS: 6496 subjects have SAE records awaiting review
     Action: Immediate pharmacovigilance review required
 
-[!] CRITICAL SUBJECTS: 4473 subjects require immediate intervention
-[!] CRITICAL SITES: 48 sites flagged for urgent quality review
+[!] CRITICAL SUBJECTS: 4531 subjects require immediate intervention
+[!] CRITICAL SITES: 51 sites flagged for urgent quality review
 
 TOP PRIORITIES THIS WEEK
 ------------------------
 1. [CRITICAL] Study_1 - Site 17 (ESP)
-   DQI Score: 0.509 | High-risk subjects: 2
-   AI Insight: Given the critical risk level (CRITICAL) and low DQI Score of 0.509 for Site 17 in ESP's Study_1, it is imperative to address the identified issues immediately. The top concerns include a high number ...
+   DQI Score: 0.516 | High-risk subjects: 2
+   AI Insight: Given the critical data quality issue (DQI Score: 0.516) at Site 17 in ESP for Study_1, immediate attention is required to address the identified risks. The top issues include a high number of SAEs pe...
 
-2. [CRITICAL] Study_16 - Site 759 (TUR)
-   DQI Score: 0.388 | High-risk subjects: 1
-   AI Insight: Given the CRITICAL risk level and DQI Score of 0.388 for Site 759 in TUR for Study_16, it is recommended to prioritize addressing the following critical issues:
+2. [CRITICAL] Study_16 - Site 674 (DEU)
+   DQI Score: 0.497 | High-risk subjects: 2
+   AI Insight: Given the CRITICAL risk level and DQI score of 0.497 for Site 674 in DEU during Study_16, it is imperative to address the identified issues promptly to maintain data quality. The top issues include pe...
 
-1. SAE Pending Count (2 instances): En...
+3. [CRITICAL] Study_16 - Site 759 (TUR)
+   DQI Score: 0.444 | High-risk subjects: 1
+   AI Insight: Given the CRITICAL risk level and DQI score of 0.444 for Site 759 in TUR for Study_16, immediate attention is required. The top issues include a high number of lab issues (41 instances), SAEs pending ...
 
-3. [CRITICAL] Study_1 - Site 27 (CHN)
-   DQI Score: 0.340 | High-risk subjects: 2
-   AI Insight: Given the critical risk level and low DQI score for Site 27 in CHN for Study_1, it is imperative to address the outstanding data quality issues promptly. The top priorities should focus on resolving p...
+4. [CRITICAL] Study_1 - Site 4 (FRA)
+   DQI Score: 0.346 | High-risk subjects: 2
+   AI Insight: Given the CRITICAL DQI score for Site 4 in FRA for Study_1, it is imperative to address the identified issues promptly to ensure data quality. The top priority should be resolving the outstanding SAEs...
 
-4. [CRITICAL] Study_24 - Site 2183 (CHN)
-   DQI Score: 0.243 | High-risk subjects: 3
-   Action: Schedule urgent site quality call within 48 hours
-
-5. [CRITICAL] Study_11 - Site 417 (ITA)
-   DQI Score: 0.233 | High-risk subjects: 1
-   Action: Schedule urgent site quality call within 48 hours
+5. [CRITICAL] Study_1 - Site 27 (CHN)
+   DQI Score: 0.343 | High-risk subjects: 2
+   AI Insight: Given the critical data quality issue (DQI Score: 0.343) at Site 27 in CHN for Study_1, it is recommended to prioritize addressing outstanding safety issues (SAE pending count: 40 instances) and missi...
 
 
 RECOMMENDATIONS BY CATEGORY
 ---------------------------
-* Max Days Outstanding: 29694 instances
+* Max Days Outstanding: 27640 instances
   Priority: MEDIUM | Action: Escalate data entry delays to site
 
-* Lab Issues Count: 7427 instances
+* Lab Issues Count: 6846 instances
   Priority: MEDIUM | Action: Reconcile lab data with central lab vendor
 
-* Sae Pending Count: 5407 instances
+* Sae Pending Count: 6496 instances
   Priority: CRITICAL | Action: Immediate SAE review and regulatory submission required
 
-* Inactivated Forms Count: 4558 instances
+* Inactivated Forms Count: 4049 instances
   Priority: LOW | Action: Review inactivated forms for audit trail compliance
 
-* Missing Pages Count: 2569 instances
+* Missing Pages Count: 3620 instances
   Priority: MEDIUM | Action: Issue data query for missing CRF pages
 
-* Missing Visit Count: 867 instances
+* Missing Visit Count: 944 instances
   Priority: HIGH | Action: Contact site to schedule missed visits or document reason
 
-* Edrr Open Issues: 475 instances
+* Edrr Open Issues: 599 instances
   Priority: LOW | Action: Resolve external data reconciliation discrepancies
 
-* Uncoded Whodd Count: 418 instances
+* Uncoded Whodd Count: 434 instances
   Priority: LOW | Action: Code medication terms to WHODrug dictionary
 
-* Uncoded Meddra Count: 303 instances
+* Uncoded Meddra Count: 327 instances
   Priority: HIGH | Action: Code adverse event terms to MedDRA dictionary
 
 

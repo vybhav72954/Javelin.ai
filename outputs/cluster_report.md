@@ -1,6 +1,6 @@
 # JAVELIN.AI - Site Clustering Report
 
-*Generated: 2026-01-22 12:37:44*
+*Generated: 2026-01-26 03:47:04*
 
 ---
 
@@ -10,46 +10,46 @@
 |--------|-------|
 | Clustering Method | GMM |
 | Number of Clusters | 3 |
-| Total Sites | 3,399 |
-| Best Silhouette Score | 0.887 |
+| Total Sites | 3,424 |
+| Best Silhouette Score | 0.907 |
 
 ## Cluster Overview
 
 | Cluster | Sites | % Total | High Risk | Avg DQI | Top Countries |
 |---------|-------|---------|-----------|---------|---------------|
-| Cluster_0_Low_Risk | 2,209 | 65.0% | 19 | 0.024 | USA(584), CHN(133), ESP(100), FRA(78), J |
-| Cluster_1_High_Risk_Elevated_DQI | 353 | 10.4% | 274 | 0.165 | USA(65), CHN(33), JPN(27), DEU(20), AUS( |
-| Cluster_2_Average | 837 | 24.6% | 94 | 0.049 | USA(190), ESP(50), ARG(44), CHN(39), IND |
+| Cluster_0_Low_Risk | 1,920 | 56.1% | 7 | 0.023 | USA(511), CHN(118), ESP(88), FRA(61), CA |
+| Cluster_1_Completeness_Issues | 848 | 24.8% | 133 | 0.061 | USA(179), ESP(47), DEU(42), JPN(40), CHN |
+| Cluster_2_High_Risk_Elevated_DQI | 656 | 19.2% | 263 | 0.116 | USA(149), CHN(49), ESP(28), DEU(27), CAN |
 
 ## Risk Concentration by Cluster
 
 ### High-Risk Clusters (>20% high-risk sites)
 
-- **Cluster_1_High_Risk_Elevated_DQI**: 77.6% high-risk (274/353 sites)
+- **Cluster_2_High_Risk_Elevated_DQI**: 40.1% high-risk (263/656 sites)
 
 ## Key Differentiating Features
 
 Features that most distinguish clusters from each other:
 
-1. **Avg Days Page Missing** (variance: 124.1653)
-2. **Lab Issues Rate** (variance: 7.0400)
-3. **Avg Days Outstanding** (variance: 5.3722)
-4. **Issue Diversity** (variance: 1.5512)
-5. **Missing Pages Rate** (variance: 1.2923)
+1. **Avg Days Page Missing** (variance: 49.1459)
+2. **Lab Issues Rate** (variance: 6.3656)
+3. **Avg Days Outstanding** (variance: 3.4618)
+4. **Issue Diversity** (variance: 1.5310)
+5. **Missing Pages Rate** (variance: 0.5897)
 
 ## Cluster-Level Recommendations
 
-### [!!!] Cluster_1_High_Risk_Elevated_DQI
+### [!!!] Cluster_2_High_Risk_Elevated_DQI
 
-- **Sites**: 353
+- **Sites**: 656
 - **Priority**: CRITICAL
-- **Recommendation**: CRITICAL: 274 high-risk sites (77.6%) - prioritize for immediate intervention; Data Completeness: High missing data rate - implement targeted data entry support
+- **Recommendation**: CRITICAL: 263 high-risk sites (40.1%) - prioritize for immediate intervention; SAE Alert: Cluster has elevated SAE rate - expedite pharmacovigilance review; Data Completeness: High missing data rate - implement targeted data entry support
 - **Action Type**: INTERVENTION
 - **Effort**: High
 
-### [!] Cluster_2_Average
+### [!] Cluster_1_Completeness_Issues
 
-- **Sites**: 837
+- **Sites**: 848
 - **Priority**: MEDIUM
 - **Recommendation**: Data Completeness: High missing data rate - implement targeted data entry support
 - **Action Type**: MONITORING
@@ -57,7 +57,7 @@ Features that most distinguish clusters from each other:
 
 ### [-] Cluster_0_Low_Risk
 
-- **Sites**: 2209
+- **Sites**: 1920
 - **Priority**: LOW
 - **Recommendation**: Monitor: Cluster within normal parameters - maintain standard oversight
 - **Action Type**: MONITORING
@@ -67,33 +67,30 @@ Features that most distinguish clusters from each other:
 
 Studies with >50% of sites in a single cluster:
 
-- **Study_1**: 51.9% in Cluster 1
-- **Study_11**: 82.4% in Cluster 0
-- **Study_13**: 92.3% in Cluster 1
-- **Study_15**: 100.0% in Cluster 1
-- **Study_16**: 61.4% in Cluster 1
-- **Study_17**: 84.6% in Cluster 1
-- **Study_19**: 76.9% in Cluster 1
-- **Study_2**: 55.6% in Cluster 0
-- **Study_20**: 100.0% in Cluster 1
-- **Study_21**: 78.3% in Cluster 0
-- **Study_22**: 58.1% in Cluster 0
-- **Study_23**: 88.2% in Cluster 0
-- **Study_25**: 98.7% in Cluster 0
-- **Study_4**: 96.4% in Cluster 0
-- **Study_5**: 69.6% in Cluster 1
-- **Study_6**: 92.9% in Cluster 1
-- **Study_7**: 76.9% in Cluster 1
-- **Study_8**: 67.5% in Cluster 0
-- **Study_9**: 88.9% in Cluster 0
+- **Study_11**: 53.0% in Cluster 0
+- **Study_13**: 71.4% in Cluster 1
+- **Study_14**: 66.7% in Cluster 0
+- **Study_18**: 66.7% in Cluster 2
+- **Study_19**: 66.7% in Cluster 2
+- **Study_20**: 53.8% in Cluster 1
+- **Study_21**: 75.7% in Cluster 0
+- **Study_22**: 54.7% in Cluster 0
+- **Study_23**: 88.9% in Cluster 0
+- **Study_24**: 87.6% in Cluster 2
+- **Study_25**: 96.5% in Cluster 0
+- **Study_5**: 51.3% in Cluster 1
+- **Study_6**: 60.0% in Cluster 2
+- **Study_7**: 57.1% in Cluster 1
+- **Study_8**: 84.7% in Cluster 1
+- **Study_9**: 90.0% in Cluster 0
 
 ## Anomaly Distribution
 
 | Cluster | Total Anomalies | Sites with Anomalies | Avg per Site |
 |---------|-----------------|----------------------|--------------|
-| cluster_0 | 3,055 | 1,208 | 1.38 |
-| cluster_1 | 996 | 316 | 2.82 |
-| cluster_2 | 1,590 | 542 | 1.90 |
+| cluster_0 | 2,763 | 1,057 | 1.44 |
+| cluster_1 | 1,442 | 529 | 1.70 |
+| cluster_2 | 1,715 | 539 | 2.61 |
 
 ---
 

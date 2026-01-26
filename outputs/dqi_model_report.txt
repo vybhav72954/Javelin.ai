@@ -4,18 +4,49 @@ JAVELIN.AI - DATA QUALITY INDEX (DQI) MODEL REPORT
 EXECUTIVE SUMMARY
 ----------------------------------------
 Total Subjects: 57,997
-Total Sites: 3,399
+Total Sites: 3,424
 Studies: 23
-Subjects with Issues: 12,213 (21.1%)
+Regions: 4
+Countries: 72
+Subjects with Issues: 12,858 (22.2%)
 
 RISK DISTRIBUTION
 ----------------------------------------
-  High: 5,264 (9.1%)
-  Medium: 6,949 (12.0%)
-  Low: 45,784 (78.9%)
+Subject Level:
+  High: 5,370 (9.3%)
+  Medium: 7,488 (12.9%)
+  Low: 45,139 (77.8%)
+
+Site Level:
+  High: 403 (11.8%)
+  Medium: 939 (27.4%)
+  Low: 2082 (60.8%)
+
+Study Level:
+  High: 13 (56.5%)
+  Medium: 0 (0.0%)
+  Low: 10 (43.5%)
 
 Capture Rate: 100.0%
 SAE Capture: 100%
+
+REGIONAL SUMMARY
+----------------------------------------
+AMERICA:
+  Sites: 1232 | Subjects: 21,937
+  DQI: 0.0417 | High-risk rate: 9.8%
+
+ASIA:
+  Sites: 689 | Subjects: 8,504
+  DQI: 0.0674 | High-risk rate: 9.5%
+
+EMEA:
+  Sites: 1478 | Subjects: 27,514
+  DQI: 0.0504 | High-risk rate: 8.7%
+
+Unknown:
+  Sites: 25 | Subjects: 42
+  DQI: 0.0118 | High-risk rate: 2.4%
 
 METHODOLOGY
 ----------------------------------------

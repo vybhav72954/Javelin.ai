@@ -26,6 +26,107 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # ============================================================================
+# DATA QUALITY FUNCTIONS (Issues 2, 9, 10, 12)
+# ============================================================================
+
+def validate_loaded_data(df, file_type, filepath):
+    """
+    Issue 9: Validate loaded data for common problems.
+    Returns cleaned dataframe and list of issues found.
+    """
+    issues = []
+
+    if df.empty:
+        return df, ['Empty dataframe']
+
+    # Check for negative values in numeric columns (shouldn't exist)
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    for col in numeric_cols:
+        neg_count = (df[col] < 0).sum()
+        if neg_count > 0:
+            issues.append(f"{col}: {neg_count} negative values (set to 0)")
+            df.loc[df[col] < 0, col] = 0
+
+    # Check for impossibly large day values (> 5 years = 1825 days)
+    day_cols = [c for c in df.columns if 'day' in c.lower()]
+    for col in day_cols:
+        if col in numeric_cols:
+            impossible = (df[col] > 1825).sum()
+            if impossible > 0:
+                issues.append(f"{col}: {impossible} values > 5 years (capped at 1825)")
+                df.loc[df[col] > 1825, col] = 1825
+
+    return df, issues
+
+
+def cap_outliers(series, multiplier=3.0, method='iqr'):
+    """
+    Issue 12: Cap outliers using IQR method.
+    Values beyond Q3 + multiplier*IQR are capped.
+
+    Args:
+        series: pandas Series of numeric values
+        multiplier: IQR multiplier (default 3.0 = very conservative)
+        method: 'iqr' or 'std'
+
+    Returns:
+        Series with outliers capped
+    """
+    if series.empty or series.isna().all():
+        return series
+
+    if method == 'iqr':
+        Q1 = series.quantile(0.25)
+        Q3 = series.quantile(0.75)
+        IQR = Q3 - Q1
+
+        if IQR == 0:  # All values are the same
+            return series
+
+        upper_bound = Q3 + multiplier * IQR
+        lower_bound = max(0, Q1 - multiplier * IQR)  # Don't go below 0 for counts
+    else:  # std method
+        mean = series.mean()
+        std = series.std()
+        if std == 0:
+            return series
+        upper_bound = mean + multiplier * std
+        lower_bound = max(0, mean - multiplier * std)
+
+    return series.clip(lower=lower_bound, upper=upper_bound)
+
+
+def safe_max(series):
+    """
+    Issue 10: Safe max aggregation that handles all-NaN cases.
+    Returns 0 instead of NaN when all values are NaN.
+    """
+    if series.empty or series.isna().all():
+        return 0
+    result = series.max()
+    return 0 if pd.isna(result) else result
+
+
+def fill_missing_categoricals(df):
+    """
+    Issue 2: Fill empty strings and NaN in categorical columns with 'Unknown'.
+    """
+    categorical_cols = ['country', 'region', 'subject_status']
+
+    for col in categorical_cols:
+        if col in df.columns:
+            # Replace empty strings
+            df[col] = df[col].replace('', 'Unknown')
+            # Replace NaN
+            df[col] = df[col].fillna('Unknown')
+            # Strip whitespace
+            df[col] = df[col].astype(str).str.strip()
+            # Replace 'nan' string
+            df[col] = df[col].replace('nan', 'Unknown')
+
+    return df
+
+# ============================================================================
 # CONFIGURATION
 # ============================================================================
 
@@ -127,10 +228,19 @@ def standardize_columns(df, file_type):
 
 
 def read_excel_smart(filepath, file_type):
-    """Read Excel file, handling multi-row headers for EDC metrics."""
+    """
+    Read Excel file, handling:
+    - Multi-row headers for EDC metrics
+    - Multi-sheet files for SAE Dashboard (combines both sheets)
+    - Multi-sheet files for Missing Pages (combines both sheets)
+
+    Returns:
+        DataFrame with combined data from relevant sheets
+    """
     try:
-        if file_type=='edc_metrics':
+        if file_type == 'edc_metrics':
             # EDC Metrics has multi-row header - data starts at row 4
+            # Only need "Subject Level Metrics" sheet (first sheet)
             df = pd.read_excel(filepath, sheet_name=0, header=None)
 
             # Find the row with actual data (look for "Subject" in columns)
@@ -148,9 +258,59 @@ def read_excel_smart(filepath, file_type):
             if 'Subject ID' in df.columns:
                 df = df[df['Subject ID'].notna()]
                 df = df[~df['Subject ID'].astype(str).str.contains('Subject ID|Responsible', na=False)]
+
+        elif file_type == 'sae_dashboard':
+            # SAE Dashboard has 2 sheets: SAE Dashboard_DM and SAE Dashboard_Safety
+            # We need to read BOTH and combine them
+            xl = pd.ExcelFile(filepath)
+            sheet_names = xl.sheet_names
+
+            all_dfs = []
+            for sheet in sheet_names:
+                # Only read sheets that look like SAE data
+                if 'SAE' in sheet or 'Dashboard' in sheet:
+                    df_sheet = pd.read_excel(filepath, sheet_name=sheet)
+                    if not df_sheet.empty:
+                        # Add source sheet column for tracking
+                        df_sheet['_source_sheet'] = sheet
+                        all_dfs.append(df_sheet)
+
+            if all_dfs:
+                # Combine all sheets
+                df = pd.concat(all_dfs, ignore_index=True, sort=False)
+                print(f"      Combined {len(all_dfs)} SAE sheets: {sum(len(d) for d in all_dfs)} total rows")
+            else:
+                df = pd.DataFrame()
+
+        elif file_type == 'missing_pages':
+            # Missing Pages has 2 sheets: All Pages Missing and Visit Level Pages Missing
+            # Combine both for complete picture
+            xl = pd.ExcelFile(filepath)
+            sheet_names = xl.sheet_names
+
+            all_dfs = []
+            for sheet in sheet_names:
+                df_sheet = pd.read_excel(filepath, sheet_name=sheet)
+                if not df_sheet.empty:
+                    df_sheet['_source_sheet'] = sheet
+                    all_dfs.append(df_sheet)
+
+            if all_dfs:
+                df = pd.concat(all_dfs, ignore_index=True, sort=False)
+                print(f"      Combined {len(all_dfs)} Missing Pages sheets: {sum(len(d) for d in all_dfs)} total rows")
+            else:
+                df = pd.DataFrame()
         else:
             # Standard read for other file types
             df = pd.read_excel(filepath, sheet_name=0)
+
+        # Issue 9: Validate loaded data
+        if not df.empty:
+            df, issues = validate_loaded_data(df, file_type, filepath)
+            # Only print if there were issues
+            # (commented out to reduce noise, uncomment for debugging)
+            # if issues:
+            #     print(f"      Validation issues in {filepath}: {issues}")
 
         return df
     except Exception as e:
@@ -732,6 +892,24 @@ def build_master_tables():
         }).reset_index()
         master_subject = master_subject.merge(edrr_df_agg, on=merge_keys, how='left')
 
+    # ========================================================================
+    # DATA QUALITY FIXES (Issues 2, 10, 12)
+    # ========================================================================
+
+    # Issue 12: Cap outliers BEFORE filling NaN (conservative IQR * 3)
+    # Only cap columns with known outlier issues (from diagnostics)
+    outlier_cols = ['max_days_outstanding', 'max_days_page_missing',
+                    'lab_issues_count', 'inactivated_forms_count']
+
+    print("\n📊 Applying outlier capping (IQR * 3)...")
+    for col in outlier_cols:
+        if col in master_subject.columns:
+            before_max = master_subject[col].max()
+            master_subject[col] = cap_outliers(master_subject[col], multiplier=3.0, method='iqr')
+            after_max = master_subject[col].max()
+            if before_max != after_max:
+                print(f"   {col}: max {before_max:.0f} → {after_max:.0f}")
+
     # Fill NaN with 0 for numeric columns
     numeric_cols = ['missing_visit_count', 'max_days_outstanding', 'lab_issues_count',
                     'sae_total_count', 'sae_pending_count', 'missing_pages_count',
@@ -741,6 +919,15 @@ def build_master_tables():
     for col in numeric_cols:
         if col in master_subject.columns:
             master_subject[col] = master_subject[col].fillna(0).astype(int)
+
+    # Issue 2: Fill missing categorical values with 'Unknown'
+    print("\n📊 Filling missing categorical values...")
+    master_subject = fill_missing_categoricals(master_subject)
+    for col in ['country', 'region', 'subject_status']:
+        if col in master_subject.columns:
+            unknown_count = (master_subject[col] == 'Unknown').sum()
+            if unknown_count > 0:
+                print(f"   {col}: {unknown_count} values set to 'Unknown'")
 
     # Add total uncoded count
     master_subject['total_uncoded_count'] = (

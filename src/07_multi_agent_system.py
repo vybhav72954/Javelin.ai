@@ -70,6 +70,9 @@ OUTPUT_DIR = PROJECT_ROOT / "outputs"
 # Input files
 SITE_DQI_PATH = OUTPUT_DIR / "master_site_with_dqi.csv"
 SUBJECT_DQI_PATH = OUTPUT_DIR / "master_subject_with_dqi.csv"
+STUDY_DQI_PATH = OUTPUT_DIR / "master_study_with_dqi.csv"
+REGION_DQI_PATH = OUTPUT_DIR / "master_region_with_dqi.csv"
+COUNTRY_DQI_PATH = OUTPUT_DIR / "master_country_with_dqi.csv"
 ANOMALIES_PATH = OUTPUT_DIR / "anomalies_detected.csv"
 SITE_ANOMALY_SCORES_PATH = OUTPUT_DIR / "site_anomaly_scores.csv"
 
@@ -587,10 +590,16 @@ class PerformanceAgent(BaseAgent):
         portfolio_avg_dqi = self.portfolio_stats.get('avg_dqi', 0.045)
         portfolio_avg_high_risk_pct = self.portfolio_stats.get('avg_high_risk_pct', 10)
 
+        # Get hierarchical risk context
+        study_risk = site_data.get('study_risk_category', 'Unknown')
+        region_risk = site_data.get('region_risk_category', 'Unknown')
+        country_risk = site_data.get('country_risk_category', 'Unknown')
+
         context = f"""
 Site: {site_data.get('site_id')} ({site_data.get('country')})
-Study: {site_data.get('study')}
-Region: {site_data.get('region')}
+Study: {site_data.get('study')} [Study Risk: {study_risk}]
+Region: {site_data.get('region')} [Region Risk: {region_risk}]
+Country Risk Category: {country_risk}
 
 PERFORMANCE METRICS:
 - Subjects: {subject_count}
@@ -602,6 +611,9 @@ PORTFOLIO BENCHMARKS:
 - Site vs Portfolio: {'+' if avg_dqi > portfolio_avg_dqi else ''}{((avg_dqi/portfolio_avg_dqi)-1)*100:.0f}% 
 - Portfolio Avg High-Risk Rate: {portfolio_avg_high_risk_pct:.1f}%
 - Site vs Portfolio: {'+' if high_risk_pct > portfolio_avg_high_risk_pct else ''}{high_risk_pct - portfolio_avg_high_risk_pct:.1f}pp
+
+HIERARCHICAL CONTEXT:
+- Study Risk: {study_risk} | Region Risk: {region_risk} | Country Risk: {country_risk}
 
 CROSS-STUDY PATTERNS: {len(cross_study_anomalies)} anomalies
 """
@@ -1120,6 +1132,36 @@ def run_multi_agent_system(model: str = DEFAULT_MODEL, top_sites: int = TOP_SITE
     if ANOMALIES_PATH.exists():
         anomalies_df = pd.read_csv(ANOMALIES_PATH)
         print(f"  ✅ Loaded {len(anomalies_df):,} anomalies")
+
+    # Load pre-computed aggregated data for context
+    study_df = None
+    region_df = None
+    country_df = None
+
+    if STUDY_DQI_PATH.exists():
+        study_df = pd.read_csv(STUDY_DQI_PATH)
+        print(f"  ✅ Loaded {len(study_df)} studies (pre-computed context)")
+
+    if REGION_DQI_PATH.exists():
+        region_df = pd.read_csv(REGION_DQI_PATH)
+        print(f"  ✅ Loaded {len(region_df)} regions (pre-computed context)")
+
+    if COUNTRY_DQI_PATH.exists():
+        country_df = pd.read_csv(COUNTRY_DQI_PATH)
+        print(f"  ✅ Loaded {len(country_df)} countries (pre-computed context)")
+
+    # Enrich site data with study/region/country risk categories
+    if study_df is not None:
+        study_risk_map = study_df.set_index('study')['study_risk_category'].to_dict()
+        site_df['study_risk_category'] = site_df['study'].map(study_risk_map).fillna('Unknown')
+
+    if country_df is not None:
+        country_risk_map = country_df.set_index('country')['country_risk_category'].to_dict()
+        site_df['country_risk_category'] = site_df['country'].map(country_risk_map).fillna('Unknown')
+
+    if region_df is not None:
+        region_risk_map = region_df.set_index('region')['region_risk_category'].to_dict()
+        site_df['region_risk_category'] = site_df['region'].map(region_risk_map).fillna('Unknown')
 
     # Set portfolio context
     mas.set_portfolio_context(site_df)

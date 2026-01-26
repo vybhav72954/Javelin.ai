@@ -501,6 +501,229 @@ def generate_study_recommendations(site_df: pd.DataFrame, llm: Optional[OllamaLL
     return recommendations
 
 
+def generate_region_recommendations(site_df: pd.DataFrame, llm: Optional[OllamaLLM] = None) -> List[Dict]:
+    """
+    Generate region-level recommendations.
+
+    This addresses Issue 2: Solution focuses on sites, ignores studies and regions.
+    Regional analysis can identify systemic issues affecting entire geographic areas.
+    """
+    recommendations = []
+
+    # Aggregate to region level
+    region_summary = site_df.groupby('region').agg({
+        'site_id': 'count',
+        'subject_count': 'sum',
+        'avg_dqi_score': ['mean', 'max', 'std'],
+        'high_risk_count': 'sum',
+        'medium_risk_count': 'sum',
+        'sae_pending_count_sum': 'sum',
+        'missing_visit_count_sum': 'sum',
+        'missing_pages_count_sum': 'sum',
+        'study': 'nunique',
+        'country': 'nunique',
+    }).reset_index()
+
+    # Flatten columns
+    region_summary.columns = ['region', 'n_sites', 'n_subjects', 'avg_dqi', 'max_dqi', 'std_dqi',
+                              'high_risk_subjects', 'medium_risk_subjects',
+                              'pending_sae', 'missing_visits', 'missing_pages',
+                              'n_studies', 'n_countries']
+
+    # Calculate metrics
+    region_summary['high_risk_rate'] = region_summary['high_risk_subjects'] / region_summary['n_subjects'] * 100
+    region_summary['avg_subjects_per_site'] = region_summary['n_subjects'] / region_summary['n_sites']
+
+    # Count high-risk sites per region
+    high_risk_sites = site_df[site_df['site_risk_category'] == 'High'].groupby('region').size()
+    region_summary['high_risk_sites'] = region_summary['region'].map(high_risk_sites).fillna(0).astype(int)
+    region_summary['high_risk_site_rate'] = region_summary['high_risk_sites'] / region_summary['n_sites'] * 100
+
+    # Portfolio averages for comparison
+    portfolio_avg_dqi = site_df['avg_dqi_score'].mean()
+    portfolio_high_risk_rate = (site_df['high_risk_count'].sum() / site_df['subject_count'].sum()) * 100
+
+    for _, row in region_summary.iterrows():
+        rec = {
+            'level': 'REGION',
+            'region': row['region'],
+            'n_countries': int(row['n_countries']),
+            'n_sites': int(row['n_sites']),
+            'n_subjects': int(row['n_subjects']),
+            'n_studies': int(row['n_studies']),
+            'avg_dqi': round(row['avg_dqi'], 4),
+            'max_dqi': round(row['max_dqi'], 4),
+            'key_metrics': {},
+            'comparison_to_portfolio': {},
+            'recommendations': [],
+            'ai_insight': None
+        }
+
+        rec['key_metrics'] = {
+            'high_risk_rate': round(row['high_risk_rate'], 1),
+            'high_risk_site_rate': round(row['high_risk_site_rate'], 1),
+            'pending_sae': int(row['pending_sae']),
+            'missing_visits': int(row['missing_visits']),
+            'missing_pages': int(row['missing_pages']),
+            'avg_subjects_per_site': round(row['avg_subjects_per_site'], 1),
+        }
+
+        # Compare to portfolio
+        dqi_diff = ((row['avg_dqi'] / portfolio_avg_dqi) - 1) * 100 if portfolio_avg_dqi > 0 else 0
+        risk_diff = row['high_risk_rate'] - portfolio_high_risk_rate
+
+        rec['comparison_to_portfolio'] = {
+            'dqi_vs_portfolio': f"{'+' if dqi_diff > 0 else ''}{dqi_diff:.1f}%",
+            'risk_vs_portfolio': f"{'+' if risk_diff > 0 else ''}{risk_diff:.1f}pp",
+            'is_above_average': dqi_diff > 10,  # 10% worse than portfolio
+        }
+
+        # Determine priority and generate recommendations
+        if row['pending_sae'] > 10:
+            rec['priority'] = 'CRITICAL'
+            rec['recommendations'].append(f"CRITICAL: {int(row['pending_sae'])} pending SAE reviews across {row['region']}")
+        elif row['high_risk_rate'] > 15 or dqi_diff > 20:
+            rec['priority'] = 'HIGH'
+            rec['recommendations'].append(f"Region has elevated risk rate ({row['high_risk_rate']:.1f}%) vs portfolio ({portfolio_high_risk_rate:.1f}%)")
+        elif row['high_risk_rate'] > 10 or dqi_diff > 10:
+            rec['priority'] = 'MEDIUM'
+        else:
+            rec['priority'] = 'LOW'
+
+        if row['high_risk_site_rate'] > 20:
+            rec['recommendations'].append(f"{row['high_risk_site_rate']:.0f}% of sites in {row['region']} are high-risk - consider regional training initiative")
+
+        if row['missing_visits'] > 50:
+            rec['recommendations'].append(f"Address {int(row['missing_visits'])} missing visits - may indicate regional protocol compliance issues")
+
+        if row['std_dqi'] > 0.1:
+            rec['recommendations'].append(f"High variability in data quality (σ={row['std_dqi']:.3f}) - some sites need targeted support")
+
+        if not rec['recommendations']:
+            rec['recommendations'].append(f"{row['region']} performing within acceptable range")
+
+        # Generate LLM insight for regions
+        if llm and llm.available:
+            prompt = f"""Provide a brief regional analysis insight (2-3 sentences):
+
+Region: {row['region']}
+Coverage: {int(row['n_countries'])} countries, {int(row['n_sites'])} sites, {int(row['n_subjects'])} subjects
+DQI Score: {row['avg_dqi']:.3f} (portfolio avg: {portfolio_avg_dqi:.3f})
+High-Risk Rate: {row['high_risk_rate']:.1f}% (portfolio: {portfolio_high_risk_rate:.1f}%)
+High-Risk Sites: {int(row['high_risk_sites'])} of {int(row['n_sites'])} ({row['high_risk_site_rate']:.1f}%)
+
+Focus on actionable regional-level insights."""
+
+            try:
+                insight = llm.generate(prompt, max_tokens=150)
+                rec['ai_insight'] = insight.strip() if insight else None
+            except:
+                pass
+
+        recommendations.append(rec)
+
+    # Sort by priority
+    priority_order = {'CRITICAL': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3}
+    recommendations.sort(key=lambda x: (priority_order.get(x['priority'], 4), -x['avg_dqi']))
+
+    return recommendations
+
+
+def generate_country_recommendations(site_df: pd.DataFrame, llm: Optional[OllamaLLM] = None) -> List[Dict]:
+    """
+    Generate country-level recommendations.
+
+    Country-level analysis identifies localized issues that may require
+    country-specific interventions (training, regulatory, CRO issues).
+    """
+    recommendations = []
+
+    # Aggregate to country level
+    country_summary = site_df.groupby(['country', 'region']).agg({
+        'site_id': 'count',
+        'subject_count': 'sum',
+        'avg_dqi_score': ['mean', 'max'],
+        'high_risk_count': 'sum',
+        'sae_pending_count_sum': 'sum',
+        'missing_visit_count_sum': 'sum',
+        'study': 'nunique',
+    }).reset_index()
+
+    # Flatten columns
+    country_summary.columns = ['country', 'region', 'n_sites', 'n_subjects', 'avg_dqi', 'max_dqi',
+                               'high_risk_subjects', 'pending_sae', 'missing_visits', 'n_studies']
+
+    # Filter to countries with at least 2 sites (enough for meaningful analysis)
+    country_summary = country_summary[country_summary['n_sites'] >= 2]
+
+    # Calculate metrics
+    country_summary['high_risk_rate'] = country_summary['high_risk_subjects'] / country_summary['n_subjects'] * 100
+
+    # Count high-risk sites per country
+    high_risk_sites = site_df[site_df['site_risk_category'] == 'High'].groupby('country').size()
+    country_summary['high_risk_sites'] = country_summary['country'].map(high_risk_sites).fillna(0).astype(int)
+    country_summary['high_risk_site_rate'] = country_summary['high_risk_sites'] / country_summary['n_sites'] * 100
+
+    # Portfolio average
+    portfolio_avg_dqi = site_df['avg_dqi_score'].mean()
+
+    # Only generate recommendations for countries with issues
+    flagged_countries = country_summary[
+        (country_summary['avg_dqi'] > portfolio_avg_dqi * 1.2) |  # 20% worse than avg
+        (country_summary['high_risk_rate'] > 15) |
+        (country_summary['pending_sae'] > 5) |
+        (country_summary['high_risk_site_rate'] > 25)
+    ].copy()
+
+    for _, row in flagged_countries.iterrows():
+        rec = {
+            'level': 'COUNTRY',
+            'country': row['country'],
+            'region': row['region'],
+            'n_sites': int(row['n_sites']),
+            'n_subjects': int(row['n_subjects']),
+            'n_studies': int(row['n_studies']),
+            'avg_dqi': round(row['avg_dqi'], 4),
+            'key_metrics': {
+                'high_risk_rate': round(row['high_risk_rate'], 1),
+                'high_risk_sites': int(row['high_risk_sites']),
+                'high_risk_site_rate': round(row['high_risk_site_rate'], 1),
+                'pending_sae': int(row['pending_sae']),
+                'missing_visits': int(row['missing_visits']),
+            },
+            'recommendations': [],
+            'ai_insight': None
+        }
+
+        # Determine priority
+        if row['pending_sae'] > 5:
+            rec['priority'] = 'CRITICAL'
+            rec['recommendations'].append(f"URGENT: {int(row['pending_sae'])} pending SAE reviews in {row['country']}")
+        elif row['high_risk_rate'] > 20 or row['high_risk_site_rate'] > 30:
+            rec['priority'] = 'HIGH'
+        elif row['high_risk_rate'] > 10:
+            rec['priority'] = 'MEDIUM'
+        else:
+            rec['priority'] = 'LOW'
+
+        if row['high_risk_site_rate'] > 30:
+            rec['recommendations'].append(f"{row['high_risk_site_rate']:.0f}% of sites are high-risk - investigate country-specific factors (CRO, training, regulatory)")
+
+        if row['avg_dqi'] > portfolio_avg_dqi * 1.5:
+            rec['recommendations'].append(f"DQI significantly above portfolio average - prioritize for quality improvement")
+
+        if row['missing_visits'] > 20:
+            rec['recommendations'].append(f"Address {int(row['missing_visits'])} missing visits across {int(row['n_sites'])} sites")
+
+        recommendations.append(rec)
+
+    # Sort by priority
+    priority_order = {'CRITICAL': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3}
+    recommendations.sort(key=lambda x: (priority_order.get(x['priority'], 4), -x['avg_dqi']))
+
+    return recommendations
+
+
 # ============================================================================
 # REPORT GENERATION
 # ============================================================================
@@ -510,7 +733,9 @@ def generate_executive_summary(
     site_recs: List[Dict],
     study_recs: List[Dict],
     data: Dict[str, pd.DataFrame],
-    llm: Optional[OllamaLLM] = None
+    llm: Optional[OllamaLLM] = None,
+    region_recs: List[Dict] = None,
+    country_recs: List[Dict] = None
 ) -> str:
     """Generate an executive summary of data quality status."""
 
@@ -582,6 +807,30 @@ Site Level:
   * High Risk Sites: {high_risk_sites} ({high_risk_sites/total_sites*100:.1f}%)
 
 """
+
+    # Add Regional Analysis section
+    if region_recs:
+        summary += """REGIONAL ANALYSIS
+-----------------
+"""
+        for rec in region_recs:
+            status = "⚠️" if rec['priority'] in ['HIGH', 'CRITICAL'] else "✓"
+            summary += f"  {status} {rec['region']}: {rec['n_countries']} countries, {rec['n_sites']} sites, {rec['n_subjects']:,} subjects\n"
+            summary += f"     DQI: {rec['avg_dqi']:.3f} | High-risk rate: {rec['key_metrics']['high_risk_rate']:.1f}%"
+            summary += f" | vs Portfolio: {rec['comparison_to_portfolio']['dqi_vs_portfolio']}\n"
+        summary += "\n"
+
+    # Add Country Flags section
+    if country_recs and len(country_recs) > 0:
+        summary += """COUNTRIES REQUIRING ATTENTION
+-----------------------------
+"""
+        for rec in country_recs[:10]:  # Top 10 countries
+            summary += f"  [{rec['priority']}] {rec['country']} ({rec['region']}): {rec['n_sites']} sites, "
+            summary += f"DQI={rec['avg_dqi']:.3f}, High-risk={rec['key_metrics']['high_risk_rate']:.1f}%\n"
+            if rec['recommendations']:
+                summary += f"        → {rec['recommendations'][0]}\n"
+        summary += "\n"
 
     # Add AI insight if available
     if ai_executive_insight:
@@ -697,7 +946,9 @@ def save_outputs(
     executive_summary: str,
     site_report: str,
     data: Dict[str, pd.DataFrame],
-    llm_model: str = None
+    llm_model: str = None,
+    region_recs: List[Dict] = None,
+    country_recs: List[Dict] = None
 ):
     """Save all outputs."""
 
@@ -716,6 +967,39 @@ def save_outputs(
         f.write("```\n")
         f.write(executive_summary)
         f.write("```\n\n")
+
+        # Add Regional Analysis section to report
+        if region_recs:
+            f.write("## Regional Analysis\n\n")
+            for rec in region_recs:
+                f.write(f"### {rec['region']}\n")
+                f.write(f"- **Coverage:** {rec['n_countries']} countries, {rec['n_sites']} sites, {rec['n_subjects']:,} subjects\n")
+                f.write(f"- **DQI Score:** {rec['avg_dqi']:.4f} (Max: {rec['max_dqi']:.4f})\n")
+                f.write(f"- **High-Risk Rate:** {rec['key_metrics']['high_risk_rate']:.1f}%\n")
+                f.write(f"- **vs Portfolio:** {rec['comparison_to_portfolio']['dqi_vs_portfolio']}\n")
+                f.write(f"- **Priority:** {rec['priority']}\n")
+                if rec['recommendations']:
+                    f.write("- **Recommendations:**\n")
+                    for r in rec['recommendations']:
+                        f.write(f"  - {r}\n")
+                if rec.get('ai_insight'):
+                    f.write(f"- **AI Insight:** {rec['ai_insight']}\n")
+                f.write("\n")
+
+        # Add Country Flags section
+        if country_recs:
+            f.write("## Countries Requiring Attention\n\n")
+            for rec in country_recs:
+                f.write(f"### {rec['country']} ({rec['region']})\n")
+                f.write(f"- **Sites:** {rec['n_sites']} | **Subjects:** {rec['n_subjects']:,}\n")
+                f.write(f"- **DQI Score:** {rec['avg_dqi']:.4f}\n")
+                f.write(f"- **High-Risk Rate:** {rec['key_metrics']['high_risk_rate']:.1f}%\n")
+                f.write(f"- **Priority:** {rec['priority']}\n")
+                if rec['recommendations']:
+                    for r in rec['recommendations']:
+                        f.write(f"- {r}\n")
+                f.write("\n")
+
         f.write("## Detailed Site Recommendations\n\n")
         f.write(site_report)
     print(f"  Saved: outputs/recommendations_report.md")
@@ -739,18 +1023,65 @@ def save_outputs(
     pd.DataFrame(site_csv_data).to_csv(OUTPUT_DIR / "recommendations_by_site.csv", index=False)
     print(f"  Saved: outputs/recommendations_by_site.csv")
 
-    # 4. Action Items JSON
+    # 4. Region Recommendations CSV (NEW)
+    if region_recs:
+        region_csv_data = []
+        for rec in region_recs:
+            region_csv_data.append({
+                'region': rec['region'],
+                'n_countries': rec['n_countries'],
+                'n_sites': rec['n_sites'],
+                'n_subjects': rec['n_subjects'],
+                'n_studies': rec['n_studies'],
+                'avg_dqi_score': rec['avg_dqi'],
+                'max_dqi_score': rec['max_dqi'],
+                'high_risk_rate': rec['key_metrics']['high_risk_rate'],
+                'high_risk_site_rate': rec['key_metrics']['high_risk_site_rate'],
+                'pending_sae': rec['key_metrics']['pending_sae'],
+                'priority': rec['priority'],
+                'vs_portfolio': rec['comparison_to_portfolio']['dqi_vs_portfolio'],
+                'top_recommendation': rec['recommendations'][0] if rec['recommendations'] else '',
+                'ai_insight': rec.get('ai_insight', '')[:500] if rec.get('ai_insight') else ''
+            })
+        pd.DataFrame(region_csv_data).to_csv(OUTPUT_DIR / "recommendations_by_region.csv", index=False)
+        print(f"  Saved: outputs/recommendations_by_region.csv")
+
+    # 5. Country Recommendations CSV (NEW)
+    if country_recs:
+        country_csv_data = []
+        for rec in country_recs:
+            country_csv_data.append({
+                'country': rec['country'],
+                'region': rec['region'],
+                'n_sites': rec['n_sites'],
+                'n_subjects': rec['n_subjects'],
+                'n_studies': rec['n_studies'],
+                'avg_dqi_score': rec['avg_dqi'],
+                'high_risk_rate': rec['key_metrics']['high_risk_rate'],
+                'high_risk_sites': rec['key_metrics']['high_risk_sites'],
+                'pending_sae': rec['key_metrics']['pending_sae'],
+                'priority': rec['priority'],
+                'top_recommendation': rec['recommendations'][0] if rec['recommendations'] else ''
+            })
+        pd.DataFrame(country_csv_data).to_csv(OUTPUT_DIR / "recommendations_by_country.csv", index=False)
+        print(f"  Saved: outputs/recommendations_by_country.csv")
+
+    # 6. Action Items JSON (Updated)
     action_items = {
         'generated_at': datetime.now().isoformat(),
         'ai_model': llm_model,
         'summary': {
             'total_subjects': len(data['subjects']),
             'total_sites': len(data['sites']),
+            'total_regions': len(region_recs) if region_recs else 0,
+            'total_countries_flagged': len(country_recs) if country_recs else 0,
             'critical_items': sum(1 for r in site_recs if r['priority'] == 'CRITICAL'),
             'high_priority_items': sum(1 for r in site_recs if r['priority'] == 'HIGH')
         },
         'site_recommendations': site_recs[:20],
-        'study_recommendations': study_recs
+        'study_recommendations': study_recs,
+        'region_recommendations': region_recs if region_recs else [],
+        'country_recommendations': country_recs if country_recs else []
     }
     with open(OUTPUT_DIR / "action_items.json", 'w', encoding='utf-8') as f:
         json.dump(action_items, f, indent=2, default=str)
@@ -769,7 +1100,7 @@ def run_recommendations_engine(model: str = DEFAULT_MODEL):
     print("=" * 70)
 
     # Step 1: Initialize LLM
-    print("\n[1/6] Initializing LLM...")
+    print("\n[1/8] Initializing LLM...")
     llm = OllamaLLM(model=model)
     if llm.available:
         print(f"  LLM Ready: {llm.model}")
@@ -778,18 +1109,18 @@ def run_recommendations_engine(model: str = DEFAULT_MODEL):
         print("  To enable: Install Ollama, run 'ollama pull mistral', then 'ollama serve'")
 
     # Step 2: Load Data
-    print("\n[2/6] Loading data...")
+    print("\n[2/8] Loading data...")
     data = load_data()
 
     # Step 3: Generate Subject Recommendations
-    print("\n[3/6] Analyzing subject-level risks...")
+    print("\n[3/8] Analyzing subject-level risks...")
     subject_recs = generate_subject_recommendations(data['subjects'])
     print(f"  Generated {len(subject_recs)} subject recommendations")
     print(f"  Critical: {sum(1 for r in subject_recs if r['priority'] == 'CRITICAL')}")
     print(f"  High: {sum(1 for r in subject_recs if r['priority'] == 'HIGH')}")
 
     # Step 4: Generate Site Recommendations
-    print("\n[4/6] Analyzing site-level patterns...")
+    print("\n[4/8] Analyzing site-level patterns...")
     if llm.available:
         print("  Generating AI insights for top sites...")
     site_recs = generate_site_recommendations(data['sites'], llm if llm.available else None)
@@ -799,22 +1130,38 @@ def run_recommendations_engine(model: str = DEFAULT_MODEL):
         print(f"  AI insights: {ai_count}")
 
     # Step 5: Generate Study Recommendations
-    print("\n[5/6] Generating study-level insights...")
+    print("\n[5/8] Generating study-level insights...")
     study_recs = generate_study_recommendations(data['sites'], llm if llm.available else None)
     print(f"  Analyzed {len(study_recs)} studies")
 
-    # Step 6: Generate Reports
-    print("\n[6/6] Generating reports...")
+    # Step 6: Generate Region Recommendations (NEW - addresses Issue 2)
+    print("\n[6/8] Generating region-level insights...")
+    region_recs = generate_region_recommendations(data['sites'], llm if llm.available else None)
+    print(f"  Analyzed {len(region_recs)} regions")
+    for rec in region_recs:
+        print(f"    {rec['region']}: {rec['n_sites']} sites, DQI={rec['avg_dqi']:.3f}, Priority={rec['priority']}")
+
+    # Step 7: Generate Country Recommendations (NEW - addresses Issue 2)
+    print("\n[7/8] Generating country-level insights...")
+    country_recs = generate_country_recommendations(data['sites'], llm if llm.available else None)
+    print(f"  Flagged {len(country_recs)} countries for attention")
+
+    # Step 8: Generate Reports
+    print("\n[8/8] Generating reports...")
     executive_summary = generate_executive_summary(
         subject_recs, site_recs, study_recs, data,
-        llm if llm.available else None
+        llm if llm.available else None,
+        region_recs=region_recs,
+        country_recs=country_recs
     )
     site_report = generate_site_action_report(site_recs)
 
     save_outputs(
         subject_recs, site_recs, study_recs,
         executive_summary, site_report, data,
-        llm.model if llm.available else None
+        llm.model if llm.available else None,
+        region_recs=region_recs,
+        country_recs=country_recs
     )
 
     # Print Summary
@@ -833,7 +1180,9 @@ Outputs:
   1. outputs/executive_summary.txt
   2. outputs/recommendations_report.md
   3. outputs/recommendations_by_site.csv
-  4. outputs/action_items.json
+  4. outputs/recommendations_by_region.csv   [NEW - Regional Analysis]
+  5. outputs/recommendations_by_country.csv  [NEW - Country Analysis]
+  6. outputs/action_items.json
 """)
 
 

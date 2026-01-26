@@ -164,11 +164,17 @@ def calculate_component_score(series, weight):
     binary = (series > 0).astype(float)
 
     # Calculate reference max for severity scaling
-    # Use 95th percentile of NON-ZERO values to avoid zero division
+    # Issue 11 Fix: Require minimum 20 samples for stable p95, otherwise use max
     non_zero_values = series[series > 0]
-    if len(non_zero_values) > 0:
+    MIN_SAMPLES_FOR_PERCENTILE = 20
+
+    if len(non_zero_values) >= MIN_SAMPLES_FOR_PERCENTILE:
+        # Enough samples for stable percentile calculation
         p95 = non_zero_values.quantile(0.95)
         reference_max = p95 if p95 > 0 else non_zero_values.max()
+    elif len(non_zero_values) > 0:
+        # Small sample: use max instead of percentile
+        reference_max = non_zero_values.max()
     else:
         reference_max = 1.0  # Fallback
 
@@ -381,6 +387,225 @@ def aggregate_site_dqi(df):
     return site_df, site_thresholds
 
 
+def aggregate_to_study_level(site_df):
+    """
+    Aggregate site-level DQI to study level.
+
+    This addresses the gap where analysis was too site-focused
+    and ignored study-level insights.
+
+    Args:
+        site_df: Site-level DataFrame with DQI scores
+
+    Returns:
+        study_df: Study-level DataFrame with aggregated DQI
+        study_thresholds: Thresholds used for study risk categorization
+    """
+    # Aggregation dictionary
+    agg_dict = {
+        'site_id': 'count',  # Number of sites
+        'subject_count': 'sum',
+        'avg_dqi_score': ['mean', 'max', 'std'],
+        'high_risk_count': 'sum',
+        'medium_risk_count': 'sum',
+        'subjects_with_issues': 'sum',
+    }
+
+    # Add sum of issue columns if they exist
+    issue_cols = ['sae_pending_count_sum', 'missing_visit_count_sum', 'missing_pages_count_sum',
+                  'lab_issues_count_sum', 'uncoded_meddra_count_sum', 'uncoded_whodd_count_sum',
+                  'inactivated_forms_count_sum', 'edrr_open_issues_sum']
+
+    for col in issue_cols:
+        if col in site_df.columns:
+            agg_dict[col] = 'sum'
+
+    # Perform aggregation
+    study_df = site_df.groupby('study').agg(agg_dict)
+
+    # Flatten column names
+    study_df.columns = ['_'.join(col).strip('_') if isinstance(col, tuple) else col
+                        for col in study_df.columns]
+    study_df = study_df.reset_index()
+
+    # Rename for clarity
+    rename_map = {
+        'site_id_count': 'site_count',
+        'subject_count_sum': 'subject_count',
+        'avg_dqi_score_mean': 'avg_dqi_score',
+        'avg_dqi_score_max': 'max_site_dqi_score',
+        'avg_dqi_score_std': 'std_dqi_score',
+        'high_risk_count_sum': 'high_risk_subjects',
+        'medium_risk_count_sum': 'medium_risk_subjects',
+        'subjects_with_issues_sum': 'subjects_with_issues',
+    }
+    study_df = study_df.rename(columns=rename_map)
+
+    # Fill NaN std with 0
+    if 'std_dqi_score' in study_df.columns:
+        study_df['std_dqi_score'] = study_df['std_dqi_score'].fillna(0)
+
+    # Calculate derived metrics
+    study_df['high_risk_rate'] = study_df['high_risk_subjects'] / study_df['subject_count']
+    study_df['issue_rate'] = study_df['subjects_with_issues'] / study_df['subject_count']
+
+    # Count high-risk sites per study
+    high_risk_sites = site_df[site_df['site_risk_category'] == 'High'].groupby('study').size()
+    study_df['high_risk_sites'] = study_df['study'].map(high_risk_sites).fillna(0).astype(int)
+    study_df['high_risk_site_rate'] = study_df['high_risk_sites'] / study_df['site_count']
+
+    # Determine study risk category based on multiple factors
+    studies_with_issues = study_df[study_df['avg_dqi_score'] > 0]['avg_dqi_score']
+    if len(studies_with_issues) > 0:
+        study_high_thresh = studies_with_issues.quantile(0.85)
+        study_med_thresh = studies_with_issues.quantile(0.50)
+    else:
+        study_high_thresh = 0.10
+        study_med_thresh = 0.05
+
+    # Assign study risk category
+    study_df['study_risk_category'] = 'Low'
+
+    # Medium criteria
+    medium_mask = (
+        (study_df['avg_dqi_score'] >= study_med_thresh) |
+        (study_df['high_risk_rate'] > 0.05)
+    )
+    study_df.loc[medium_mask, 'study_risk_category'] = 'Medium'
+
+    # High criteria (overrides medium)
+    high_mask = (
+        (study_df['avg_dqi_score'] >= study_high_thresh) |
+        (study_df['high_risk_rate'] > 0.15) |
+        (study_df['high_risk_site_rate'] > 0.20)
+    )
+    study_df.loc[high_mask, 'study_risk_category'] = 'High'
+
+    study_thresholds = {
+        'high': study_high_thresh,
+        'medium': study_med_thresh,
+    }
+
+    return study_df, study_thresholds
+
+
+def aggregate_to_region_level(site_df):
+    """
+    Aggregate site-level DQI to region level.
+
+    This addresses the gap where analysis ignored regional patterns
+    that could indicate systemic issues.
+
+    Args:
+        site_df: Site-level DataFrame with DQI scores
+
+    Returns:
+        region_df: Region-level DataFrame with aggregated DQI
+        country_df: Country-level DataFrame with aggregated DQI
+    """
+    # -------------------------------------------------------------------------
+    # REGION-LEVEL AGGREGATION
+    # -------------------------------------------------------------------------
+    region_agg = {
+        'site_id': 'count',
+        'subject_count': 'sum',
+        'avg_dqi_score': ['mean', 'max', 'std'],
+        'high_risk_count': 'sum',
+        'medium_risk_count': 'sum',
+        'subjects_with_issues': 'sum',
+        'study': 'nunique',
+        'country': 'nunique',
+    }
+
+    region_df = site_df.groupby('region').agg(region_agg)
+    region_df.columns = ['_'.join(col).strip('_') if isinstance(col, tuple) else col
+                         for col in region_df.columns]
+    region_df = region_df.reset_index()
+
+    # Rename columns
+    region_df = region_df.rename(columns={
+        'site_id_count': 'site_count',
+        'subject_count_sum': 'subject_count',
+        'avg_dqi_score_mean': 'avg_dqi_score',
+        'avg_dqi_score_max': 'max_dqi_score',
+        'avg_dqi_score_std': 'std_dqi_score',
+        'high_risk_count_sum': 'high_risk_subjects',
+        'medium_risk_count_sum': 'medium_risk_subjects',
+        'subjects_with_issues_sum': 'subjects_with_issues',
+        'study_nunique': 'study_count',
+        'country_nunique': 'country_count',
+    })
+
+    # Fill NaN
+    region_df['std_dqi_score'] = region_df['std_dqi_score'].fillna(0)
+
+    # Derived metrics
+    region_df['high_risk_rate'] = region_df['high_risk_subjects'] / region_df['subject_count']
+    region_df['issue_rate'] = region_df['subjects_with_issues'] / region_df['subject_count']
+
+    # Count high-risk sites per region
+    high_risk_sites = site_df[site_df['site_risk_category'] == 'High'].groupby('region').size()
+    region_df['high_risk_sites'] = region_df['region'].map(high_risk_sites).fillna(0).astype(int)
+    region_df['high_risk_site_rate'] = region_df['high_risk_sites'] / region_df['site_count']
+
+    # Assign region risk category
+    region_df['region_risk_category'] = 'Low'
+    region_df.loc[region_df['avg_dqi_score'] >= region_df['avg_dqi_score'].median(), 'region_risk_category'] = 'Medium'
+    region_df.loc[region_df['avg_dqi_score'] >= region_df['avg_dqi_score'].quantile(0.75), 'region_risk_category'] = 'High'
+
+    # -------------------------------------------------------------------------
+    # COUNTRY-LEVEL AGGREGATION
+    # -------------------------------------------------------------------------
+    country_agg = {
+        'site_id': 'count',
+        'subject_count': 'sum',
+        'avg_dqi_score': ['mean', 'max', 'std'],
+        'high_risk_count': 'sum',
+        'medium_risk_count': 'sum',
+        'subjects_with_issues': 'sum',
+        'study': 'nunique',
+        'region': 'first',
+    }
+
+    country_df = site_df.groupby('country').agg(country_agg)
+    country_df.columns = ['_'.join(col).strip('_') if isinstance(col, tuple) else col
+                          for col in country_df.columns]
+    country_df = country_df.reset_index()
+
+    # Rename columns
+    country_df = country_df.rename(columns={
+        'site_id_count': 'site_count',
+        'subject_count_sum': 'subject_count',
+        'avg_dqi_score_mean': 'avg_dqi_score',
+        'avg_dqi_score_max': 'max_dqi_score',
+        'avg_dqi_score_std': 'std_dqi_score',
+        'high_risk_count_sum': 'high_risk_subjects',
+        'medium_risk_count_sum': 'medium_risk_subjects',
+        'subjects_with_issues_sum': 'subjects_with_issues',
+        'study_nunique': 'study_count',
+        'region_first': 'region',
+    })
+
+    # Fill NaN
+    country_df['std_dqi_score'] = country_df['std_dqi_score'].fillna(0)
+
+    # Derived metrics
+    country_df['high_risk_rate'] = country_df['high_risk_subjects'] / country_df['subject_count']
+    country_df['issue_rate'] = country_df['subjects_with_issues'] / country_df['subject_count']
+
+    # Count high-risk sites per country
+    high_risk_sites = site_df[site_df['site_risk_category'] == 'High'].groupby('country').size()
+    country_df['high_risk_sites'] = country_df['country'].map(high_risk_sites).fillna(0).astype(int)
+    country_df['high_risk_site_rate'] = country_df['high_risk_sites'] / country_df['site_count']
+
+    # Assign country risk category
+    country_df['country_risk_category'] = 'Low'
+    country_df.loc[country_df['avg_dqi_score'] >= country_df['avg_dqi_score'].median(), 'country_risk_category'] = 'Medium'
+    country_df.loc[country_df['avg_dqi_score'] >= country_df['avg_dqi_score'].quantile(0.80), 'country_risk_category'] = 'High'
+
+    return region_df, country_df
+
+
 # ============================================================================
 # VALIDATION FUNCTIONS
 # ============================================================================
@@ -589,6 +814,60 @@ def calculate_dqi():
     print(top_sites.to_string(index=False))
 
     # -------------------------------------------------------------------------
+    # Step 4b: Aggregate to Study Level (NEW - addresses Issue 2)
+    # -------------------------------------------------------------------------
+    print("\n" + "=" * 70)
+    print("STEP 4b: AGGREGATE TO STUDY LEVEL")
+    print("=" * 70)
+
+    study_df, study_thresholds = aggregate_to_study_level(site_df)
+
+    print(f"\nAggregated {len(site_df):,} sites to {len(study_df):,} studies")
+
+    print("\nStudy Thresholds:")
+    print(f"  High:   avg_dqi >= {study_thresholds['high']:.4f} OR high_risk_rate > 15% OR high_risk_site_rate > 20%")
+    print(f"  Medium: avg_dqi >= {study_thresholds['medium']:.4f} OR high_risk_rate > 5%")
+
+    study_risk_counts = study_df['study_risk_category'].value_counts()
+    print("\nStudy Risk Distribution:")
+    for cat in ['High', 'Medium', 'Low']:
+        count = study_risk_counts.get(cat, 0)
+        pct = count / len(study_df) * 100
+        print(f"  {cat:<8} {count:>4} studies ({pct:>5.1f}%)")
+
+    print("\nTop 5 Highest Risk Studies:")
+    top_studies = study_df.nlargest(5, 'avg_dqi_score')[
+        ['study', 'site_count', 'subject_count', 'avg_dqi_score',
+         'high_risk_subjects', 'study_risk_category']
+    ]
+    print(top_studies.to_string(index=False))
+
+    # -------------------------------------------------------------------------
+    # Step 4c: Aggregate to Region Level (NEW - addresses Issue 2)
+    # -------------------------------------------------------------------------
+    print("\n" + "=" * 70)
+    print("STEP 4c: AGGREGATE TO REGION/COUNTRY LEVEL")
+    print("=" * 70)
+
+    region_df, country_df = aggregate_to_region_level(site_df)
+
+    print(f"\nAggregated to {len(region_df)} regions and {len(country_df)} countries")
+
+    print("\nRegion Summary:")
+    for _, row in region_df.iterrows():
+        print(f"  {row['region']}: {int(row['site_count'])} sites, {int(row['subject_count']):,} subjects, "
+              f"DQI={row['avg_dqi_score']:.4f}, High-risk={row['high_risk_rate']*100:.1f}%")
+
+    print("\nTop 10 Highest Risk Countries:")
+    top_countries = country_df.nlargest(10, 'avg_dqi_score')[
+        ['country', 'region', 'site_count', 'subject_count', 'avg_dqi_score',
+         'high_risk_rate', 'country_risk_category']
+    ]
+    top_countries['high_risk_rate'] = top_countries['high_risk_rate'] * 100
+    top_countries = top_countries.rename(columns={'high_risk_rate': 'high_risk_%'})
+    print(top_countries.to_string(index=False))
+
+    # -------------------------------------------------------------------------
     # Step 5: Validation
     # -------------------------------------------------------------------------
     print("\n" + "=" * 70)
@@ -634,6 +913,24 @@ def calculate_dqi():
     print(f"\nSaved: {site_path}")
     print(f"  {len(site_df):,} sites with aggregated DQI")
 
+    # Save study data (NEW - addresses Issue 2)
+    study_path = OUTPUT_DIR / "master_study_with_dqi.csv"
+    study_df.to_csv(study_path, index=False)
+    print(f"\nSaved: {study_path}")
+    print(f"  {len(study_df)} studies with aggregated DQI")
+
+    # Save region data (NEW - addresses Issue 2)
+    region_path = OUTPUT_DIR / "master_region_with_dqi.csv"
+    region_df.to_csv(region_path, index=False)
+    print(f"\nSaved: {region_path}")
+    print(f"  {len(region_df)} regions with aggregated DQI")
+
+    # Save country data (NEW - addresses Issue 2)
+    country_path = OUTPUT_DIR / "master_country_with_dqi.csv"
+    country_df.to_csv(country_path, index=False)
+    print(f"\nSaved: {country_path}")
+    print(f"  {len(country_df)} countries with aggregated DQI")
+
     # Save weights
     weights_data = []
     for feature, config in FEATURE_WEIGHTS.items():
@@ -659,15 +956,36 @@ def calculate_dqi():
         f.write(f"Total Subjects: {len(df):,}\n")
         f.write(f"Total Sites: {len(site_df):,}\n")
         f.write(f"Studies: {df['study'].nunique()}\n")
+        f.write(f"Regions: {len(region_df)}\n")
+        f.write(f"Countries: {len(country_df)}\n")
         f.write(f"Subjects with Issues: {df['has_issues'].sum():,} ({df['has_issues'].mean():.1%})\n\n")
 
         f.write("RISK DISTRIBUTION\n")
         f.write("-" * 40 + "\n")
+        f.write("Subject Level:\n")
         for cat in ['High', 'Medium', 'Low']:
             count = risk_counts.get(cat, 0)
             f.write(f"  {cat}: {count:,} ({count/len(df)*100:.1f}%)\n")
+
+        f.write("\nSite Level:\n")
+        for cat in ['High', 'Medium', 'Low']:
+            count = site_risk_counts.get(cat, 0)
+            f.write(f"  {cat}: {count} ({count/len(site_df)*100:.1f}%)\n")
+
+        f.write("\nStudy Level:\n")
+        for cat in ['High', 'Medium', 'Low']:
+            count = study_risk_counts.get(cat, 0)
+            f.write(f"  {cat}: {count} ({count/len(study_df)*100:.1f}%)\n")
+
         f.write(f"\nCapture Rate: {validations['capture_rate']['rate']:.1%}\n")
         f.write(f"SAE Capture: {validations['sae_capture']['rate']:.0%}\n\n")
+
+        f.write("REGIONAL SUMMARY\n")
+        f.write("-" * 40 + "\n")
+        for _, row in region_df.iterrows():
+            f.write(f"{row['region']}:\n")
+            f.write(f"  Sites: {int(row['site_count'])} | Subjects: {int(row['subject_count']):,}\n")
+            f.write(f"  DQI: {row['avg_dqi_score']:.4f} | High-risk rate: {row['high_risk_rate']*100:.1f}%\n\n")
 
         f.write("METHODOLOGY\n")
         f.write("-" * 40 + "\n")
