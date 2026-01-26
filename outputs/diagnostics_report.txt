@@ -21,7 +21,7 @@ DETAILED FINDINGS
 ======================================================================
 
 --- ACTUAL FILE ERRORS (need attention) ---
-✅ No actual file errors!
+No actual file errors!
 
 --- EMPTY FILES (legitimate - no issues of this type) ---
    visit_tracker: 8 studies have no data (OK)
@@ -33,17 +33,17 @@ DETAILED FINDINGS
    edrr: 8 studies have no data (OK)
 
 --- ID FORMAT ISSUES ---
-✅ No ID format issues - all subjects match directly!
+No ID format issues - all subjects match directly!
 
 --- OUTLIERS (handled by pipeline's cap_outliers) ---
    Total outliers in raw data: 12,545
-   ✅ These are capped by the pipeline during processing
+   These are capped by the pipeline during processing
 
 ======================================================================
 STATUS & RECOMMENDATIONS
 ======================================================================
 
-✅ NO CRITICAL ISSUES - Pipeline is ready to run!
+NO CRITICAL ISSUES - Pipeline is ready to run!
 
 The following are handled automatically by the pipeline:
   • Multi-sheet files (SAE, Missing Pages) - Combined automatically

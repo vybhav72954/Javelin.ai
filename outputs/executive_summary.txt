@@ -21,13 +21,13 @@ Site Level:
 
 REGIONAL ANALYSIS
 -----------------
-  ⚠️ ASIA: 13 countries, 689 sites, 8,504 subjects
+     ASIA: 13 countries, 689 sites, 8,504 subjects
      DQI: 0.067 | High-risk rate: 9.5% | vs Portfolio: +33.7%
-  ⚠️ EMEA: 49 countries, 1478 sites, 27,514 subjects
+     EMEA: 49 countries, 1478 sites, 27,514 subjects
      DQI: 0.050 | High-risk rate: 8.7% | vs Portfolio: -0.1%
-  ⚠️ AMERICA: 7 countries, 1232 sites, 21,937 subjects
+     AMERICA: 7 countries, 1232 sites, 21,937 subjects
      DQI: 0.042 | High-risk rate: 9.8% | vs Portfolio: -17.2%
-  ✓ Unknown: 3 countries, 25 sites, 42 subjects
+     Unknown: 3 countries, 25 sites, 42 subjects
      DQI: 0.012 | High-risk rate: 2.4% | vs Portfolio: -76.6%
 
 COUNTRIES REQUIRING ATTENTION
