@@ -68,6 +68,9 @@ else:
 # Input files from previous steps
 SITE_DQI_PATH = OUTPUT_DIR / "master_site_with_dqi.csv"
 SUBJECT_DQI_PATH = OUTPUT_DIR / "master_subject_with_dqi.csv"
+STUDY_DQI_PATH = OUTPUT_DIR / "master_study_with_dqi.csv"
+REGION_DQI_PATH = OUTPUT_DIR / "master_region_with_dqi.csv"
+COUNTRY_DQI_PATH = OUTPUT_DIR / "master_country_with_dqi.csv"
 ANOMALIES_PATH = OUTPUT_DIR / "anomalies_detected.csv"
 CLUSTERS_PATH = OUTPUT_DIR / "site_clusters.csv"
 DQI_WEIGHTS_PATH = OUTPUT_DIR / "dqi_weights.csv"
@@ -163,8 +166,8 @@ ROOT_CAUSE_TEMPLATES = {
 # DATA LOADING
 # ============================================================================
 
-def load_data() -> Tuple[pd.DataFrame, pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame]]:
-    """Load all required data files."""
+def load_data() -> Tuple[pd.DataFrame, pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame], Optional[pd.DataFrame], Optional[pd.DataFrame], Optional[pd.DataFrame]]:
+    """Load all required data files including pre-computed aggregations."""
     print("  Loading site data...")
     site_df = pd.read_csv(SITE_DQI_PATH)
     print(f"    Loaded {len(site_df):,} sites")
@@ -185,7 +188,24 @@ def load_data() -> Tuple[pd.DataFrame, pd.DataFrame, Optional[pd.DataFrame], Opt
         cluster_df = pd.read_csv(CLUSTERS_PATH)
         print(f"    Loaded cluster assignments for {len(cluster_df):,} sites")
 
-    return site_df, subject_df, anomaly_df, cluster_df
+    # Load pre-computed aggregated data for context
+    study_df = None
+    region_df = None
+    country_df = None
+
+    if STUDY_DQI_PATH.exists():
+        study_df = pd.read_csv(STUDY_DQI_PATH)
+        print(f"    Loaded {len(study_df)} studies (pre-computed)")
+
+    if REGION_DQI_PATH.exists():
+        region_df = pd.read_csv(REGION_DQI_PATH)
+        print(f"    Loaded {len(region_df)} regions (pre-computed)")
+
+    if COUNTRY_DQI_PATH.exists():
+        country_df = pd.read_csv(COUNTRY_DQI_PATH)
+        print(f"    Loaded {len(country_df)} countries (pre-computed)")
+
+    return site_df, subject_df, anomaly_df, cluster_df, study_df, region_df, country_df
 
 
 # ============================================================================
@@ -268,9 +288,14 @@ def analyze_issue_cooccurrence(site_df: pd.DataFrame) -> Tuple[pd.DataFrame, Dic
 # FACTOR ATTRIBUTION ANALYSIS
 # ============================================================================
 
-def analyze_factor_attribution(site_df: pd.DataFrame) -> Dict:
+def analyze_factor_attribution(site_df: pd.DataFrame,
+                               study_df: pd.DataFrame = None,
+                               region_df: pd.DataFrame = None,
+                               country_df: pd.DataFrame = None) -> Dict:
     """
     Identify what factors (region, study, volume, etc.) predict issues.
+
+    Enhanced to use pre-computed study/region/country data when available.
 
     Returns:
         Dictionary of factor importance and correlations.
@@ -280,6 +305,7 @@ def analyze_factor_attribution(site_df: pd.DataFrame) -> Dict:
     results = {
         'regional_factors':{},
         'study_factors':{},
+        'country_factors':{},
         'volume_factors':{},
         'factor_importance':[]
     }
@@ -289,8 +315,23 @@ def analyze_factor_attribution(site_df: pd.DataFrame) -> Dict:
         print("    Warning: avg_dqi_score not found")
         return results
 
-    # Regional analysis
-    if 'region' in site_df.columns:
+    overall_mean = site_df['avg_dqi_score'].mean()
+
+    # Regional analysis - use pre-computed if available
+    if region_df is not None and len(region_df) > 0:
+        print("    Using pre-computed region data...")
+        for _, row in region_df.iterrows():
+            region = row['region']
+            region_mean = row['avg_dqi_score']
+            if region_mean > overall_mean * 1.5:
+                results['regional_factors'][region] = {
+                    'avg_dqi':float(region_mean),
+                    'vs_overall':f"{(region_mean / overall_mean - 1) * 100:.1f}% higher than average",
+                    'site_count':int(row['site_count']),
+                    'high_risk_rate':f"{row['high_risk_rate'] * 100:.1f}%",
+                    'risk_category':row['region_risk_category']
+                }
+    elif 'region' in site_df.columns:
         regional_stats = site_df.groupby('region').agg({
             'avg_dqi_score':['mean', 'std', 'count'],
             'high_risk_count':'sum',
@@ -301,8 +342,6 @@ def analyze_factor_attribution(site_df: pd.DataFrame) -> Dict:
         regional_stats['high_risk_rate'] = (
                     regional_stats['high_risk_sites'] / regional_stats['site_count'] * 100).round(1)
 
-        # Find regions with significantly higher DQI
-        overall_mean = site_df['avg_dqi_score'].mean()
         for region in regional_stats.index:
             region_mean = regional_stats.loc[region, 'avg_dqi']
             if region_mean > overall_mean * 1.5:
@@ -313,8 +352,22 @@ def analyze_factor_attribution(site_df: pd.DataFrame) -> Dict:
                     'high_risk_rate':f"{regional_stats.loc[region, 'high_risk_rate']:.1f}%"
                 }
 
-    # Study analysis
-    if 'study' in site_df.columns:
+    # Study analysis - use pre-computed if available
+    if study_df is not None and len(study_df) > 0:
+        print("    Using pre-computed study data...")
+        for _, row in study_df.iterrows():
+            study = row['study']
+            study_mean = row['avg_dqi_score']
+            if study_mean > overall_mean * 2:  # More than 2x average
+                results['study_factors'][study] = {
+                    'avg_dqi':float(study_mean),
+                    'vs_overall':f"{(study_mean / overall_mean - 1) * 100:.1f}% higher than average",
+                    'site_count':int(row['site_count']),
+                    'high_risk_rate':f"{row['high_risk_rate'] * 100:.1f}%",
+                    'risk_category':row['study_risk_category'],
+                    'classification':'STUDY_WIDE_ISSUE'
+                }
+    elif 'study' in site_df.columns:
         study_stats = site_df.groupby('study').agg({
             'avg_dqi_score':['mean', 'std'],
             'high_risk_count':'sum',
@@ -326,11 +379,9 @@ def analyze_factor_attribution(site_df: pd.DataFrame) -> Dict:
         study_stats['site_count'] = site_counts
         study_stats['high_risk_rate'] = (study_stats['high_risk_sites'] / study_stats['site_count'] * 100).round(1)
 
-        # Find problematic studies
-        overall_mean = site_df['avg_dqi_score'].mean()
         for study in study_stats.index:
             study_mean = study_stats.loc[study, 'avg_dqi']
-            if study_mean > overall_mean * 2:  # More than 2x average
+            if study_mean > overall_mean * 2:
                 results['study_factors'][study] = {
                     'avg_dqi':float(study_mean),
                     'vs_overall':f"{(study_mean / overall_mean - 1) * 100:.1f}% higher than average",
@@ -339,13 +390,27 @@ def analyze_factor_attribution(site_df: pd.DataFrame) -> Dict:
                     'classification':'STUDY_WIDE_ISSUE'
                 }
 
+    # Country analysis - use pre-computed if available
+    if country_df is not None and len(country_df) > 0:
+        print("    Using pre-computed country data...")
+        for _, row in country_df.iterrows():
+            country = row['country']
+            country_mean = row['avg_dqi_score']
+            if country_mean > overall_mean * 1.8 and row['site_count'] >= 3:  # At least 3 sites
+                results['country_factors'][country] = {
+                    'avg_dqi':float(country_mean),
+                    'vs_overall':f"{(country_mean / overall_mean - 1) * 100:.1f}% higher than average",
+                    'site_count':int(row['site_count']),
+                    'region':row['region'],
+                    'high_risk_rate':f"{row['high_risk_rate'] * 100:.1f}%",
+                    'risk_category':row['country_risk_category']
+                }
+
     # Volume analysis - correlation between subject count and issues
     if 'subject_count' in site_df.columns:
-        # Normalize issues by subject count to see if it's volume-driven
         site_df_copy = site_df.copy()
         site_df_copy['issues_per_subject'] = site_df_copy['avg_dqi_score']
 
-        # Correlation between volume and DQI
         corr = site_df['subject_count'].corr(site_df['avg_dqi_score'])
         results['volume_factors']['volume_dqi_correlation'] = round(corr, 3)
 
@@ -359,10 +424,10 @@ def analyze_factor_attribution(site_df: pd.DataFrame) -> Dict:
 
     # Calculate factor importance using variance explained
     factors = []
+    total_variance = site_df['avg_dqi_score'].var()
 
     if 'region' in site_df.columns:
         region_variance = site_df.groupby('region')['avg_dqi_score'].mean().var()
-        total_variance = site_df['avg_dqi_score'].var()
         factors.append({
             'factor':'Region',
             'variance_explained':round(region_variance / total_variance * 100, 1) if total_variance > 0 else 0
@@ -370,7 +435,6 @@ def analyze_factor_attribution(site_df: pd.DataFrame) -> Dict:
 
     if 'study' in site_df.columns:
         study_variance = site_df.groupby('study')['avg_dqi_score'].mean().var()
-        total_variance = site_df['avg_dqi_score'].var()
         factors.append({
             'factor':'Study',
             'variance_explained':round(study_variance / total_variance * 100, 1) if total_variance > 0 else 0
@@ -882,11 +946,27 @@ def run_root_cause_analysis(top_sites: int = TOP_SITES_TO_ANALYZE) -> bool:
     # =========================================================================
     print("[1/6] Loading data...")
     try:
-        site_df, subject_df, anomaly_df, cluster_df = load_data()
+        site_df, subject_df, anomaly_df, cluster_df, study_df, region_df, country_df = load_data()
     except FileNotFoundError as e:
         print(f"  Error: {e}")
         print("  Make sure to run previous pipeline steps first.")
         return False
+
+    # Enrich site data with hierarchical risk context
+    if study_df is not None:
+        study_risk_map = study_df.set_index('study')['study_risk_category'].to_dict()
+        site_df['study_risk_category'] = site_df['study'].map(study_risk_map).fillna('Unknown')
+        print(f"  Enriched with study risk categories")
+
+    if country_df is not None:
+        country_risk_map = country_df.set_index('country')['country_risk_category'].to_dict()
+        site_df['country_risk_category'] = site_df['country'].map(country_risk_map).fillna('Unknown')
+        print(f"  Enriched with country risk categories")
+
+    if region_df is not None:
+        region_risk_map = region_df.set_index('region')['region_risk_category'].to_dict()
+        site_df['region_risk_category'] = site_df['region'].map(region_risk_map).fillna('Unknown')
+        print(f"  Enriched with region risk categories")
 
     # =========================================================================
     # Step 2: Issue Co-occurrence Analysis
@@ -898,7 +978,7 @@ def run_root_cause_analysis(top_sites: int = TOP_SITES_TO_ANALYZE) -> bool:
     # Step 3: Factor Attribution
     # =========================================================================
     print("\n[3/6] Analyzing factor attribution...")
-    factor_results = analyze_factor_attribution(site_df)
+    factor_results = analyze_factor_attribution(site_df, study_df, region_df, country_df)
 
     # =========================================================================
     # Step 4: DQI Contribution Analysis

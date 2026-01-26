@@ -1,6 +1,6 @@
 # JAVELIN.AI - Anomaly Detection Report
 
-*Generated: 2026-01-26 03:26:57*
+*Generated: 2026-01-26 03:42:39*
 
 ---
 
@@ -300,27 +300,27 @@ Based on the anomaly analysis, key actions:
 
 ### CRITICAL Priority
 
-- Investigate elevated lab issues count at this site
-- Investigate elevated sae pending count at this site
+- Investigate elevated edrr open issues at this site
 - Investigate elevated max days outstanding at this site
-- Investigate elevated max days page missing at this site
+- Investigate elevated high risk count at this site
+- Investigate elevated subject count at this site
 - Cross-program site review - consistent quality issues across multiple studies
 
 ### HIGH Priority
 
-- Critical - single site driving majority of Study_7 data quality issues
-- Investigate elevated lab issues count at this site
+- Prioritize NZL for regional training and site support
+- Investigate elevated edrr open issues at this site
+- Regional strategy review for ASIA
+- Critical - single site driving majority of Study_18 data quality issues
 - Site-wide quality intervention needed - majority of subjects have issues
-- Investigate elevated sae pending count at this site
-- Investigate elevated max days outstanding at this site
 
 ### MEDIUM Priority
 
-- Check if SAE adverse event terms are being routed to coding team
-- Investigate elevated lab issues count at this site
-- Verify all data sources are being captured for this site
-- Investigate elevated sae pending count at this site
+- Focus intervention specifically on inactivated forms - appears to be root cause
+- Investigate elevated edrr open issues at this site
+- Regional strategy review for Unknown
 - Investigate elevated max days outstanding at this site
+- Investigate elevated high risk count at this site
 
 
 ---

@@ -74,6 +74,9 @@ OUTPUT_DIR = PROJECT_ROOT / "outputs"
 # Input files from previous steps
 SITE_DQI_PATH = OUTPUT_DIR / "master_site_with_dqi.csv"
 SUBJECT_DQI_PATH = OUTPUT_DIR / "master_subject_with_dqi.csv"
+STUDY_DQI_PATH = OUTPUT_DIR / "master_study_with_dqi.csv"
+REGION_DQI_PATH = OUTPUT_DIR / "master_region_with_dqi.csv"
+COUNTRY_DQI_PATH = OUTPUT_DIR / "master_country_with_dqi.csv"
 ANOMALIES_PATH = OUTPUT_DIR / "anomalies_detected.csv"
 
 # Clustering Configuration
@@ -122,8 +125,8 @@ CLUSTER_NAMING_RULES = {
 # DATA PREPARATION
 # ============================================================================
 
-def load_data() -> Tuple[pd.DataFrame, pd.DataFrame, Optional[pd.DataFrame]]:
-    """Load all required data files."""
+def load_data() -> Tuple[pd.DataFrame, pd.DataFrame, Optional[pd.DataFrame], Optional[pd.DataFrame], Optional[pd.DataFrame], Optional[pd.DataFrame]]:
+    """Load all required data files including pre-computed aggregations."""
     print("  Loading site data...")
     site_df = pd.read_csv(SITE_DQI_PATH)
     print(f"    Loaded {len(site_df):,} sites")
@@ -138,7 +141,24 @@ def load_data() -> Tuple[pd.DataFrame, pd.DataFrame, Optional[pd.DataFrame]]:
         anomaly_df = pd.read_csv(ANOMALIES_PATH)
         print(f"    Loaded {len(anomaly_df):,} anomalies")
 
-    return site_df, subject_df, anomaly_df
+    # Load pre-computed aggregated data for context
+    study_df = None
+    region_df = None
+    country_df = None
+
+    if STUDY_DQI_PATH.exists():
+        study_df = pd.read_csv(STUDY_DQI_PATH)
+        print(f"    Loaded {len(study_df)} studies (pre-computed)")
+
+    if REGION_DQI_PATH.exists():
+        region_df = pd.read_csv(REGION_DQI_PATH)
+        print(f"    Loaded {len(region_df)} regions (pre-computed)")
+
+    if COUNTRY_DQI_PATH.exists():
+        country_df = pd.read_csv(COUNTRY_DQI_PATH)
+        print(f"    Loaded {len(country_df)} countries (pre-computed)")
+
+    return site_df, subject_df, anomaly_df, study_df, region_df, country_df
 
 
 def prepare_features(site_df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, List[str]]:
@@ -533,12 +553,16 @@ def analyze_cluster_patterns(feature_df: pd.DataFrame,
         'feature_importance':{},
         'anomaly_concentration':{},
         'regional_patterns':{},
-        'study_patterns':{}
+        'country_patterns':{},
+        'study_patterns':{},
+        'risk_context':{}
     }
 
     # Feature importance (which features differ most between clusters)
     feature_cols = [c for c in df.columns if c not in ['study', 'site_id', 'country', 'region',
-                                                       'subject_count', 'site_risk_category', 'cluster']]
+                                                       'subject_count', 'site_risk_category', 'cluster',
+                                                       'study_risk_category', 'country_risk_category',
+                                                       'region_risk_category']]
 
     feature_variance = {}
     for col in feature_cols:
@@ -558,6 +582,13 @@ def analyze_cluster_patterns(feature_df: pd.DataFrame,
             region_pcts = (cluster_data['region'].value_counts(normalize=True) * 100).to_dict()
             patterns['regional_patterns'][f'cluster_{cluster_id}'] = region_pcts
 
+    # Country patterns - which countries are most concentrated in each cluster
+    if 'country' in df.columns:
+        for cluster_id in sorted(df['cluster'].unique()):
+            cluster_data = df[df['cluster']==cluster_id]
+            top_countries = cluster_data['country'].value_counts().head(5).to_dict()
+            patterns['country_patterns'][f'cluster_{cluster_id}'] = top_countries
+
     # Study patterns - which studies are concentrated in which clusters
     if 'study' in df.columns:
         study_cluster = df.groupby(['study', 'cluster']).size().unstack(fill_value=0)
@@ -569,6 +600,16 @@ def analyze_cluster_patterns(feature_df: pd.DataFrame,
                     'dominant_cluster':int(dominant_cluster),
                     'concentration':f'{dominant_pct:.1f}%'
                 }
+
+    # Risk context patterns - how clusters align with hierarchical risk categories
+    for risk_col in ['study_risk_category', 'country_risk_category', 'region_risk_category']:
+        if risk_col in df.columns:
+            risk_type = risk_col.replace('_risk_category', '')
+            patterns['risk_context'][risk_type] = {}
+            for cluster_id in sorted(df['cluster'].unique()):
+                cluster_data = df[df['cluster']==cluster_id]
+                risk_dist = (cluster_data[risk_col].value_counts(normalize=True) * 100).to_dict()
+                patterns['risk_context'][risk_type][f'cluster_{cluster_id}'] = risk_dist
 
     # Anomaly concentration
     if anomaly_df is not None and len(anomaly_df) > 0:
@@ -909,7 +950,7 @@ def generate_cluster_report(profiles_df: pd.DataFrame,
 # ============================================================================
 
 def run_site_clustering(n_clusters: Optional[int] = None,
-                        method: str = 'kmeans',
+                        method: str = 'gmm',
                         auto_optimal: bool = True) -> bool:
     """
     Main function to run site clustering analysis.
@@ -917,6 +958,8 @@ def run_site_clustering(n_clusters: Optional[int] = None,
     Args:
         n_clusters: Number of clusters (None = auto-detect)
         method: Clustering method ('kmeans', 'hierarchical', 'dbscan', 'gmm')
+                GMM is recommended for clinical trial data as it handles
+                overlapping clusters and provides soft assignments.
         auto_optimal: If True, find optimal cluster count
 
     Returns:
@@ -932,11 +975,27 @@ def run_site_clustering(n_clusters: Optional[int] = None,
     # =========================================================================
     print("[1/5] Loading data...")
     try:
-        site_df, subject_df, anomaly_df = load_data()
+        site_df, subject_df, anomaly_df, study_df, region_df, country_df = load_data()
     except FileNotFoundError as e:
         print(f"  Error: {e}")
         print("  Make sure to run previous pipeline steps first.")
         return False
+
+    # Enrich site data with hierarchical risk context
+    if study_df is not None:
+        study_risk_map = study_df.set_index('study')['study_risk_category'].to_dict()
+        site_df['study_risk_category'] = site_df['study'].map(study_risk_map).fillna('Unknown')
+        print(f"  Enriched with study risk categories")
+
+    if country_df is not None:
+        country_risk_map = country_df.set_index('country')['country_risk_category'].to_dict()
+        site_df['country_risk_category'] = site_df['country'].map(country_risk_map).fillna('Unknown')
+        print(f"  Enriched with country risk categories")
+
+    if region_df is not None:
+        region_risk_map = region_df.set_index('region')['region_risk_category'].to_dict()
+        site_df['region_risk_category'] = site_df['region'].map(region_risk_map).fillna('Unknown')
+        print(f"  Enriched with region risk categories")
 
     # =========================================================================
     # Step 2: Prepare Features
@@ -1126,7 +1185,7 @@ if __name__=="__main__":
     import sys
 
     n_clusters = None
-    method = 'kmeans'
+    method = 'gmm'  # GMM is default - better for clinical trial data
     auto_optimal = True
 
     # Parse arguments
@@ -1159,17 +1218,17 @@ Usage:
 
 Options:
     --clusters N, -k N    Number of clusters (default: auto-detect)
-    --method METHOD, -m   Clustering method (default: kmeans)
+    --method METHOD, -m   Clustering method (default: gmm)
                           Options: kmeans, hierarchical, dbscan, gmm
+                          GMM recommended for clinical data (soft assignments)
     --no-auto             Don't auto-detect optimal cluster count
     --help, -h            Show this help message
 
 Examples:
-    python 08_site_clustering.py
-    python 08_site_clustering.py --clusters 8
-    python 08_site_clustering.py --method hierarchical
-    python 08_site_clustering.py --method dbscan
-    python 08_site_clustering.py -k 6 -m gmm
+    python 08_site_clustering.py                    # GMM with auto clusters
+    python 08_site_clustering.py --clusters 8       # GMM with 8 clusters
+    python 08_site_clustering.py --method kmeans    # K-Means instead
+    python 08_site_clustering.py -k 6 -m gmm        # Explicit GMM with 6 clusters
 """)
         sys.exit(0)
 
