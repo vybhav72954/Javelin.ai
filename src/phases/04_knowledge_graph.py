@@ -51,19 +51,18 @@ if str(_SRC_DIR) not in sys.path:
 # ============================================================================
 
 try:
-    from config import PROJECT_ROOT, OUTPUT_DIR
+    from config import PROJECT_ROOT, OUTPUT_DIR, PHASE_DIRS
     _USING_CONFIG = True
 except ImportError:
     _USING_CONFIG = False
     PROJECT_ROOT = _SRC_DIR.parent
-    OUTPUT_DIR = PROJECT_ROOT / "outputs"
+    PHASE_DIRS = {'phase_03': OUTPUT_DIR / "phase_03", 'phase_04': OUTPUT_DIR / "phase_04"}
 
-SUBJECT_PATH = OUTPUT_DIR / "master_subject_with_dqi.csv"
-SITE_PATH = OUTPUT_DIR / "master_site_with_dqi.csv"
-STUDY_PATH = OUTPUT_DIR / "master_study_with_dqi.csv"
-REGION_PATH = OUTPUT_DIR / "master_region_with_dqi.csv"
-COUNTRY_PATH = OUTPUT_DIR / "master_country_with_dqi.csv"
-
+SUBJECT_PATH = PHASE_DIRS['phase_03'] / "master_subject_with_dqi.csv"
+SITE_PATH = PHASE_DIRS['phase_03'] / "master_site_with_dqi.csv"
+STUDY_PATH = PHASE_DIRS['phase_03'] / "master_study_with_dqi.csv"
+REGION_PATH = PHASE_DIRS['phase_03'] / "master_region_with_dqi.csv"
+COUNTRY_PATH = PHASE_DIRS['phase_03'] / "master_country_with_dqi.csv"
 
 # ============================================================================
 # KNOWLEDGE GRAPH BUILDER
@@ -376,19 +375,21 @@ def build_knowledge_graph(args):
         print("STEP 4: EXPORT FULL KNOWLEDGE GRAPH")
         print("=" * 70)
 
-        graphml_path = OUTPUT_DIR / "knowledge_graph.graphml"
+        PHASE_DIRS['phase_04'].mkdir(parents=True, exist_ok=True)
+
+        graphml_path = PHASE_DIRS['phase_04']/ "knowledge_graph.graphml"
         print(f"\nExporting GraphML...")
         kg.export_graphml(graphml_path)
         print(f"  [OK] Saved: {graphml_path}")
 
-        nodes_path = OUTPUT_DIR / "knowledge_graph_nodes.csv"
-        edges_path = OUTPUT_DIR / "knowledge_graph_edges.csv"
+        nodes_path = PHASE_DIRS['phase_04']/ "knowledge_graph_nodes.csv"
+        edges_path = PHASE_DIRS['phase_04']/ "knowledge_graph_edges.csv"
         print(f"\nExporting Neo4j CSVs...")
         kg.export_neo4j_csv(nodes_path, edges_path)
         print(f"  [OK] Saved: {nodes_path}")
         print(f"  [OK] Saved: {edges_path}")
 
-        summary_path = OUTPUT_DIR / "knowledge_graph_summary.json"
+        summary_path = PHASE_DIRS['phase_04']/ "knowledge_graph_summary.json"
         print(f"\nExporting summary JSON...")
         kg.export_summary_json(summary_path)
         print(f"  [OK] Saved: {summary_path}")
@@ -410,21 +411,21 @@ def build_knowledge_graph(args):
             if subgraph_type == 'high_risk':
                 print(f"\nCreating high-risk subgraph...")
                 subgraph = kg.get_high_risk_subgraph()
-                filepath = OUTPUT_DIR / "subgraph_high_risk.graphml"
+                filepath = PHASE_DIRS['phase_04']/ "subgraph_high_risk.graphml"
                 kg.export_subgraph_graphml(subgraph, filepath)
                 print(f"  [OK] Saved: {filepath}")
                 print(f"  Nodes: {subgraph.number_of_nodes():,}, Edges: {subgraph.number_of_edges():,}")
             elif subgraph_type == 'top_studies':
                 print(f"\nCreating top-5 studies subgraph...")
                 subgraph = kg.get_top_studies_subgraph(top_n=5)
-                filepath = OUTPUT_DIR / "subgraph_top_studies.graphml"
+                filepath = PHASE_DIRS['phase_04']/ "subgraph_top_studies.graphml"
                 kg.export_subgraph_graphml(subgraph, filepath)
                 print(f"  [OK] Saved: {filepath}")
                 print(f"  Nodes: {subgraph.number_of_nodes():,}, Edges: {subgraph.number_of_edges():,}")
             elif subgraph_type == 'sample':
                 print(f"\nCreating random sample subgraph (1000 subjects)...")
                 subgraph = kg.get_sample_subgraph(sample_size=1000)
-                filepath = OUTPUT_DIR / "subgraph_sample.graphml"
+                filepath = PHASE_DIRS['phase_04']/ "subgraph_sample.graphml"
                 kg.export_subgraph_graphml(subgraph, filepath)
                 print(f"  [OK] Saved: {filepath}")
                 print(f"  Nodes: {subgraph.number_of_nodes():,}, Edges: {subgraph.number_of_edges():,}")
@@ -434,7 +435,7 @@ def build_knowledge_graph(args):
         print("\n" + "=" * 70)
         print("STEP 6: GENERATE REPORT")
         print("=" * 70)
-        report_path = OUTPUT_DIR / "knowledge_graph_report.txt"
+        report_path = PHASE_DIRS['phase_04']/ "knowledge_graph_report.txt"
         with open(report_path, 'w', encoding='utf-8') as f:
             f.write("JAVELIN.AI - KNOWLEDGE GRAPH REPORT\n")
             f.write("=" * 60 + "\n\n")
