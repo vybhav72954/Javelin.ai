@@ -1,19 +1,27 @@
 """
 Javelin.AI - Phase 02: Build Master Table
-==========================================
-This script builds unified master tables from all study data.
+==============================================================
+
+Builds unified master tables from all study data by merging multiple data sources
+into subject-level, site-level, and study-level tables.
 
 Prerequisites:
     - Run 01_data_discovery.py first
-    - Check outputs/file_mapping.csv exists
+    - outputs/phase01/file_mapping.csv must exist
 
 Usage:
     python src/phases/02_build_master_table.py
 
 Output:
-    - outputs/master_subject.csv  : One row per subject with all metrics
-    - outputs/master_site.csv     : Aggregated site-level metrics
-    - outputs/master_study.csv    : Aggregated study-level metrics
+    - outputs/phase02/master_subject.csv    # One row per subject with all metrics
+    - outputs/phase02/master_site.csv       # Aggregated site-level metrics
+    - outputs/phase02/master_study.csv      # Aggregated study-level metrics
+
+Features:
+    - Merges data from 9 different source types
+    - Handles missing values and outliers
+    - Creates subject-site lookup table
+    - Aggregates metrics at multiple levels
 """
 
 import os

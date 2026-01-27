@@ -1,43 +1,47 @@
 """
 Javelin.AI - Phase 08: Site Clustering Analysis
-================================================
+==============================================================
 
 Clusters clinical trial sites based on data quality patterns to identify
 site archetypes and enable targeted intervention strategies.
 
-CLUSTERING APPROACH:
---------------------
-    Default: Gaussian Mixture Models (GMM)
-    - Soft clustering (probabilistic assignment)
-    - Handles non-spherical clusters
-    - Provides uncertainty estimates
+Prerequisites:
+    - Run 03_calculate_dqi.py (Phase 03)
+    - Run 06_anomaly_detection.py (Phase 06) - optional
+    - outputs/phase03/master_site_with_dqi.csv must exist
 
-    Alternatives: K-Means, DBSCAN
+Usage:
+    python src/phases/08_site_clustering.py
+    python src/phases/08_site_clustering.py --algorithm gmm --n-clusters 5
+    python src/phases/08_site_clustering.py --algorithm kmeans
+    python src/phases/08_site_clustering.py --algorithm dbscan --eps 0.5
 
-CLUSTER PROFILES:
------------------
-    Based on analysis, sites typically fall into:
+CLI Options:
+    --algorithm     'gmm' (default), 'kmeans', or 'dbscan'
+    --n-clusters    Number of clusters (auto-detect if not specified)
+    --auto          Force auto-detection of optimal clusters
+    --eps           DBSCAN epsilon parameter (default: 0.5)
+    --min-samples   DBSCAN min_samples parameter (default: 5)
+
+Output:
+    - outputs/phase08/site_clusters.csv                 # Sites with cluster assignments
+    - outputs/phase08/cluster_profiles.csv              # Cluster characteristics
+    - outputs/phase08/cluster_report.md                 # Human-readable report
+    - outputs/phase08/cluster_summary.json              # Statistics
+    - outputs/phase08/cluster_distribution.png          # Visual: cluster sizes
+    - outputs/phase08/cluster_heatmap.png               # Visual: feature heatmap
+    - outputs/phase08/cluster_pca.png                   # Visual: PCA projection
+
+Clustering Algorithms:
+    - GMM (default): Gaussian Mixture Models - soft clustering, probabilistic
+    - K-Means: Fast, hard clustering, centroid-based
+    - DBSCAN: Density-based, auto-detects clusters
+
+Typical Cluster Profiles:
     - High Performers: Low DQI, few issues
     - Safety Concerns: High SAE/coding issues
     - Data Laggards: Missing visits/pages
     - Systemic Issues: Multiple problem types
-    - Anomalous: Statistical outliers
-
-OUTPUTS:
---------
-    - outputs/phase_08/site_clusters.csv
-    - outputs/phase_08/cluster_profiles.csv
-    - outputs/phase_08/cluster_report.md
-    - outputs/phase_08/cluster_summary.json
-    - outputs/phase_08/cluster_distribution.png
-    - outputs/phase_08/cluster_heatmap.png
-    - outputs/phase_08/cluster_pca.png
-
-Usage:
-    python src/08_site_clustering.py
-    python src/08_site_clustering.py --algorithm gmm --n-clusters 5
-    python src/08_site_clustering.py --algorithm kmeans
-    python src/08_site_clustering.py --algorithm dbscan --eps 0.5
 """
 
 import sys

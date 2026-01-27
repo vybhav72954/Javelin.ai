@@ -1,17 +1,21 @@
 """
 Javelin.AI - Phase 01: Data Discovery
 ======================================
-This script scans your data folder, classifies all files, and discovers column mappings.
-
-Run this FIRST before anything else.
+Scans the data folder, classifies all files, and discovers column mappings.
+Run this FIRST before anything else (after diagnostics).
 
 Usage:
     python src/phases/01_data_discovery.py
 
 Output:
-    - outputs/file_mapping.csv      : Which file is which type
-    - outputs/column_report.csv     : Column variations found per file type
-    - outputs/discovery_issues.txt  : Any files/columns that need manual review
+    - outputs/phase01/file_mapping.csv       # Which file is which type
+    - outputs/phase01/column_report.csv      # Column variations found per file type
+    - outputs/phase01/discovery_issues.txt   # Any files/columns that need manual review
+
+File Types Detected:
+    - edcmetrics, visittracker, missinglab, saedashboard
+    - missingpages, meddracoding, whoddcoding
+    - inactivated, edrr
 """
 
 import os

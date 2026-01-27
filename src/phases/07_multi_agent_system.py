@@ -1,16 +1,42 @@
 """
 Javelin.AI - Phase 07: Multi-Agent Analysis System
-===================================================
+==============================================================
 
-Implements a multi-agent system where specialized AI agents analyze
-clinical trial sites from different perspectives and coordinate
-to produce prioritized recommendations.
+Implements a multi-agent system where specialized AI agents analyze clinical
+trial sites from different perspectives and coordinate to produce prioritized
+recommendations.
 
-AGENT ARCHITECTURE:
--------------------
+Prerequisites:
+    - Run 03_calculate_dqi.py (Phase 03)
+    - Run 06_anomaly_detection.py (Phase 06)
+    - outputs/phase03/master_site_with_dqi.csv must exist
+    - outputs/phase06/site_anomaly_scores.csv must exist
+
+Usage:
+    python src/phases/07_multi_agent_system.py
+    python src/phases/07_multi_agent_system.py --model mistral --top-sites 100
+    python src/phases/07_multi_agent_system.py --fast
+
+CLI Options:
+    --model         Ollama model to use (default: mistral)
+    --top-sites     Number of top sites to analyze (default: 50)
+    --fast          Skip LLM, use rule-based analysis only
+
+Output:
+    - outputs/phase07/multi_agent_recommendations.csv   # Final recommendations
+    - outputs/phase07/agent_analysis.json               # Detailed agent outputs
+    - outputs/phase07/multi_agent_report.md             # Human-readable report
+
+Agent Architecture:
+    - Safety Agent (40%): SAE, MedDRA, regulatory compliance
+    - Data Quality Agent (35%): Missing data, timeliness
+    - Performance Agent (25%): Benchmarking, trends
+    - Coordinator Agent: Synthesizes insights, resolves conflicts
+
+
     ┌─────────────────────────────────────────────────────────────┐
-    │                    COORDINATOR AGENT                         │
-    │         (Synthesizes insights, resolves conflicts)           │
+    │                    COORDINATOR AGENT                        │
+    │         (Synthesizes insights, resolves conflicts)          │
     └─────────────────────────────────────────────────────────────┘
                               ▲
           ┌───────────────────┼───────────────────┐
@@ -23,17 +49,6 @@ AGENT ARCHITECTURE:
     │ - MedDRA  │       │   data    │       │   marking │
     │ - Regul.  │       │ - Stale   │       │ - Trends  │
     └───────────┘       └───────────┘       └───────────┘
-
-OUTPUTS:
---------
-    - outputs/phase_07/multi_agent_recommendations.csv
-    - outputs/phase_07/agent_analysis.json
-    - outputs/phase_07/multi_agent_report.md
-
-Usage:
-    python src/07_multi_agent_system.py
-    python src/07_multi_agent_system.py --model mistral --top-sites 100
-    python src/07_multi_agent_system.py --fast  # Skip LLM, use rules only
 """
 
 import sys

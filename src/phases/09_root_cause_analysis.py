@@ -1,45 +1,49 @@
 """
 Javelin.AI - Phase 09: Root Cause Analysis
-===========================================
+==============================================================
 
-Analyzes patterns across sites and clusters to identify root causes
-of data quality issues and generate actionable insights.
+Analyzes patterns across sites and clusters to identify root causes of
+data quality issues and generate actionable insights.
 
-ROOT CAUSE METHODOLOGY:
------------------------
-    1. Issue Co-occurrence Analysis
-       - Which issues tend to appear together?
-       - What are the common failure patterns?
-
-    2. Temporal Pattern Detection
-       - Are issues related to data staleness?
-       - Time-based correlations
-
-    3. Geographic/Organizational Patterns
-       - Country/region-specific issues
-       - Study-level patterns
-
-    4. Site Characteristic Correlation
-       - Site size vs issue prevalence
-       - Experience factors
-
-    5. Cluster-Based Root Cause
-       - Why do certain site archetypes emerge?
-       - What differentiates high vs low performers?
-
-OUTPUTS:
---------
-    - outputs/phase_09/root_cause_analysis.csv
-    - outputs/phase_09/root_cause_report.md
-    - outputs/phase_09/root_cause_summary.json
-    - outputs/phase_09/issue_cooccurrence.csv
-    - outputs/phase_09/geographic_patterns.csv
-    - outputs/phase_09/contributing_factors.csv
+Prerequisites:
+    - Run 03_calculate_dqi.py (Phase 03)
+    - Run 06_anomaly_detection.py (Phase 06)
+    - Run 08_site_clustering.py (Phase 08) - optional
+    - outputs/phase03/master_*_with_dqi.csv must exist
+    - outputs/phase06/anomalies_detected.csv must exist
 
 Usage:
-    python src/09_root_cause_analysis.py
-    python src/09_root_cause_analysis.py --top-sites 10
-    python src/09_root_cause_analysis.py --include-clusters
+    python src/phases/09_root_cause_analysis.py
+    python src/phases/09_root_cause_analysis.py --top-sites 10
+    python src/phases/09_root_cause_analysis.py --include-clusters
+    python src/phases/09_root_cause_analysis.py --no-clusters
+
+CLI Options:
+    --include-clusters  Include cluster analysis from Phase 08 (default: True)
+    --no-clusters       Skip cluster integration
+    --top-sites         Number of top issues to analyze (default: 10)
+
+Output:
+    - outputs/phase09/root_cause_analysis.csv           # Identified root causes
+    - outputs/phase09/root_cause_report.md              # Human-readable report
+    - outputs/phase09/root_cause_summary.json           # Statistics
+    - outputs/phase09/issue_cooccurrence.csv            # Issue co-occurrence matrix
+    - outputs/phase09/geographic_patterns.csv           # Regional patterns
+    - outputs/phase09/contributing_factors.csv          # Factor analysis
+
+Root Cause Methodology:
+    1. Issue Co-occurrence Analysis: Which issues appear together?
+    2. Temporal Pattern Detection: Time-based correlations
+    3. Geographic/Organizational Patterns: Country/region/study patterns
+    4. Site Characteristic Correlation: Size, experience factors
+    5. Cluster-Based Root Cause: Why do certain archetypes emerge?
+
+Categories:
+    - Safety: SAE processes, adverse event handling
+    - Completeness: Data entry, documentation
+    - Timeliness: Query resolution, delays
+    - Systemic: Organizational, process issues
+    - Geographic: Location-specific challenges
 """
 
 import sys

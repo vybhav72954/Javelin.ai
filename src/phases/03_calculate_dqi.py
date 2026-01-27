@@ -1,29 +1,29 @@
 """
-Javelin.AI - Phase 03: Calculate Data Quality Index (DQI)
-========================================================================
+Javelin.AI - Phase 03: Calculate Data Quality Intelligence (DQI)
 
-FINAL VERSION - Validated and Clinically Sound
+Calculates comprehensive DQI scores and risk categories for subjects, sites,
+studies, regions, and countries based on weighted issue metrics.
 
-METHODOLOGY:
-------------
-1. DQI Score = Weighted sum of issue components
-2. Each component uses Binary + Severity scoring:
-   - Binary (50%): Does the subject have this issue? (0 or 1)
-   - Severity (50%): How severe is the issue? (0 to 1 scale)
-3. Risk categories based on score percentiles
-4. Clinical override: SAE pending always triggers High risk
+Prerequisites:
+    - Run 02_build_master_table.py first
+    - outputs/phase02/master_*.csv files must exist
 
 Usage:
     python src/phases/03_calculate_dqi.py
 
-Outputs:
-    - outputs/master_subject_with_dqi.csv  (subject-level DQI)
-    - outputs/master_site_with_dqi.csv     (site-level aggregation)
-    - outputs/master_study_with_dqi.csv    (study-level aggregation)
-    - outputs/master_region_with_dqi.csv   (region-level aggregation)
-    - outputs/master_country_with_dqi.csv  (country-level aggregation)
-    - outputs/dqi_weights.csv              (weights with rationale)
-    - outputs/dqi_model_report.txt         (methodology report)
+Output:
+    - outputs/phase03/master_subject_with_dqi.csv    # Subjects with DQI scores
+    - outputs/phase03/master_site_with_dqi.csv       # Sites with DQI and risk levels
+    - outputs/phase03/master_study_with_dqi.csv      # Studies with aggregate DQI
+    - outputs/phase03/master_region_with_dqi.csv     # Regional quality metrics
+    - outputs/phase03/master_country_with_dqi.csv    # Country-level metrics
+    - outputs/phase03/dqi_report.txt                 # Human-readable summary
+
+DQI Scoring:
+    - 0.00 = Perfect (no issues)
+    - > 0.10 = Low risk
+    - > 0.20 = Medium risk
+    - > 0.30 = High risk
 """
 
 import sys

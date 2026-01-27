@@ -1,29 +1,34 @@
 """
 Javelin.AI - Phase 04: Build Knowledge Graph
-============================================
+=============================================================
 
 Creates a knowledge graph representing the clinical trial data structure
-with DQI scores and risk categories.
+with DQI scores and risk categories for visualization and analysis.
 
-GRAPH STRUCTURE:
-----------------
-Nodes:
-  - Study: Clinical trial studies
-  - Site: Trial sites/locations
-  - Subject: Trial participants
-  - Country: Geographic countries
-  - Region: Geographic regions
-
-Relationships:
-  - Subject -[ENROLLED_AT]-> Site
-  - Site -[PARTICIPATES_IN]-> Study
-  - Site -[LOCATED_IN]-> Country
-  - Country -[IN_REGION]-> Region
+Prerequisites:
+    - Run 03_calculate_dqi.py first
+    - outputs/phase03/master_*_with_dqi.csv files must exist
 
 Usage:
     python src/phases/04_knowledge_graph.py
     python src/phases/04_knowledge_graph.py --subgraphs all
     python src/phases/04_knowledge_graph.py --high-risk-only
+
+CLI Options:
+    --subgraphs         Comma-separated: 'highrisk', 'topstudies', 'sample', or 'all'
+    --high-risk-only    Create ONLY the high-risk subgraph (fast mode)
+
+Output:
+    - outputs/phase04/knowledge_graph.graphml           # Full graph for Gephi/yEd
+    - outputs/phase04/knowledge_graph_nodes.csv         # Nodes for Neo4j import
+    - outputs/phase04/knowledge_graph_edges.csv         # Edges for Neo4j import
+    - outputs/phase04/knowledge_graph_summary.json      # Graph statistics
+    - outputs/phase04/knowledge_graph_report.txt        # Human-readable report
+    - outputs/phase04/subgraph_*.graphml                # Filtered subgraphs
+
+Graph Structure:
+    Nodes: Study, Site, Subject, Country, Region
+    Relationships: ENROLLED_AT, PARTICIPATES_IN, LOCATED_IN, IN_REGION
 """
 
 import sys

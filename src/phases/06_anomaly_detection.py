@@ -1,36 +1,35 @@
 """
-Javelin.AI - Phase 06: Anomaly Detection Engine
-=====================================================
+Javelin.AI - Phase 06: Anomaly Detection
+==============================================================
 
-WHAT THIS DOES:
----------------
-Automatically discovers hidden patterns and outliers that manual review would miss.
-Goes beyond simple thresholds to find truly unusual data quality patterns.
+Detects anomalies and unusual patterns in site-level data quality metrics
+using statistical methods and pattern recognition.
 
-ANOMALY TYPES DETECTED:
------------------------
-1. STATISTICAL OUTLIERS - Sites with metrics far outside normal distribution
-2. PATTERN ANOMALIES   - Unusual combinations of issues (e.g., high SAE but not flagged)
-3. REGIONAL ANOMALIES  - Countries/regions performing significantly different from peers
-4. CROSS-STUDY ANOMALIES - Sites that appear problematic across multiple studies
-5. VELOCITY ANOMALIES  - Unusually high concentration of issues (issue density)
-
-VERSION 2.0 IMPROVEMENTS:
--------------------------
-- Tighter thresholds to reduce noise (z-score 3.0 instead of 2.5)
-- Fixed regional anomaly detection
-- Excluded redundant DQI score outliers (already captured by DQI system)
-- Focus on actionable, non-obvious findings
-- Better severity classification
+Prerequisites:
+    - Run 03_calculate_dqi.py first
+    - outputs/phase03/master_*_with_dqi.csv files must exist
 
 Usage:
     python src/phases/06_anomaly_detection.py
 
-Outputs:
-    - outputs/phase_06/anomalies_detected.csv      : All detected anomalies with details
-    - outputs/phase_06/anomaly_summary.json        : Summary statistics
-    - outputs/phase_06/anomaly_report.md           : Human-readable report
-    - outputs/phase_06/site_anomaly_scores.csv     : Anomaly scores per site
+Output:
+    - outputs/phase06/anomalies_detected.csv            # All detected anomalies
+    - outputs/phase06/site_anomaly_scores.csv           # Sites ranked by anomaly score
+    - outputs/phase06/anomaly_summary.json              # Statistics and metadata
+    - outputs/phase06/anomaly_report.md                 # Human-readable report
+
+Anomaly Types:
+    - Statistical Outliers: Z-score based detection
+    - Pattern Anomalies: Unusual issue combinations
+    - Regional Anomalies: Geographic deviations
+    - Cross-Study Anomalies: Comparative patterns
+    - Velocity Anomalies: Concentration patterns
+
+Severity Levels:
+    - CRITICAL: Immediate action required
+    - HIGH: Priority investigation
+    - MEDIUM: Monitor closely
+    - LOW: Awareness only
 """
 
 import sys

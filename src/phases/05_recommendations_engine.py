@@ -1,23 +1,33 @@
 """
-Javelin.AI - Phase 05: Gen AI Recommendations Engine
-=====================================================
+Javelin.AI - Phase 05: Recommendations Engine
+==============================================================
 
-This module generates actionable recommendations from DQI scores
-using domain knowledge and LLM-powered insights.
+Generates prioritized, actionable recommendations for sites based on
+their data quality profiles and risk categories.
 
-LLM Integration: Ollama (open-source, runs locally)
-Supported Models: llama3, mistral, phi3, gemma2
-
-Setup Instructions:
-------------------
-1. Install Ollama: https://ollama.ai/download
-2. Pull a model: ollama pull mistral
-3. Run: ollama serve (starts local API on port 11434)
-4. Then run this script
+Prerequisites:
+    - Run 03_calculate_dqi.py first
+    - outputs/phase03/master_site_with_dqi.csv must exist
 
 Usage:
     python src/phases/05_recommendations_engine.py
-    python src/phases/05_recommendations_engine.py --model phi3
+    python src/phases/05_recommendations_engine.py --model llama3
+    python src/phases/05_recommendations_engine.py --top-sites 50
+
+CLI Options:
+    --model         Ollama model to use (default: mistral)
+    --top-sites     Number of sites to generate recommendations for (default: 100)
+
+Output:
+    - outputs/phase05/recommendations.csv               # Prioritized recommendations
+    - outputs/phase05/recommendations_report.md         # Human-readable report
+    - outputs/phase05/recommendations_summary.json      # Statistics
+
+Recommendation Categories:
+    - Safety: SAE reviews, adverse event coding
+    - Data Quality: Missing visits, pages, lab issues
+    - Timeliness: Outstanding queries, delays
+    - Administrative: Form corrections, system issues
 """
 
 import sys

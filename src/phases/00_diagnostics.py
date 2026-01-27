@@ -2,8 +2,8 @@
 JAVELIN.AI - Phase 00: Comprehensive Data Quality Diagnostics
 ==============================================================
 
-This script diagnoses ALL issues in the data pipeline.
-Run this BEFORE running the main pipeline to understand data quality.
+Pre-pipeline diagnostic tool to validate environment setup, check dependencies,
+and verify directory structure before running the main pipeline.
 
 Issues Checked:
 ---------------
@@ -18,6 +18,14 @@ Issues Checked:
 11. Percentile on small samples - Check sample sizes per feature
 12. No outlier handling - Detect outliers in raw data
 13. Multi-sheet data loss - Check if pipeline reads all sheets
+
+Prerequisites:
+    - None (runs standalone before pipeline)
+
+Output:
+    - outputs/phase00/diagnostics_report.txt
+    - outputs/phase00/environment_check.json
+    - Console output with validation results
 
 Usage:
     python src/phases/00_diagnostics.py
