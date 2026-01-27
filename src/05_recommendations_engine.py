@@ -30,6 +30,16 @@ from typing import List, Dict, Any, Optional
 import warnings
 warnings.filterwarnings('ignore')
 
+import sys
+import os
+import io
+
+if sys.platform == 'win32':
+    if hasattr(sys.stdout, 'buffer'):
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace', line_buffering=True)
+    if hasattr(sys.stderr, 'buffer'):
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace', line_buffering=True)
+
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
@@ -37,6 +47,7 @@ warnings.filterwarnings('ignore')
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
 OUTPUT_DIR = PROJECT_ROOT / "outputs"
+
 
 SUBJECT_DQI_PATH = OUTPUT_DIR / "master_subject_with_dqi.csv"
 SITE_DQI_PATH = OUTPUT_DIR / "master_site_with_dqi.csv"
@@ -1168,7 +1179,11 @@ def run_recommendations_engine(model: str = DEFAULT_MODEL):
     print("\n" + "=" * 70)
     print("EXECUTIVE SUMMARY")
     print("=" * 70)
-    print(executive_summary)
+    try:
+        print(executive_summary)
+    except UnicodeEncodeError:
+        # Fallback for Windows encoding issues
+        print(executive_summary.encode('utf-8', errors='ignore').decode('utf-8'))
 
     print("\n" + "=" * 70)
     print("COMPLETE")

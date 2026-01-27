@@ -369,7 +369,7 @@ def generate_subject_recommendations(df: pd.DataFrame) -> List[Dict]:
     return recommendations
 
 
-def generate_site_recommendations(df: pd.DataFrame, llm: Optional[OllamaLLM] = None) -> List[Dict]:
+def generate_site_recommendations(df: pd.DataFrame, llm: Optional[OllamaLLM] = None, top_sites: int = 50) -> List[Dict]:
     """Generate recommendations for sites requiring attention."""
     recommendations = []
 
@@ -441,7 +441,8 @@ def generate_site_recommendations(df: pd.DataFrame, llm: Optional[OllamaLLM] = N
         else:
             rec['priority'] = 'MEDIUM'
 
-        if llm and llm.available and idx < 20:
+        # Generate LLM insight for top N sites
+        if llm and llm.available and idx < top_sites:
             insight = generate_site_insight(llm, rec)
             if insight:
                 rec['ai_insight'] = insight
@@ -1074,11 +1075,15 @@ def save_outputs(
 # MAIN FUNCTION
 # ============================================================================
 
-def run_recommendations_engine(model: str = DEFAULT_MODEL):
+def run_recommendations_engine(model: str = DEFAULT_MODEL, top_sites: int = 20):
     """Main function to run the recommendations engine."""
     print("=" * 70)
     print("JAVELIN.AI - GEN AI RECOMMENDATIONS ENGINE")
     print("=" * 70)
+
+    if top_sites:
+        print(f"Analyzing top {top_sites} sites with AI insights")
+
     if _USING_CONFIG:
         print("(Using centralized config)")
 
@@ -1103,10 +1108,10 @@ def run_recommendations_engine(model: str = DEFAULT_MODEL):
     print(f"  High: {sum(1 for r in subject_recs if r['priority'] == 'HIGH')}")
 
     # Step 4: Generate Site Recommendations
-    print("\n[4/8] Analyzing site-level patterns...")
+    print("[4/8] Analyzing site-level patterns...")
     if llm.available:
-        print("  Generating AI insights for top sites...")
-    site_recs = generate_site_recommendations(data['sites'], llm if llm.available else None)
+        print(f"Generating AI insights for top {top_sites} sites...")
+    site_recs = generate_site_recommendations(data['sites'], llm if llm.available else None, top_sites=top_sites)
     print(f"  Generated {len(site_recs)} site recommendations")
     if llm.available:
         ai_count = sum(1 for r in site_recs if r.get('ai_insight'))
@@ -1175,11 +1180,14 @@ Outputs (in {output_dir}):
 # ENTRY POINT
 # ============================================================================
 
-if __name__ == "__main__":
+if __name__=="__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description='Generate AI-powered recommendations')
-    parser.add_argument('--model', type=str, default=DEFAULT_MODEL, help='Ollama model to use')
+    parser = argparse.ArgumentParser(description="Generate AI-powered recommendations")
+    parser.add_argument('--model', type=str, default=DEFAULT_MODEL,
+                        help='Ollama model to use')
+    parser.add_argument('--top-sites', type=int, default=20,
+                        help='Number of top sites to analyze with AI (default: 20)')
     args = parser.parse_args()
 
-    run_recommendations_engine(model=args.model)
+    run_recommendations_engine(model=args.model, top_sites=args.top_sites)

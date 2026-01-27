@@ -49,6 +49,7 @@ from pathlib import Path
 from datetime import datetime
 import time
 import json
+import os
 import platform
 
 try:
@@ -348,22 +349,30 @@ def execute_phase(phase_num: str, logger: PipelineLogger) -> bool:
 
     start_time = time.time()
     try:
+        # Force UTF-8 encoding via environment variable
+        env = os.environ.copy()
+        env['PYTHONIOENCODING'] = 'utf-8'
+
         result = subprocess.run(
             cmd,
             capture_output=True,
-            text=True,
             check=True,
-            cwd=PROJECT_ROOT
+            cwd=PROJECT_ROOT,
+            env=env
         )
 
         duration = time.time() - start_time
 
-        if result.stdout:
+        # Manually decode output with UTF-8
+        stdout_text = result.stdout.decode('utf-8', errors='replace') if result.stdout else ''
+        stderr_text = result.stderr.decode('utf-8', errors='replace') if result.stderr else ''
+
+        if stdout_text:
             logger.log("STDOUT:", console=False)
-            logger.log(result.stdout, console=False)
-        if result.stderr:
+            logger.log(stdout_text, console=False)
+        if stderr_text:
             logger.log("STDERR:", console=False)
-            logger.log(result.stderr, console=False)
+            logger.log(stderr_text, console=False)
 
         outputs = []
         for output_key in metadata['outputs']:
@@ -382,13 +391,17 @@ def execute_phase(phase_num: str, logger: PipelineLogger) -> bool:
         duration = time.time() - start_time
         error_msg = f"Exit code {e.returncode}"
 
-        if e.stdout:
+        # Manually decode error output with UTF-8
+        stdout_text = e.stdout.decode('utf-8', errors='replace') if e.stdout else ''
+        stderr_text = e.stderr.decode('utf-8', errors='replace') if e.stderr else ''
+
+        if stdout_text:
             logger.log("STDOUT:", console=False)
-            logger.log(e.stdout, console=False)
-        if e.stderr:
+            logger.log(stdout_text, console=False)
+        if stderr_text:
             logger.log("STDERR:", console=False)
-            logger.log(e.stderr, console=False)
-            error_msg += f" | {e.stderr[:200]}"
+            logger.log(stderr_text, console=False)
+            error_msg += f" | {stderr_text[:200]}"
 
         logger.phase_error(phase_num, error_msg)
         print(f"  Phase {phase_num} FAILED after {duration:.1f}s")
@@ -400,6 +413,7 @@ def execute_phase(phase_num: str, logger: PipelineLogger) -> bool:
         logger.phase_error(phase_num, str(e))
         print(f"  Phase {phase_num} FAILED after {duration:.1f}s: {e}")
         return False
+
 
 def execute_pipeline(phases: list, logger: PipelineLogger) -> tuple:
     """Execute multiple phases in sequence."""

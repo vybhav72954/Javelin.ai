@@ -151,13 +151,13 @@ PIPELINE_DEFAULTS = {
     # Phase 05: Recommendations Engine
     '05': {
         'model': 'mistral',
-        'top_sites': 100,
+        'top_sites': 5,
     },
 
     # Phase 07: Multi-Agent System
     '07': {
         'model': 'mistral',
-        'top_sites': 50,
+        'top_sites': 3,
         'fast': False,
     },
 
