@@ -7,20 +7,21 @@ Importing from here ensures consistency across all phases.
 
 USAGE:
 ------
-    from config import (
-        PROJECT_ROOT, DATA_DIR, OUTPUT_DIR, PHASE_DIRS,
-        COLUMN_MAPPINGS, FILE_PATTERNS, DQI_WEIGHTS,
-        THRESHOLDS, OUTPUT_FILES,
-        ensure_output_dirs, ensure_phase_dir, get_phase_dir, get_output_file
-    )
+from config import (
+    PROJECT_ROOT, DATA_DIR, OUTPUT_DIR, PHASE_DIRS,
+    COLUMN_MAPPINGS, FILE_PATTERNS, DQI_WEIGHTS,
+    THRESHOLDS, OUTPUT_FILES, PIPELINE_DEFAULTS,
+    ensure_output_dirs, ensure_phase_dir, get_phase_dir, get_output_file
+)
 
 BACKWARD COMPATIBILITY:
 -----------------------
-    Existing scripts can continue to work without importing from config.
-    This file is designed to be opt-in during the migration period.
+Existing scripts can continue to work without importing from config.
+This file is designed to be opt-in during the migration period.
 
 Author: JAVELIN.AI Team
-Version: 1.1.0 (Phase-specific output directories)
+Version: 1.3.0 (Final - matching existing phase file naming)
+Last Updated: 2026-01-27
 """
 
 from pathlib import Path
@@ -41,24 +42,27 @@ else:
 DATA_DIR = PROJECT_ROOT / "data"
 OUTPUT_DIR = PROJECT_ROOT / "outputs"
 SRC_DIR = PROJECT_ROOT / "src"
-
+LOGS_DIR = OUTPUT_DIR / "logs"  # Separate logs folder
 
 # ============================================================================
 # OUTPUT DIRECTORY STRUCTURE (Phase-specific)
 # ============================================================================
+# Keys use underscore (phase_01) to match existing phase files
+# Paths use no underscore (phase01) for cleaner folder names
 
 PHASE_DIRS = {
-    'phase_00': OUTPUT_DIR / "phase_00",
-    'phase_01': OUTPUT_DIR / "phase_01",
-    'phase_02': OUTPUT_DIR / "phase_02",
-    'phase_03': OUTPUT_DIR / "phase_03",
-    'phase_04': OUTPUT_DIR / "phase_04",
-    'phase_05': OUTPUT_DIR / "phase_05",
-    'phase_06': OUTPUT_DIR / "phase_06",
-    'phase_07': OUTPUT_DIR / "phase_07",
-    'phase_08': OUTPUT_DIR / "phase_08",
-    'phase_09': OUTPUT_DIR / "phase_09",
+    'phase_00': OUTPUT_DIR / "phase00",
+    'phase_01': OUTPUT_DIR / "phase01",
+    'phase_02': OUTPUT_DIR / "phase02",
+    'phase_03': OUTPUT_DIR / "phase03",
+    'phase_04': OUTPUT_DIR / "phase04",
+    'phase_05': OUTPUT_DIR / "phase05",
+    'phase_06': OUTPUT_DIR / "phase06",
+    'phase_07': OUTPUT_DIR / "phase07",
+    'phase_08': OUTPUT_DIR / "phase08",
+    'phase_09': OUTPUT_DIR / "phase09",
     'validation': OUTPUT_DIR / "validation",
+    'logs': LOGS_DIR,  # Logs directory
 }
 
 # ============================================================================
@@ -101,12 +105,9 @@ OUTPUT_FILES = {
     'subgraph_sample': PHASE_DIRS['phase_04'] / "subgraph_sample.graphml",
 
     # Phase 05: Recommendations
-    'executive_summary': PHASE_DIRS['phase_05'] / "executive_summary.txt",
+    'recommendations': PHASE_DIRS['phase_05'] / "recommendations.csv",
     'recommendations_report': PHASE_DIRS['phase_05'] / "recommendations_report.md",
-    'recommendations_by_site': PHASE_DIRS['phase_05'] / "recommendations_by_site.csv",
-    'recommendations_by_region': PHASE_DIRS['phase_05'] / "recommendations_by_region.csv",
-    'recommendations_by_country': PHASE_DIRS['phase_05'] / "recommendations_by_country.csv",
-    'action_items': PHASE_DIRS['phase_05'] / "action_items.json",
+    'recommendations_summary': PHASE_DIRS['phase_05'] / "recommendations_summary.json",
 
     # Phase 06: Anomaly Detection
     'anomalies_detected': PHASE_DIRS['phase_06'] / "anomalies_detected.csv",
@@ -133,18 +134,139 @@ OUTPUT_FILES = {
     'root_cause_report': PHASE_DIRS['phase_09'] / "root_cause_report.md",
     'root_cause_summary': PHASE_DIRS['phase_09'] / "root_cause_summary.json",
     'issue_cooccurrence': PHASE_DIRS['phase_09'] / "issue_cooccurrence.csv",
+    'geographic_patterns': PHASE_DIRS['phase_09'] / "geographic_patterns.csv",
+    'contributing_factors': PHASE_DIRS['phase_09'] / "contributing_factors.csv",
 
     # Validation
     'sensitivity_analysis_results': PHASE_DIRS['validation'] / "sensitivity_analysis_results.csv",
     'sensitivity_analysis_report': PHASE_DIRS['validation'] / "sensitivity_analysis_report.md",
 }
 
+# ============================================================================
+# PIPELINE DEFAULTS (for run_pipeline.py)
+# ============================================================================
+# Default arguments for phases that support CLI options
+
+PIPELINE_DEFAULTS = {
+    # Phase 05: Recommendations Engine
+    '05': {
+        'model': 'mistral',
+        'top_sites': 100,
+    },
+
+    # Phase 07: Multi-Agent System
+    '07': {
+        'model': 'mistral',
+        'top_sites': 50,
+        'fast': False,
+    },
+
+    # Phase 08: Site Clustering
+    '08': {
+        'algorithm': 'gmm',
+        'n_clusters': None,
+        'auto': False,
+        'eps': 0.5,
+        'min_samples': 5,
+    },
+
+    # Phase 09: Root Cause Analysis
+    '09': {
+        'include_clusters': True,
+        'top_sites': 10,
+    },
+}
+
+# ============================================================================
+# PIPELINE CONFIGURATION (for run_pipeline.py)
+# ============================================================================
+
+PHASE_METADATA = {
+    '00': {
+        'name': 'Diagnostics',
+        'script': '00_diagnostics.py',
+        'optional': True,
+        'description': 'Pre-pipeline diagnostics and validation',
+        'requires': [],
+        'outputs': ['diagnostics_report'],
+    },
+    '01': {
+        'name': 'Data Discovery',
+        'script': '01_data_discovery.py',
+        'optional': False,
+        'description': 'Scan and classify data files',
+        'requires': [],
+        'outputs': ['file_mapping', 'column_report'],
+    },
+    '02': {
+        'name': 'Build Master Table',
+        'script': '02_build_master_table.py',
+        'optional': False,
+        'description': 'Merge data into unified tables',
+        'requires': ['01'],
+        'outputs': ['master_subject', 'master_site', 'master_study'],
+    },
+    '03': {
+        'name': 'Calculate DQI',
+        'script': '03_calculate_dqi.py',
+        'optional': False,
+        'description': 'Calculate Data Quality Intelligence scores',
+        'requires': ['02'],
+        'outputs': ['master_subject_with_dqi', 'master_site_with_dqi'],
+    },
+    '04': {
+        'name': 'Knowledge Graph',
+        'script': '04_knowledge_graph.py',
+        'optional': True,
+        'description': 'Build knowledge graph for visualization',
+        'requires': ['03'],
+        'outputs': ['knowledge_graph', 'knowledge_graph_report'],
+    },
+    '05': {
+        'name': 'Recommendations',
+        'script': '05_recommendations_engine.py',
+        'optional': False,
+        'description': 'Generate prioritized recommendations',
+        'requires': ['03'],
+        'outputs': ['recommendations', 'recommendations_report'],
+    },
+    '06': {
+        'name': 'Anomaly Detection',
+        'script': '06_anomaly_detection.py',
+        'optional': False,
+        'description': 'Detect anomalies and unusual patterns',
+        'requires': ['03'],
+        'outputs': ['anomalies_detected', 'site_anomaly_scores'],
+    },
+    '07': {
+        'name': 'Multi-Agent Analysis',
+        'script': '07_multi_agent_system.py',
+        'optional': False,
+        'description': 'Multi-agent system analysis',
+        'requires': ['03', '06'],
+        'outputs': ['multi_agent_recommendations', 'multi_agent_report'],
+    },
+    '08': {
+        'name': 'Site Clustering',
+        'script': '08_site_clustering.py',
+        'optional': False,
+        'description': 'Cluster sites by quality patterns',
+        'requires': ['03', '06'],
+        'outputs': ['site_clusters', 'cluster_profiles'],
+    },
+    '09': {
+        'name': 'Root Cause Analysis',
+        'script': '09_root_cause_analysis.py',
+        'optional': False,
+        'description': 'Identify root causes of issues',
+        'requires': ['03', '06', '08'],
+        'outputs': ['root_cause_analysis', 'root_cause_report'],
+    },
+}
 
 # ============================================================================
 # FILE TYPE PATTERNS
 # ============================================================================
-# Used by 01_data_discovery.py to classify files
-# Order matters - first match wins
 
 FILE_PATTERNS: Dict[str, List[str]] = {
     'edc_metrics': [
@@ -201,11 +323,9 @@ FILE_PATTERNS: Dict[str, List[str]] = {
     ],
 }
 
-
 # ============================================================================
 # COLUMN MAPPINGS
 # ============================================================================
-# Maps canonical column names to possible variations found in source files
 
 COLUMN_MAPPINGS: Dict[str, Dict[str, List[str]]] = {
     'edc_metrics': {
@@ -260,20 +380,13 @@ COLUMN_MAPPINGS: Dict[str, Dict[str, List[str]]] = {
     },
 }
 
-# Alias for backward compatibility
 EXPECTED_COLUMNS = COLUMN_MAPPINGS
-
 
 # ============================================================================
 # DQI FEATURE WEIGHTS
 # ============================================================================
-# Weights based on clinical importance
-# Rationale: Safety > Completeness > Timeliness > Administrative
-#
-# VALIDATED: Sensitivity analysis confirms stability under +/-30% perturbation
 
 DQI_WEIGHTS: Dict[str, Dict[str, Any]] = {
-    # TIER 1: SAFETY-CRITICAL (35% total)
     'sae_pending_count': {
         'weight': 0.20,
         'tier': 'Safety',
@@ -284,8 +397,6 @@ DQI_WEIGHTS: Dict[str, Dict[str, Any]] = {
         'tier': 'Safety',
         'rationale': 'Uncoded adverse event terms prevent proper safety signal detection'
     },
-
-    # TIER 2: DATA COMPLETENESS (32% total)
     'missing_visit_count': {
         'weight': 0.12,
         'tier': 'Completeness',
@@ -301,8 +412,6 @@ DQI_WEIGHTS: Dict[str, Dict[str, Any]] = {
         'tier': 'Completeness',
         'rationale': 'Lab data issues can mask abnormal safety values'
     },
-
-    # TIER 3: TIMELINESS (14% total)
     'max_days_outstanding': {
         'weight': 0.08,
         'tier': 'Timeliness',
@@ -313,8 +422,6 @@ DQI_WEIGHTS: Dict[str, Dict[str, Any]] = {
         'tier': 'Timeliness',
         'rationale': 'Long-outstanding missing pages indicate systemic site issues'
     },
-
-    # TIER 4: CODING & RECONCILIATION (11% total)
     'uncoded_whodd_count': {
         'weight': 0.06,
         'tier': 'Coding',
@@ -325,8 +432,6 @@ DQI_WEIGHTS: Dict[str, Dict[str, Any]] = {
         'tier': 'Reconciliation',
         'rationale': 'Open external data reconciliation issues need resolution'
     },
-
-    # TIER 5: ADMINISTRATIVE (8% total)
     'n_issue_types': {
         'weight': 0.05,
         'tier': 'Composite',
@@ -339,13 +444,10 @@ DQI_WEIGHTS: Dict[str, Dict[str, Any]] = {
     },
 }
 
-# Validate weights sum to 1.0
 _total_weight = sum(w['weight'] for w in DQI_WEIGHTS.values())
 assert abs(_total_weight - 1.0) < 0.001, f"DQI weights must sum to 1.0, got {_total_weight}"
 
-# Extract just the weight values (for backward compatibility)
 DQI_WEIGHT_VALUES: Dict[str, float] = {k: v['weight'] for k, v in DQI_WEIGHTS.items()}
-
 
 # ============================================================================
 # THRESHOLDS AND PARAMETERS
@@ -354,20 +456,16 @@ DQI_WEIGHT_VALUES: Dict[str, float] = {k: v['weight'] for k, v in DQI_WEIGHTS.it
 class THRESHOLDS:
     """Configurable thresholds used across the pipeline."""
 
-    # Outlier handling (02_build_master_table.py)
     OUTLIER_IQR_MULTIPLIER = 3.0
-    MAX_DAYS_CAP = 1825  # 5 years
+    MAX_DAYS_CAP = 1825
 
-    # DQI calculation (03_calculate_dqi.py)
     MIN_SAMPLES_FOR_PERCENTILE = 20
     HIGH_RISK_PERCENTILE = 0.90
     MIN_HIGH_THRESHOLD = 0.10
 
-    # Site-level risk
     SITE_HIGH_PERCENTILE = 0.85
     SITE_MEDIUM_PERCENTILE = 0.50
 
-    # Study/Region/Country risk
     STUDY_HIGH_PERCENTILE = 0.85
     STUDY_MEDIUM_PERCENTILE = 0.50
     REGION_HIGH_PERCENTILE = 0.85
@@ -375,18 +473,14 @@ class THRESHOLDS:
     COUNTRY_HIGH_PERCENTILE = 0.85
     COUNTRY_MEDIUM_PERCENTILE = 0.50
 
-    # Validation
     VALIDATION_FOLDS = 5
     STABILITY_THRESHOLD = 0.05
 
-    # Anomaly detection
     ANOMALY_CONTAMINATION = 0.05
     ZSCORE_THRESHOLD = 3.0
 
-    # Clustering
     MAX_CLUSTERS = 10
     MIN_CLUSTER_SIZE = 5
-
 
 # ============================================================================
 # FEATURE LISTS
@@ -457,7 +551,6 @@ RISK_COLORS = {
     'Low': '#44BB44',
 }
 
-
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
@@ -468,7 +561,6 @@ def ensure_output_dirs():
     for phase_dir in PHASE_DIRS.values():
         phase_dir.mkdir(parents=True, exist_ok=True)
 
-
 def ensure_phase_dir(phase: str):
     """Create a specific phase directory."""
     if phase in PHASE_DIRS:
@@ -476,13 +568,11 @@ def ensure_phase_dir(phase: str):
         return PHASE_DIRS[phase]
     raise KeyError(f"Unknown phase: {phase}")
 
-
 def get_phase_dir(phase: str) -> Path:
     """Get the directory path for a specific phase."""
     if phase in PHASE_DIRS:
         return PHASE_DIRS[phase]
     raise KeyError(f"Unknown phase: {phase}")
-
 
 def get_output_file(file_key: str) -> Path:
     """Get the path for a specific output file."""
@@ -490,6 +580,16 @@ def get_output_file(file_key: str) -> Path:
         return OUTPUT_FILES[file_key]
     raise KeyError(f"Unknown output file key: {file_key}")
 
+def get_phase_script_path(phase_num: str) -> Path:
+    """Get the full path to a phase script."""
+    if phase_num in PHASE_METADATA:
+        script_name = PHASE_METADATA[phase_num]['script']
+        return SRC_DIR / 'phases' / script_name
+    raise KeyError(f"Unknown phase: {phase_num}")
+
+def get_phase_defaults(phase_num: str) -> Dict[str, Any]:
+    """Get default arguments for a phase."""
+    return PIPELINE_DEFAULTS.get(phase_num, {})
 
 # ============================================================================
 # VALIDATION
@@ -499,16 +599,18 @@ def validate_config():
     """Validate configuration consistency."""
     errors = []
 
-    # Check DQI weights sum to 1
     total = sum(w['weight'] for w in DQI_WEIGHTS.values())
     if abs(total - 1.0) > 0.001:
         errors.append(f"DQI weights sum to {total}, expected 1.0")
 
+    for phase_num, metadata in PHASE_METADATA.items():
+        script_path = get_phase_script_path(phase_num)
+        if not script_path.exists():
+            errors.append(f"Phase {phase_num} script not found: {script_path}")
+
     if errors:
         raise ValueError("Configuration validation failed:\n" + "\n".join(errors))
-
     return True
-
 
 # ============================================================================
 # MODULE INITIALIZATION
@@ -518,10 +620,10 @@ if __name__ == "__main__":
     print("=" * 70)
     print("JAVELIN.AI - CONFIGURATION SUMMARY")
     print("=" * 70)
-
     print(f"\nPROJECT_ROOT: {PROJECT_ROOT}")
     print(f"DATA_DIR: {DATA_DIR}")
     print(f"OUTPUT_DIR: {OUTPUT_DIR}")
+    print(f"LOGS_DIR: {LOGS_DIR}")
 
     print(f"\nPhase Directories:")
     for phase, path in PHASE_DIRS.items():
@@ -535,6 +637,11 @@ if __name__ == "__main__":
     for feature, cfg in sorted(DQI_WEIGHTS.items(), key=lambda x: -x[1]['weight']):
         print(f"  - {feature}: {cfg['weight']:.0%} ({cfg['tier']})")
 
+    print(f"\nPipeline Phases: {len(PHASE_METADATA)}")
+    for phase_num, metadata in PHASE_METADATA.items():
+        optional_mark = " (optional)" if metadata['optional'] else ""
+        print(f"  - Phase {phase_num}: {metadata['name']}{optional_mark}")
+
     print(f"\nThresholds:")
     print(f"  - Outlier IQR multiplier: {THRESHOLDS.OUTLIER_IQR_MULTIPLIER}")
     print(f"  - High risk percentile: {THRESHOLDS.HIGH_RISK_PERCENTILE}")
@@ -543,6 +650,6 @@ if __name__ == "__main__":
     print("\nValidating configuration...")
     try:
         validate_config()
-        print("[OK] Configuration is valid!")
+        print("Configuration is valid!")
     except ValueError as e:
-        print(f"[ERROR] {e}")
+        print(f"ERROR: {e}")
