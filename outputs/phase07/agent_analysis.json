@@ -1,0 +1,402 @@
+{
+  "generated": "2026-01-28T04:05:54.441686",
+  "sites_analyzed": 3,
+  "portfolio_context": {
+    "portfolio_avg_dqi": 0.05042554968092245,
+    "portfolio_avg_subjects": 16.9383761682243,
+    "portfolio_avg_sae": 1.897196261682243,
+    "portfolio_avg_high_risk_rate": 0.09259099608600445,
+    "total_sites": 3424,
+    "total_studies": 23,
+    "study_risks": {
+      "Study_1": "High",
+      "Study_10": "Low",
+      "Study_11": "Low",
+      "Study_13": "High",
+      "Study_14": "High",
+      "Study_15": "Low",
+      "Study_16": "High",
+      "Study_17": "High",
+      "Study_18": "Low",
+      "Study_19": "High",
+      "Study_2": "Low",
+      "Study_20": "High",
+      "Study_21": "High",
+      "Study_22": "Low",
+      "Study_23": "Low",
+      "Study_24": "High",
+      "Study_25": "Low",
+      "Study_4": "Low",
+      "Study_5": "High",
+      "Study_6": "High",
+      "Study_7": "High",
+      "Study_8": "High",
+      "Study_9": "Low"
+    },
+    "region_risks": {
+      "AMERICA": "Low",
+      "ASIA": "High",
+      "EMEA": "Medium",
+      "Unknown": "Low"
+    },
+    "country_risks": {
+      "ARE": "High",
+      "ARG": "Medium",
+      "AUS": "High",
+      "AUT": "High",
+      "BEL": "High",
+      "BFA": "Low",
+      "BGR": "Low",
+      "BRA": "Low",
+      "CAN": "Medium",
+      "CHE": "Medium",
+      "CHL": "Low",
+      "CHN": "Medium",
+      "CIV": "Low",
+      "COD": "Low",
+      "COL": "Low",
+      "CZE": "Low",
+      "DEU": "High",
+      "DNK": "Low",
+      "ESP": "Medium",
+      "EST": "Low",
+      "FIN": "Low",
+      "FRA": "Medium",
+      "GAB": "Medium",
+      "GBR": "Medium",
+      "GHA": "Low",
+      "GRC": "High",
+      "HKG": "Medium",
+      "HRV": "Low",
+      "HUN": "Low",
+      "IND": "Medium",
+      "IRL": "High",
+      "ISL": "Low",
+      "ISR": "High",
+      "ITA": "Medium",
+      "JOR": "High",
+      "JPN": "Medium",
+      "KEN": "Low",
+      "KOR": "High",
+      "LBN": "Low",
+      "LTU": "Low",
+      "LVA": "Low",
+      "MEX": "Low",
+      "MLI": "Low",
+      "MUS": "Low",
+      "MYS": "Medium",
+      "NER": "Low",
+      "NLD": "Low",
+      "NOR": "Medium",
+      "NZL": "Medium",
+      "OMN": "High",
+      "PHL": "Low",
+      "POL": "Low",
+      "PRK": "High",
+      "PRT": "Medium",
+      "ROU": "Low",
+      "RUS": "Medium",
+      "RWA": "Medium",
+      "SGP": "High",
+      "SRB": "Low",
+      "SVK": "Low",
+      "SVN": "Medium",
+      "SWE": "Low",
+      "THA": "Low",
+      "TUR": "High",
+      "TWN": "High",
+      "TZA": "Low",
+      "UGA": "Medium",
+      "USA": "Medium",
+      "Unknown": "Low",
+      "VNM": "Low",
+      "ZAF": "Low",
+      "ZMB": "Low"
+    }
+  },
+  "site_analyses": {
+    "Study_1_Site 17": [
+      {
+        "agent_name": "SafetyAgent",
+        "site_id": "Site 17",
+        "study": "Study_1",
+        "risk_level": "High",
+        "confidence": 0.9,
+        "findings": [
+          "CRITICAL: 8 SAE reviews pending",
+          "Uncoded adverse events: 4",
+          "SAE rate 4.2x portfolio average"
+        ],
+        "recommendations": [
+          "Immediate SAE review completion required",
+          "Escalate to Safety Officer",
+          "Complete MedDRA coding for adverse events"
+        ],
+        "metrics": {
+          "sae_pending": 8,
+          "sae_total": 0,
+          "uncoded_meddra": 4,
+          "uncoded_whodd": 0,
+          "safety_score": 0.7
+        },
+        "reasoning": ""
+      },
+      {
+        "agent_name": "DataQualityAgent",
+        "site_id": "Site 17",
+        "study": "Study_1",
+        "risk_level": "Critical",
+        "confidence": 0.85,
+        "findings": [
+          "Missing visits: 2",
+          "Missing CRF pages: 16",
+          "Pages missing for 157 days",
+          "Lab data issues: 1",
+          "Open reconciliation issues: 2",
+          "Inactivated forms: 61"
+        ],
+        "recommendations": [
+          "Schedule visit data entry",
+          "URGENT: Address long-outstanding missing pages",
+          "Review and resolve lab data discrepancies",
+          "Complete external data reconciliation",
+          "Review form inactivation patterns"
+        ],
+        "metrics": {
+          "missing_visits": 2,
+          "missing_pages": 16,
+          "max_days_page_missing": 157,
+          "lab_issues": 1,
+          "edrr_issues": 2,
+          "inactivated_forms": 61,
+          "quality_score": 0.8999999999999999,
+          "dqi_score": 0.5163811080556421
+        },
+        "reasoning": ""
+      },
+      {
+        "agent_name": "PerformanceAgent",
+        "site_id": "Site 17",
+        "study": "Study_1",
+        "risk_level": "Critical",
+        "confidence": 0.75,
+        "findings": [
+          "DQI 0.516 is 10.2x portfolio average",
+          "High-risk subject rate: 66.7%",
+          "Rate significantly exceeds portfolio average",
+          "Both site and study (Study_1) are high-risk",
+          "Flagged as statistical anomaly (score: 0.82)"
+        ],
+        "recommendations": [
+          "Investigate systemic issues at site",
+          "Root cause analysis recommended",
+          "Coordinate with study team on remediation",
+          "Review anomaly detection findings"
+        ],
+        "metrics": {
+          "subject_count": 3,
+          "high_risk_count": 2,
+          "avg_dqi": 0.5163811080556421,
+          "site_risk_category": "High",
+          "high_risk_rate": 0.6666666666666666,
+          "study_risk_category": "High",
+          "country": "ESP",
+          "region": "EMEA",
+          "country_risk": "Medium",
+          "region_risk": "Medium",
+          "is_anomaly": true,
+          "anomaly_score": 0.825,
+          "performance_score": 0.9999999999999999
+        },
+        "reasoning": ""
+      }
+    ],
+    "Study_24_Site 888": [
+      {
+        "agent_name": "SafetyAgent",
+        "site_id": "Site 888",
+        "study": "Study_24",
+        "risk_level": "Critical",
+        "confidence": 0.9,
+        "findings": [
+          "CRITICAL: 29 SAE reviews pending",
+          "Uncoded adverse events: 10",
+          "Uncoded drug terms: 23",
+          "SAE rate 15.3x portfolio average"
+        ],
+        "recommendations": [
+          "Immediate SAE review completion required",
+          "Escalate to Safety Officer",
+          "Complete MedDRA coding for adverse events",
+          "Complete WHODD coding for medications"
+        ],
+        "metrics": {
+          "sae_pending": 29,
+          "sae_total": 0,
+          "uncoded_meddra": 10,
+          "uncoded_whodd": 23,
+          "safety_score": 1.0
+        },
+        "reasoning": " The high number of Pending SAE reviews and Uncoded Adverse Events at Site 888 indicates potential issues with data management and safety reporting. This situation could potentially lead to non-compliance with regulatory standards such as Good Clinical Practice (GCP) and International Council for Harmonisation of Technical Requirements for Pharmaceuticals for Human Use (ICH) guidelines, which may result in regulatory risks.\n\nTo mitigate these risks, it is recommended that the site takes immediat"
+      },
+      {
+        "agent_name": "DataQualityAgent",
+        "site_id": "Site 888",
+        "study": "Study_24",
+        "risk_level": "Critical",
+        "confidence": 0.85,
+        "findings": [
+          "Missing visits: 10",
+          "Missing CRF pages: 160",
+          "Pages missing for 897 days",
+          "Lab data issues: 512"
+        ],
+        "recommendations": [
+          "Urgent: Complete visit documentation",
+          "URGENT: Address long-outstanding missing pages",
+          "Review and resolve lab data discrepancies"
+        ],
+        "metrics": {
+          "missing_visits": 10,
+          "missing_pages": 160,
+          "max_days_page_missing": 897,
+          "lab_issues": 512,
+          "edrr_issues": 0,
+          "inactivated_forms": 0,
+          "quality_score": 0.8173913043478261,
+          "dqi_score": 0.3185679542761827
+        },
+        "reasoning": ""
+      },
+      {
+        "agent_name": "PerformanceAgent",
+        "site_id": "Site 888",
+        "study": "Study_24",
+        "risk_level": "Critical",
+        "confidence": 0.75,
+        "findings": [
+          "DQI 0.319 is 6.3x portfolio average",
+          "High-risk subject rate: 65.2%",
+          "Rate significantly exceeds portfolio average",
+          "Both site and study (Study_24) are high-risk",
+          "Located in high-risk country: DEU",
+          "Flagged as statistical anomaly (score: 1.01)"
+        ],
+        "recommendations": [
+          "Investigate systemic issues at site",
+          "Root cause analysis recommended",
+          "Coordinate with study team on remediation",
+          "Review anomaly detection findings"
+        ],
+        "metrics": {
+          "subject_count": 23,
+          "high_risk_count": 15,
+          "avg_dqi": 0.3185679542761827,
+          "site_risk_category": "High",
+          "high_risk_rate": 0.6521739130434783,
+          "study_risk_category": "High",
+          "country": "DEU",
+          "region": "EMEA",
+          "country_risk": "High",
+          "region_risk": "Medium",
+          "is_anomaly": true,
+          "anomaly_score": 1.012,
+          "performance_score": 0.9185679542761825
+        },
+        "reasoning": ""
+      }
+    ],
+    "Study_1_Site 27": [
+      {
+        "agent_name": "SafetyAgent",
+        "site_id": "Site 27",
+        "study": "Study_1",
+        "risk_level": "High",
+        "confidence": 0.9,
+        "findings": [
+          "CRITICAL: 40 SAE reviews pending",
+          "Uncoded adverse events: 2",
+          "Uncoded drug terms: 2",
+          "SAE rate 21.1x portfolio average"
+        ],
+        "recommendations": [
+          "Immediate SAE review completion required",
+          "Escalate to Safety Officer",
+          "Complete MedDRA coding for adverse events",
+          "Complete WHODD coding for medications"
+        ],
+        "metrics": {
+          "sae_pending": 40,
+          "sae_total": 0,
+          "uncoded_meddra": 2,
+          "uncoded_whodd": 2,
+          "safety_score": 0.64
+        },
+        "reasoning": ""
+      },
+      {
+        "agent_name": "DataQualityAgent",
+        "site_id": "Site 27",
+        "study": "Study_1",
+        "risk_level": "Medium",
+        "confidence": 0.85,
+        "findings": [
+          "Missing CRF pages: 4",
+          "Open reconciliation issues: 2",
+          "Inactivated forms: 85"
+        ],
+        "recommendations": [
+          "Complete external data reconciliation",
+          "Review form inactivation patterns"
+        ],
+        "metrics": {
+          "missing_visits": 0,
+          "missing_pages": 4,
+          "max_days_page_missing": 0,
+          "lab_issues": 0,
+          "edrr_issues": 2,
+          "inactivated_forms": 85,
+          "quality_score": 0.4,
+          "dqi_score": 0.3427616051125225
+        },
+        "reasoning": " Based on the provided data for Site 27, the overall data quality appears to be good as there are no missing visits and no laboratory issues reported. However, there are four missing pages in the clinical trial data. While this does not significantly affect the overall data quality compared to having missing visits or lab issues, it could potentially impact the analysis of specific parameters or variables that were recorded on those missing pages. It is recommended to address these missing pages"
+      },
+      {
+        "agent_name": "PerformanceAgent",
+        "site_id": "Site 27",
+        "study": "Study_1",
+        "risk_level": "Critical",
+        "confidence": 0.75,
+        "findings": [
+          "DQI 0.343 is 6.8x portfolio average",
+          "High-risk subject rate: 66.7%",
+          "Rate significantly exceeds portfolio average",
+          "Both site and study (Study_1) are high-risk",
+          "Flagged as statistical anomaly (score: 1.10)"
+        ],
+        "recommendations": [
+          "Investigate systemic issues at site",
+          "Root cause analysis recommended",
+          "Coordinate with study team on remediation",
+          "Review anomaly detection findings"
+        ],
+        "metrics": {
+          "subject_count": 3,
+          "high_risk_count": 2,
+          "avg_dqi": 0.3427616051125225,
+          "site_risk_category": "High",
+          "high_risk_rate": 0.6666666666666666,
+          "study_risk_category": "High",
+          "country": "CHN",
+          "region": "ASIA",
+          "country_risk": "Medium",
+          "region_risk": "High",
+          "is_anomaly": true,
+          "anomaly_score": 1.1,
+          "performance_score": 0.9427616051125224
+        },
+        "reasoning": ""
+      }
+    ]
+  }
+}

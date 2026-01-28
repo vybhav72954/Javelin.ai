@@ -1,0 +1,33 @@
+{
+  "generated": "2026-01-28T04:06:21.237456",
+  "total_sites": 3424,
+  "total_subjects": 57997,
+  "root_causes_count": 3,
+  "critical_causes": 1,
+  "high_causes": 2,
+  "cooccurrence_patterns": 37,
+  "geographic_patterns": 39,
+  "root_causes": [
+    {
+      "id": "RC001",
+      "category": "Safety",
+      "description": "Safety data processing backlog causing SAE review delays and coding gaps",
+      "severity": "Critical",
+      "affected_sites": "969"
+    },
+    {
+      "id": "RC002",
+      "category": "Completeness",
+      "description": "Insufficient site data entry capacity causing missing visit and CRF data",
+      "severity": "High",
+      "affected_sites": "1297"
+    },
+    {
+      "id": "RC003",
+      "category": "Geographic",
+      "description": "Regional/country-specific issues in VNM, SVN, COD",
+      "severity": "High",
+      "affected_sites": "17"
+    }
+  ]
+}

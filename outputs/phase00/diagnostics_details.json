@@ -1,0 +1,1551 @@
+{
+  "issue_1_fillna_impact": {
+    "visit_tracker": {
+      "studies_with_data": 15,
+      "studies_empty": 8,
+      "studies_empty_list": [
+        "Study_13",
+        "Study_14",
+        "Study_15",
+        "Study_18",
+        "Study_20",
+        "Study_25",
+        "Study_7",
+        "Study_9"
+      ],
+      "note": "Empty studies will have 0 values after fillna - this is correct behavior"
+    },
+    "missing_lab": {
+      "studies_with_data": 18,
+      "studies_empty": 5,
+      "studies_empty_list": [
+        "Study_14",
+        "Study_15",
+        "Study_18",
+        "Study_21",
+        "Study_22"
+      ],
+      "note": "Empty studies will have 0 values after fillna - this is correct behavior"
+    },
+    "sae_dashboard": {
+      "studies_with_data": 17,
+      "studies_empty": 6,
+      "studies_empty_list": [
+        "Study_10",
+        "Study_14",
+        "Study_15",
+        "Study_18",
+        "Study_19",
+        "Study_20"
+      ],
+      "note": "Empty studies will have 0 values after fillna - this is correct behavior"
+    },
+    "missing_pages": {
+      "studies_with_data": 22,
+      "studies_empty": 1,
+      "studies_empty_list": [
+        "Study_25"
+      ],
+      "note": "Empty studies will have 0 values after fillna - this is correct behavior"
+    },
+    "meddra_coding": {
+      "studies_with_data": 21,
+      "studies_empty": 2,
+      "studies_empty_list": [
+        "Study_11",
+        "Study_2"
+      ],
+      "note": "Empty studies will have 0 values after fillna - this is correct behavior"
+    },
+    "whodd_coding": {
+      "studies_with_data": 22,
+      "studies_empty": 1,
+      "studies_empty_list": [
+        "Study_15"
+      ],
+      "note": "Empty studies will have 0 values after fillna - this is correct behavior"
+    },
+    "inactivated": {
+      "studies_with_data": 23,
+      "studies_empty": 0,
+      "studies_empty_list": [],
+      "note": "Empty studies will have 0 values after fillna - this is correct behavior"
+    },
+    "edrr": {
+      "studies_with_data": 15,
+      "studies_empty": 8,
+      "studies_empty_list": [
+        "Study_14",
+        "Study_15",
+        "Study_18",
+        "Study_19",
+        "Study_20",
+        "Study_6",
+        "Study_7",
+        "Study_9"
+      ],
+      "note": "Empty studies will have 0 values after fillna - this is correct behavior"
+    }
+  },
+  "issue_2_empty_categoricals": [],
+  "issue_4_left_join_loss": {
+    "Study_4_sae_dashboard": {
+      "total_records": 847,
+      "matched_records": 846,
+      "unmatched_records": 1
+    },
+    "Study_16_edrr": {
+      "total_records": 208,
+      "matched_records": 206,
+      "unmatched_records": 2
+    },
+    "Study_24_edrr": {
+      "total_records": 27,
+      "matched_records": 26,
+      "unmatched_records": 1
+    }
+  },
+  "issue_5_duplicates": [
+    {
+      "study": "Study_10",
+      "file_type": "visit_tracker",
+      "duplicate_count": 2
+    },
+    {
+      "study": "Study_11",
+      "file_type": "visit_tracker",
+      "duplicate_count": 2
+    },
+    {
+      "study": "Study_16",
+      "file_type": "visit_tracker",
+      "duplicate_count": 170
+    },
+    {
+      "study": "Study_17",
+      "file_type": "visit_tracker",
+      "duplicate_count": 2
+    },
+    {
+      "study": "Study_1",
+      "file_type": "visit_tracker",
+      "duplicate_count": 7
+    },
+    {
+      "study": "Study_21",
+      "file_type": "visit_tracker",
+      "duplicate_count": 3
+    },
+    {
+      "study": "Study_22",
+      "file_type": "visit_tracker",
+      "duplicate_count": 19
+    },
+    {
+      "study": "Study_23",
+      "file_type": "visit_tracker",
+      "duplicate_count": 4
+    },
+    {
+      "study": "Study_4",
+      "file_type": "visit_tracker",
+      "duplicate_count": 1492
+    },
+    {
+      "study": "Study_5",
+      "file_type": "visit_tracker",
+      "duplicate_count": 1
+    },
+    {
+      "study": "Study_6",
+      "file_type": "visit_tracker",
+      "duplicate_count": 4
+    },
+    {
+      "study": "Study_10",
+      "file_type": "missing_lab",
+      "duplicate_count": 39
+    },
+    {
+      "study": "Study_11",
+      "file_type": "missing_lab",
+      "duplicate_count": 7
+    },
+    {
+      "study": "Study_13",
+      "file_type": "missing_lab",
+      "duplicate_count": 22
+    },
+    {
+      "study": "Study_16",
+      "file_type": "missing_lab",
+      "duplicate_count": 206
+    },
+    {
+      "study": "Study_17",
+      "file_type": "missing_lab",
+      "duplicate_count": 231
+    },
+    {
+      "study": "Study_19",
+      "file_type": "missing_lab",
+      "duplicate_count": 164
+    },
+    {
+      "study": "Study_1",
+      "file_type": "missing_lab",
+      "duplicate_count": 120
+    },
+    {
+      "study": "Study_20",
+      "file_type": "missing_lab",
+      "duplicate_count": 79
+    },
+    {
+      "study": "Study_24",
+      "file_type": "missing_lab",
+      "duplicate_count": 17598
+    },
+    {
+      "study": "Study_25",
+      "file_type": "missing_lab",
+      "duplicate_count": 3
+    },
+    {
+      "study": "Study_2",
+      "file_type": "missing_lab",
+      "duplicate_count": 39
+    },
+    {
+      "study": "Study_5",
+      "file_type": "missing_lab",
+      "duplicate_count": 435
+    },
+    {
+      "study": "Study_6",
+      "file_type": "missing_lab",
+      "duplicate_count": 221
+    },
+    {
+      "study": "Study_7",
+      "file_type": "missing_lab",
+      "duplicate_count": 724
+    },
+    {
+      "study": "Study_8",
+      "file_type": "missing_lab",
+      "duplicate_count": 19
+    },
+    {
+      "study": "Study_9",
+      "file_type": "missing_lab",
+      "duplicate_count": 27
+    },
+    {
+      "study": "Study_11",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 914
+    },
+    {
+      "study": "Study_13",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 268
+    },
+    {
+      "study": "Study_16",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 148
+    },
+    {
+      "study": "Study_17",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 190
+    },
+    {
+      "study": "Study_1",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 1231
+    },
+    {
+      "study": "Study_21",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 5801
+    },
+    {
+      "study": "Study_22",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 1164
+    },
+    {
+      "study": "Study_23",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 19
+    },
+    {
+      "study": "Study_24",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 273
+    },
+    {
+      "study": "Study_25",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 416
+    },
+    {
+      "study": "Study_2",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 130
+    },
+    {
+      "study": "Study_4",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 9792
+    },
+    {
+      "study": "Study_5",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 7
+    },
+    {
+      "study": "Study_6",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 28
+    },
+    {
+      "study": "Study_7",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 7
+    },
+    {
+      "study": "Study_8",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 98
+    },
+    {
+      "study": "Study_9",
+      "file_type": "sae_dashboard",
+      "duplicate_count": 2
+    },
+    {
+      "study": "Study_10",
+      "file_type": "missing_pages",
+      "duplicate_count": 31
+    },
+    {
+      "study": "Study_11",
+      "file_type": "missing_pages",
+      "duplicate_count": 50
+    },
+    {
+      "study": "Study_13",
+      "file_type": "missing_pages",
+      "duplicate_count": 93
+    },
+    {
+      "study": "Study_14",
+      "file_type": "missing_pages",
+      "duplicate_count": 32
+    },
+    {
+      "study": "Study_15",
+      "file_type": "missing_pages",
+      "duplicate_count": 363
+    },
+    {
+      "study": "Study_16",
+      "file_type": "missing_pages",
+      "duplicate_count": 514
+    },
+    {
+      "study": "Study_17",
+      "file_type": "missing_pages",
+      "duplicate_count": 346
+    },
+    {
+      "study": "Study_18",
+      "file_type": "missing_pages",
+      "duplicate_count": 103
+    },
+    {
+      "study": "Study_19",
+      "file_type": "missing_pages",
+      "duplicate_count": 350
+    },
+    {
+      "study": "Study_1",
+      "file_type": "missing_pages",
+      "duplicate_count": 351
+    },
+    {
+      "study": "Study_20",
+      "file_type": "missing_pages",
+      "duplicate_count": 92
+    },
+    {
+      "study": "Study_21",
+      "file_type": "missing_pages",
+      "duplicate_count": 398
+    },
+    {
+      "study": "Study_22",
+      "file_type": "missing_pages",
+      "duplicate_count": 1152
+    },
+    {
+      "study": "Study_23",
+      "file_type": "missing_pages",
+      "duplicate_count": 28
+    },
+    {
+      "study": "Study_24",
+      "file_type": "missing_pages",
+      "duplicate_count": 716
+    },
+    {
+      "study": "Study_2",
+      "file_type": "missing_pages",
+      "duplicate_count": 8
+    },
+    {
+      "study": "Study_4",
+      "file_type": "missing_pages",
+      "duplicate_count": 738
+    },
+    {
+      "study": "Study_5",
+      "file_type": "missing_pages",
+      "duplicate_count": 1234
+    },
+    {
+      "study": "Study_6",
+      "file_type": "missing_pages",
+      "duplicate_count": 324
+    },
+    {
+      "study": "Study_7",
+      "file_type": "missing_pages",
+      "duplicate_count": 73
+    },
+    {
+      "study": "Study_8",
+      "file_type": "missing_pages",
+      "duplicate_count": 209
+    },
+    {
+      "study": "Study_9",
+      "file_type": "missing_pages",
+      "duplicate_count": 76
+    },
+    {
+      "study": "Study_10",
+      "file_type": "meddra_coding",
+      "duplicate_count": 738
+    },
+    {
+      "study": "Study_13",
+      "file_type": "meddra_coding",
+      "duplicate_count": 242
+    },
+    {
+      "study": "Study_14",
+      "file_type": "meddra_coding",
+      "duplicate_count": 10
+    },
+    {
+      "study": "Study_15",
+      "file_type": "meddra_coding",
+      "duplicate_count": 1
+    },
+    {
+      "study": "Study_16",
+      "file_type": "meddra_coding",
+      "duplicate_count": 3387
+    },
+    {
+      "study": "Study_17",
+      "file_type": "meddra_coding",
+      "duplicate_count": 616
+    },
+    {
+      "study": "Study_18",
+      "file_type": "meddra_coding",
+      "duplicate_count": 436
+    },
+    {
+      "study": "Study_19",
+      "file_type": "meddra_coding",
+      "duplicate_count": 230
+    },
+    {
+      "study": "Study_1",
+      "file_type": "meddra_coding",
+      "duplicate_count": 1458
+    },
+    {
+      "study": "Study_20",
+      "file_type": "meddra_coding",
+      "duplicate_count": 81
+    },
+    {
+      "study": "Study_21",
+      "file_type": "meddra_coding",
+      "duplicate_count": 411462
+    },
+    {
+      "study": "Study_22",
+      "file_type": "meddra_coding",
+      "duplicate_count": 45
+    },
+    {
+      "study": "Study_23",
+      "file_type": "meddra_coding",
+      "duplicate_count": 4586
+    },
+    {
+      "study": "Study_24",
+      "file_type": "meddra_coding",
+      "duplicate_count": 2995
+    },
+    {
+      "study": "Study_25",
+      "file_type": "meddra_coding",
+      "duplicate_count": 7799
+    },
+    {
+      "study": "Study_4",
+      "file_type": "meddra_coding",
+      "duplicate_count": 28815
+    },
+    {
+      "study": "Study_5",
+      "file_type": "meddra_coding",
+      "duplicate_count": 1777
+    },
+    {
+      "study": "Study_6",
+      "file_type": "meddra_coding",
+      "duplicate_count": 320
+    },
+    {
+      "study": "Study_7",
+      "file_type": "meddra_coding",
+      "duplicate_count": 257
+    },
+    {
+      "study": "Study_8",
+      "file_type": "meddra_coding",
+      "duplicate_count": 6814
+    },
+    {
+      "study": "Study_9",
+      "file_type": "meddra_coding",
+      "duplicate_count": 113
+    },
+    {
+      "study": "Study_10",
+      "file_type": "whodd_coding",
+      "duplicate_count": 516
+    },
+    {
+      "study": "Study_11",
+      "file_type": "whodd_coding",
+      "duplicate_count": 1
+    },
+    {
+      "study": "Study_13",
+      "file_type": "whodd_coding",
+      "duplicate_count": 562
+    },
+    {
+      "study": "Study_14",
+      "file_type": "whodd_coding",
+      "duplicate_count": 1
+    },
+    {
+      "study": "Study_16",
+      "file_type": "whodd_coding",
+      "duplicate_count": 4927
+    },
+    {
+      "study": "Study_17",
+      "file_type": "whodd_coding",
+      "duplicate_count": 744
+    },
+    {
+      "study": "Study_18",
+      "file_type": "whodd_coding",
+      "duplicate_count": 54
+    },
+    {
+      "study": "Study_19",
+      "file_type": "whodd_coding",
+      "duplicate_count": 351
+    },
+    {
+      "study": "Study_1",
+      "file_type": "whodd_coding",
+      "duplicate_count": 1528
+    },
+    {
+      "study": "Study_20",
+      "file_type": "whodd_coding",
+      "duplicate_count": 44
+    },
+    {
+      "study": "Study_21",
+      "file_type": "whodd_coding",
+      "duplicate_count": 221702
+    },
+    {
+      "study": "Study_22",
+      "file_type": "whodd_coding",
+      "duplicate_count": 157
+    },
+    {
+      "study": "Study_23",
+      "file_type": "whodd_coding",
+      "duplicate_count": 2732
+    },
+    {
+      "study": "Study_24",
+      "file_type": "whodd_coding",
+      "duplicate_count": 3260
+    },
+    {
+      "study": "Study_25",
+      "file_type": "whodd_coding",
+      "duplicate_count": 13769
+    },
+    {
+      "study": "Study_2",
+      "file_type": "whodd_coding",
+      "duplicate_count": 2075
+    },
+    {
+      "study": "Study_4",
+      "file_type": "whodd_coding",
+      "duplicate_count": 25121
+    },
+    {
+      "study": "Study_5",
+      "file_type": "whodd_coding",
+      "duplicate_count": 930
+    },
+    {
+      "study": "Study_6",
+      "file_type": "whodd_coding",
+      "duplicate_count": 492
+    },
+    {
+      "study": "Study_7",
+      "file_type": "whodd_coding",
+      "duplicate_count": 339
+    },
+    {
+      "study": "Study_8",
+      "file_type": "whodd_coding",
+      "duplicate_count": 4477
+    },
+    {
+      "study": "Study_9",
+      "file_type": "whodd_coding",
+      "duplicate_count": 207
+    },
+    {
+      "study": "Study_10",
+      "file_type": "inactivated",
+      "duplicate_count": 5
+    },
+    {
+      "study": "Study_11",
+      "file_type": "inactivated",
+      "duplicate_count": 6
+    },
+    {
+      "study": "Study_13",
+      "file_type": "inactivated",
+      "duplicate_count": 355
+    },
+    {
+      "study": "Study_14",
+      "file_type": "inactivated",
+      "duplicate_count": 4
+    },
+    {
+      "study": "Study_15",
+      "file_type": "inactivated",
+      "duplicate_count": 199
+    },
+    {
+      "study": "Study_16",
+      "file_type": "inactivated",
+      "duplicate_count": 9414
+    },
+    {
+      "study": "Study_17",
+      "file_type": "inactivated",
+      "duplicate_count": 867
+    },
+    {
+      "study": "Study_18",
+      "file_type": "inactivated",
+      "duplicate_count": 1
+    },
+    {
+      "study": "Study_19",
+      "file_type": "inactivated",
+      "duplicate_count": 245
+    },
+    {
+      "study": "Study_1",
+      "file_type": "inactivated",
+      "duplicate_count": 5525
+    },
+    {
+      "study": "Study_20",
+      "file_type": "inactivated",
+      "duplicate_count": 77
+    },
+    {
+      "study": "Study_21",
+      "file_type": "inactivated",
+      "duplicate_count": 34
+    },
+    {
+      "study": "Study_22",
+      "file_type": "inactivated",
+      "duplicate_count": 122
+    },
+    {
+      "study": "Study_23",
+      "file_type": "inactivated",
+      "duplicate_count": 7291
+    },
+    {
+      "study": "Study_24",
+      "file_type": "inactivated",
+      "duplicate_count": 7
+    },
+    {
+      "study": "Study_25",
+      "file_type": "inactivated",
+      "duplicate_count": 17597
+    },
+    {
+      "study": "Study_2",
+      "file_type": "inactivated",
+      "duplicate_count": 3963
+    },
+    {
+      "study": "Study_4",
+      "file_type": "inactivated",
+      "duplicate_count": 2
+    },
+    {
+      "study": "Study_5",
+      "file_type": "inactivated",
+      "duplicate_count": 4433
+    },
+    {
+      "study": "Study_6",
+      "file_type": "inactivated",
+      "duplicate_count": 555
+    },
+    {
+      "study": "Study_7",
+      "file_type": "inactivated",
+      "duplicate_count": 1
+    },
+    {
+      "study": "Study_8",
+      "file_type": "inactivated",
+      "duplicate_count": 739
+    },
+    {
+      "study": "Study_9",
+      "file_type": "inactivated",
+      "duplicate_count": 10483
+    }
+  ],
+  "issue_6_inconsistent_metadata": [],
+  "issue_7_id_format_mismatch": {},
+  "issue_8_file_errors": [],
+  "issue_8_empty_files": [
+    {
+      "study": "Study_13",
+      "file_type": "visit_tracker",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_14",
+      "file_type": "visit_tracker",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_15",
+      "file_type": "visit_tracker",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_18",
+      "file_type": "visit_tracker",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_20",
+      "file_type": "visit_tracker",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_25",
+      "file_type": "visit_tracker",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_7",
+      "file_type": "visit_tracker",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_9",
+      "file_type": "visit_tracker",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_14",
+      "file_type": "missing_lab",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_15",
+      "file_type": "missing_lab",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_18",
+      "file_type": "missing_lab",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_21",
+      "file_type": "missing_lab",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_22",
+      "file_type": "missing_lab",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_10",
+      "file_type": "sae_dashboard",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_14",
+      "file_type": "sae_dashboard",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_15",
+      "file_type": "sae_dashboard",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_18",
+      "file_type": "sae_dashboard",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_19",
+      "file_type": "sae_dashboard",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_20",
+      "file_type": "sae_dashboard",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_25",
+      "file_type": "missing_pages",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_11",
+      "file_type": "meddra_coding",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_2",
+      "file_type": "meddra_coding",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_15",
+      "file_type": "whodd_coding",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_14",
+      "file_type": "edrr",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_15",
+      "file_type": "edrr",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_18",
+      "file_type": "edrr",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_19",
+      "file_type": "edrr",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_20",
+      "file_type": "edrr",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_6",
+      "file_type": "edrr",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_7",
+      "file_type": "edrr",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    },
+    {
+      "study": "Study_9",
+      "file_type": "edrr",
+      "reason": "No data (legitimately empty - no issues of this type)"
+    }
+  ],
+  "issue_9_invalid_values": [],
+  "issue_11_small_samples": {
+    "Study_10": {
+      "total_sites": 35,
+      "sites_with_lt_5_subjects": 32,
+      "sites_with_1_subject": 12,
+      "pct_small_sites": 91.4
+    },
+    "Study_11": {
+      "total_sites": 149,
+      "sites_with_lt_5_subjects": 112,
+      "sites_with_1_subject": 41,
+      "pct_small_sites": 75.2
+    },
+    "Study_13": {
+      "total_sites": 14,
+      "sites_with_lt_5_subjects": 13,
+      "sites_with_1_subject": 9,
+      "pct_small_sites": 92.9
+    },
+    "Study_14": {
+      "total_sites": 3,
+      "sites_with_lt_5_subjects": 3,
+      "sites_with_1_subject": 2,
+      "pct_small_sites": 100.0
+    },
+    "Study_15": {
+      "total_sites": 3,
+      "sites_with_lt_5_subjects": 1,
+      "sites_with_1_subject": 1,
+      "pct_small_sites": 33.3
+    },
+    "Study_16": {
+      "total_sites": 177,
+      "sites_with_lt_5_subjects": 125,
+      "sites_with_1_subject": 37,
+      "pct_small_sites": 70.6
+    },
+    "Study_17": {
+      "total_sites": 14,
+      "sites_with_lt_5_subjects": 11,
+      "sites_with_1_subject": 2,
+      "pct_small_sites": 78.6
+    },
+    "Study_18": {
+      "total_sites": 3,
+      "sites_with_lt_5_subjects": 1,
+      "sites_with_1_subject": 1,
+      "pct_small_sites": 33.3
+    },
+    "Study_19": {
+      "total_sites": 15,
+      "sites_with_lt_5_subjects": 12,
+      "sites_with_1_subject": 4,
+      "pct_small_sites": 80.0
+    },
+    "Study_1": {
+      "total_sites": 28,
+      "sites_with_lt_5_subjects": 23,
+      "sites_with_1_subject": 10,
+      "pct_small_sites": 82.1
+    },
+    "Study_20": {
+      "total_sites": 13,
+      "sites_with_lt_5_subjects": 12,
+      "sites_with_1_subject": 7,
+      "pct_small_sites": 92.3
+    },
+    "Study_21": {
+      "total_sites": 1070,
+      "sites_with_lt_5_subjects": 136,
+      "sites_with_1_subject": 32,
+      "pct_small_sites": 12.7
+    },
+    "Study_22": {
+      "total_sites": 1060,
+      "sites_with_lt_5_subjects": 135,
+      "sites_with_1_subject": 25,
+      "pct_small_sites": 12.7
+    },
+    "Study_23": {
+      "total_sites": 36,
+      "sites_with_lt_5_subjects": 2,
+      "sites_with_1_subject": 2,
+      "pct_small_sites": 5.6
+    },
+    "Study_24": {
+      "total_sites": 113,
+      "sites_with_lt_5_subjects": 65,
+      "sites_with_1_subject": 15,
+      "pct_small_sites": 57.5
+    },
+    "Study_25": {
+      "total_sites": 226,
+      "sites_with_lt_5_subjects": 106,
+      "sites_with_1_subject": 27,
+      "pct_small_sites": 46.9
+    },
+    "Study_2": {
+      "total_sites": 19,
+      "sites_with_lt_5_subjects": 12,
+      "sites_with_1_subject": 3,
+      "pct_small_sites": 63.2
+    },
+    "Study_4": {
+      "total_sites": 170,
+      "sites_with_lt_5_subjects": 63,
+      "sites_with_1_subject": 14,
+      "pct_small_sites": 37.1
+    },
+    "Study_5": {
+      "total_sites": 113,
+      "sites_with_lt_5_subjects": 55,
+      "sites_with_1_subject": 26,
+      "pct_small_sites": 48.7
+    },
+    "Study_6": {
+      "total_sites": 15,
+      "sites_with_lt_5_subjects": 11,
+      "sites_with_1_subject": 5,
+      "pct_small_sites": 73.3
+    },
+    "Study_7": {
+      "total_sites": 14,
+      "sites_with_lt_5_subjects": 13,
+      "sites_with_1_subject": 7,
+      "pct_small_sites": 92.9
+    },
+    "Study_8": {
+      "total_sites": 124,
+      "sites_with_lt_5_subjects": 71,
+      "sites_with_1_subject": 15,
+      "pct_small_sites": 57.3
+    },
+    "Study_9": {
+      "total_sites": 10,
+      "sites_with_lt_5_subjects": 1,
+      "sites_with_1_subject": 1,
+      "pct_small_sites": 10.0
+    }
+  },
+  "issue_12_outliers": {
+    "Study_16_visit_tracker": [
+      {
+        "column": "# Days Outstanding (TODAY - PROJECTED\nDATE)",
+        "outlier_count": 12,
+        "max_value": 408.0,
+        "p99_value": 188.76000000000022
+      }
+    ],
+    "Study_19_visit_tracker": [
+      {
+        "column": "# Days Outstanding ",
+        "outlier_count": 2,
+        "max_value": 102.0,
+        "p99_value": 100.74
+      }
+    ],
+    "Study_1_visit_tracker": [
+      {
+        "column": "# Days Outstanding",
+        "outlier_count": 1,
+        "max_value": 32.0,
+        "p99_value": 29.89999999999999
+      }
+    ],
+    "Study_21_visit_tracker": [
+      {
+        "column": "# Days Outstanding",
+        "outlier_count": 3,
+        "max_value": 209.0,
+        "p99_value": 81.22999999999973
+      }
+    ],
+    "Study_22_visit_tracker": [
+      {
+        "column": "# Days Outstanding",
+        "outlier_count": 39,
+        "max_value": 554.0,
+        "p99_value": 251.74
+      }
+    ],
+    "Study_24_visit_tracker": [
+      {
+        "column": "# Days Outstanding",
+        "outlier_count": 2,
+        "max_value": 79.0,
+        "p99_value": 65.14000000000007
+      }
+    ],
+    "Study_5_visit_tracker": [
+      {
+        "column": "# Days Outstanding",
+        "outlier_count": 1,
+        "max_value": 217.0,
+        "p99_value": 185.0000000000001
+      }
+    ],
+    "Study_11_sae_dashboard": [
+      {
+        "column": "Discrepancy ID",
+        "outlier_count": 297,
+        "max_value": 1499193.0,
+        "p99_value": 1499148.65
+      }
+    ],
+    "Study_13_sae_dashboard": [
+      {
+        "column": "Discrepancy ID",
+        "outlier_count": 12,
+        "max_value": 1507459.0,
+        "p99_value": 1424516.3
+      }
+    ],
+    "Study_17_sae_dashboard": [
+      {
+        "column": "Discrepancy ID",
+        "outlier_count": 28,
+        "max_value": 1426887.0,
+        "p99_value": 1426881.1
+      }
+    ],
+    "Study_22_sae_dashboard": [
+      {
+        "column": "Discrepancy ID",
+        "outlier_count": 435,
+        "max_value": 1478950.0,
+        "p99_value": 1477180.48
+      }
+    ],
+    "Study_6_sae_dashboard": [
+      {
+        "column": "Discrepancy ID",
+        "outlier_count": 10,
+        "max_value": 1505393.0,
+        "p99_value": 1479568.76
+      }
+    ],
+    "Study_11_missing_pages": [
+      {
+        "column": "No. #Days Page Missing",
+        "outlier_count": 6,
+        "max_value": 772.0,
+        "p99_value": 757.97
+      }
+    ],
+    "Study_17_missing_pages": [
+      {
+        "column": "No. #Days Page Missing",
+        "outlier_count": 16,
+        "max_value": 126.0,
+        "p99_value": 119.35000000000008
+      }
+    ],
+    "Study_19_missing_pages": [
+      {
+        "column": "No. #Days Page Missing",
+        "outlier_count": 4,
+        "max_value": 87.0,
+        "p99_value": 78.0
+      }
+    ],
+    "Study_1_missing_pages": [
+      {
+        "column": "# of Days Missing",
+        "outlier_count": 2,
+        "max_value": 218.0,
+        "p99_value": 115.0
+      }
+    ],
+    "Study_21_missing_pages": [
+      {
+        "column": "No. #Days Page Missing",
+        "outlier_count": 11,
+        "max_value": 1267.0,
+        "p99_value": 1016.4399999999987
+      },
+      {
+        "column": "# of Days Missing",
+        "outlier_count": 11,
+        "max_value": 1267.0,
+        "p99_value": 1016.4399999999987
+      }
+    ],
+    "Study_22_missing_pages": [
+      {
+        "column": "No. #Days Page Missing",
+        "outlier_count": 12,
+        "max_value": 767.0,
+        "p99_value": 591.6600000000002
+      }
+    ],
+    "Study_5_missing_pages": [
+      {
+        "column": "No. #Days Page Missing",
+        "outlier_count": 6,
+        "max_value": 410.0,
+        "p99_value": 279.2300000000001
+      }
+    ],
+    "Study_8_missing_pages": [
+      {
+        "column": "No. #Days Page Missing",
+        "outlier_count": 2,
+        "max_value": 650.0,
+        "p99_value": 650.0
+      }
+    ],
+    "Study_10_meddra_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 15,
+        "max_value": 43.0,
+        "p99_value": 33.049999999999955
+      }
+    ],
+    "Study_16_meddra_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 139,
+        "max_value": 51.0,
+        "p99_value": 36.0
+      }
+    ],
+    "Study_18_meddra_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 2,
+        "max_value": 11.0,
+        "p99_value": 7.0
+      }
+    ],
+    "Study_19_meddra_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 3,
+        "max_value": 24.0,
+        "p99_value": 21.419999999999987
+      }
+    ],
+    "Study_1_meddra_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 3,
+        "max_value": 87.0,
+        "p99_value": 76.0
+      }
+    ],
+    "Study_20_meddra_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 2,
+        "max_value": 19.0,
+        "p99_value": 18.03
+      }
+    ],
+    "Study_21_meddra_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 1463,
+        "max_value": 198.0,
+        "p99_value": 26.0
+      }
+    ],
+    "Study_23_meddra_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 170,
+        "max_value": 13.0,
+        "p99_value": 7.0
+      }
+    ],
+    "Study_24_meddra_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 85,
+        "max_value": 31.0,
+        "p99_value": 22.0
+      }
+    ],
+    "Study_25_meddra_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 85,
+        "max_value": 39.0,
+        "p99_value": 22.0
+      }
+    ],
+    "Study_4_meddra_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 648,
+        "max_value": 122.0,
+        "p99_value": 58.0
+      }
+    ],
+    "Study_5_meddra_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 54,
+        "max_value": 60.0,
+        "p99_value": 37.789999999999964
+      }
+    ],
+    "Study_8_meddra_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 115,
+        "max_value": 65.0,
+        "p99_value": 34.0
+      }
+    ],
+    "Study_9_meddra_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 5,
+        "max_value": 11.0,
+        "p99_value": 6.0
+      }
+    ],
+    "Study_10_whodd_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 21,
+        "max_value": 60.0,
+        "p99_value": 54.33000000000004
+      }
+    ],
+    "Study_16_whodd_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 151,
+        "max_value": 111.0,
+        "p99_value": 74.0
+      }
+    ],
+    "Study_17_whodd_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 101,
+        "max_value": 163.0,
+        "p99_value": 155.20000000000005
+      }
+    ],
+    "Study_18_whodd_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 1,
+        "max_value": 6.0,
+        "p99_value": 4.920000000000002
+      }
+    ],
+    "Study_21_whodd_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 11191,
+        "max_value": 393.0,
+        "p99_value": 106.0
+      }
+    ],
+    "Study_23_whodd_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 20,
+        "max_value": 12.0,
+        "p99_value": 8.0
+      }
+    ],
+    "Study_24_whodd_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 122,
+        "max_value": 35.0,
+        "p99_value": 19.0
+      }
+    ],
+    "Study_25_whodd_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 315,
+        "max_value": 119.0,
+        "p99_value": 72.0
+      }
+    ],
+    "Study_2_whodd_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 124,
+        "max_value": 269.0,
+        "p99_value": 246.6300000000001
+      }
+    ],
+    "Study_4_whodd_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 518,
+        "max_value": 202.0,
+        "p99_value": 106.0
+      }
+    ],
+    "Study_5_whodd_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 4,
+        "max_value": 34.0,
+        "p99_value": 25.0
+      }
+    ],
+    "Study_8_whodd_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 170,
+        "max_value": 89.0,
+        "p99_value": 57.0
+      }
+    ],
+    "Study_9_whodd_coding": [
+      {
+        "column": "Logline",
+        "outlier_count": 3,
+        "max_value": 13.0,
+        "p99_value": 9.0
+      }
+    ],
+    "Study_13_inactivated": [
+      {
+        "column": "RecordPosition",
+        "outlier_count": 4,
+        "max_value": 51.0,
+        "p99_value": 30.149999999999977
+      }
+    ],
+    "Study_16_inactivated": [
+      {
+        "column": "RecordPostion",
+        "outlier_count": 50,
+        "max_value": 70.0,
+        "p99_value": 23.0
+      }
+    ],
+    "Study_17_inactivated": [
+      {
+        "column": "RecordPosition",
+        "outlier_count": 15,
+        "max_value": 101.0,
+        "p99_value": 51.54000000000019
+      }
+    ],
+    "Study_19_inactivated": [
+      {
+        "column": "RecordPosition",
+        "outlier_count": 1,
+        "max_value": 11.0,
+        "p99_value": 9.0
+      }
+    ],
+    "Study_1_inactivated": [
+      {
+        "column": "RecordPosition",
+        "outlier_count": 191,
+        "max_value": 81.0,
+        "p99_value": 39.789999999999964
+      }
+    ],
+    "Study_20_inactivated": [
+      {
+        "column": "RecordPosition",
+        "outlier_count": 9,
+        "max_value": 23.0,
+        "p99_value": 22.11
+      }
+    ],
+    "Study_23_inactivated": [
+      {
+        "column": "RecordPosition",
+        "outlier_count": 32,
+        "max_value": 25.0,
+        "p99_value": 13.0
+      }
+    ],
+    "Study_25_inactivated": [
+      {
+        "column": "RecordPosition",
+        "outlier_count": 1681,
+        "max_value": 275.0,
+        "p99_value": 101.0
+      }
+    ],
+    "Study_2_inactivated": [
+      {
+        "column": "RecordPosition",
+        "outlier_count": 417,
+        "max_value": 268.0,
+        "p99_value": 209.30999999999995
+      }
+    ],
+    "Study_5_inactivated": [
+      {
+        "column": "RecordPostion",
+        "outlier_count": 49,
+        "max_value": 51.0,
+        "p99_value": 15.920000000000073
+      }
+    ],
+    "Study_6_inactivated": [
+      {
+        "column": "RecordPosition",
+        "outlier_count": 4,
+        "max_value": 42.0,
+        "p99_value": 10.720000000000027
+      }
+    ],
+    "Study_17_edrr": [
+      {
+        "column": "Total Open issue Count per subject",
+        "outlier_count": 1,
+        "max_value": 3.0,
+        "p99_value": 2.8900000000000006
+      }
+    ]
+  }
+}

@@ -1,0 +1,5 @@
+JAVELIN.AI - DATA DISCOVERY ISSUES
+==================================================
+
+* MISSING COLUMNS in Study_21/Inactivated report_updated.xlsx (inactivated): ['site_id', 'country']
+* MISSING COLUMNS in Study_4/eSAE Dashboard DM_Safety_08Oct2025_updated.xlsx (sae_dashboard): ['country']

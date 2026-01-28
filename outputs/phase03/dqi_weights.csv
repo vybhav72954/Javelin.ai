@@ -1,0 +1,12 @@
+feature,weight,tier,rationale
+sae_pending_count,0.2,Safety,Pending SAE reviews require immediate regulatory attention
+uncoded_meddra_count,0.15,Safety,Uncoded adverse event terms prevent proper safety signal detection
+missing_visit_count,0.12,Completeness,Missing visits mean missed safety assessments and protocol deviations
+missing_pages_count,0.1,Completeness,Missing CRF pages indicate incomplete subject records
+lab_issues_count,0.1,Completeness,Lab data issues can mask abnormal safety values
+max_days_outstanding,0.08,Timeliness,Delayed data entry reduces real-time safety monitoring capability
+max_days_page_missing,0.06,Timeliness,Long-outstanding missing pages indicate systemic site issues
+uncoded_whodd_count,0.06,Coding,Uncoded drug terms affect concomitant medication tracking
+edrr_open_issues,0.05,Reconciliation,Open external data reconciliation issues need resolution
+n_issue_types,0.05,Composite,Multiple concurrent issue types indicate systemic problems
+inactivated_forms_count,0.03,Administrative,"Inactivated forms are corrections, lowest risk priority"

@@ -635,12 +635,12 @@ cython_debug/
 
 # Project Specific
 Data for problem Statement 1
-NEST 2.0 Detailed Problem Statements.pdf
+docs/NEST 2.0 Detailed Problem Statements.pdf
 data
 */*.graphml
 dqi_report.py
 dqi_weight_distribution.png
 Figure_1.png
 regional_distribution.png
-Team_CWTY.pptx
-Team_CWTY_PS1_NEST-2.0_R1.pdf
+docs/Team_CWTY.pptx
+docs/Team_CWTY_PS1_NEST-2.0_R1.pdf

@@ -1,0 +1,16 @@
+JAVELIN.AI - DATA QUALITY INDEX (DQI) MODEL REPORT
+============================================================
+
+Total Subjects: 57,997
+Total Sites: 3,424
+Studies: 23
+Subjects with Issues: 12,858 (22.2%)
+
+RISK DISTRIBUTION
+----------------------------------------
+  High: 5,370 (9.3%)
+  Medium: 7,488 (12.9%)
+  Low: 45,139 (77.8%)
+
+Capture Rate: 100.0%
+SAE Capture: 100%

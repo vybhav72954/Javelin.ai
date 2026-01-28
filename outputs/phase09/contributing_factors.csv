@@ -1,0 +1,36 @@
+factor,category,site_count,avg_dqi_score,high_risk_rate,interpretation
+Site Size,Small,1015,0.0829,0.2749,Small sites (avg DQI: 0.0829) may lack dedicated data management resources
+Site Size,Large,845,0.0342,0.032,Large sites have average DQI of 0.0342
+Site Size,Medium,730,0.0515,0.1233,Medium sites have average DQI of 0.0515
+Site Size,Very Large,834,0.0264,0.0084,Very large sites (avg DQI: 0.0264) handle high volume but may have process efficiencies
+Study,Study_1,28,0.1543,0.2424,Study Study_1 has 28 sites with avg DQI 0.1543
+Study,Study_10,35,0.0752,0.0366,Study Study_10 has 35 sites with avg DQI 0.0752
+Study,Study_11,149,0.0355,0.0331,Study Study_11 has 149 sites with avg DQI 0.0355
+Study,Study_13,14,0.1274,0.087,Study Study_13 has 14 sites with avg DQI 0.1274
+Study,Study_14,3,0.0997,0.25,Study Study_14 has 3 sites with avg DQI 0.0997
+Study,Study_15,3,0.0684,0.0106,Study Study_15 has 3 sites with avg DQI 0.0684
+Study,Study_16,177,0.1655,0.2712,Study Study_16 has 177 sites with avg DQI 0.1655
+Study,Study_17,14,0.1957,0.1837,Study Study_17 has 14 sites with avg DQI 0.1957
+Study,Study_18,3,0.0354,0.0093,Study Study_18 has 3 sites with avg DQI 0.0354
+Study,Study_19,15,0.2191,0.3469,Study Study_19 has 15 sites with avg DQI 0.2191
+Study,Study_2,19,0.0784,0.0375,Study Study_2 has 19 sites with avg DQI 0.0784
+Study,Study_20,13,0.1648,0.1739,Study Study_20 has 13 sites with avg DQI 0.1648
+Study,Study_21,1070,0.0367,0.1676,Study Study_21 has 1070 sites with avg DQI 0.0367
+Study,Study_22,1060,0.0133,0.0172,Study Study_22 has 1060 sites with avg DQI 0.0133
+Study,Study_23,36,0.0266,0.0003,Study Study_23 has 36 sites with avg DQI 0.0266
+Study,Study_24,113,0.1679,0.2508,Study Study_24 has 113 sites with avg DQI 0.1679
+Study,Study_25,226,0.054,0.0007,Study Study_25 has 226 sites with avg DQI 0.0540
+Study,Study_4,170,0.0241,0.0167,Study Study_4 has 170 sites with avg DQI 0.0241
+Study,Study_5,113,0.1065,0.0854,Study Study_5 has 113 sites with avg DQI 0.1065
+Study,Study_6,15,0.1852,0.2963,Study Study_6 has 15 sites with avg DQI 0.1852
+Study,Study_7,14,0.1328,0.2353,Study Study_7 has 14 sites with avg DQI 0.1328
+Study,Study_8,124,0.0985,0.0368,Study Study_8 has 124 sites with avg DQI 0.0985
+Study,Study_9,10,0.0542,0.0221,Study Study_9 has 10 sites with avg DQI 0.0542
+Region,AMERICA,1232,0.0417,-0.1723,AMERICA: Below portfolio average by 17.2%
+Region,ASIA,689,0.0674,0.3372,ASIA: Above portfolio average by 33.7%
+Region,EMEA,1478,0.0504,-0.0007,EMEA: Below portfolio average by 0.1%
+Region,Unknown,25,0.0118,-0.7657,Unknown: Below portfolio average by 76.6%
+Issue Complexity,None,741,0.0,0.0,741 sites have no active issues - potential best practice sources
+Issue Complexity,Low,1979,0.0454,0.051,1979 sites with low issue complexity
+Issue Complexity,High,85,0.1921,0.7765,85 sites have multiple concurrent issues requiring systemic intervention
+Issue Complexity,Medium,619,0.1073,0.3813,619 sites with medium issue complexity

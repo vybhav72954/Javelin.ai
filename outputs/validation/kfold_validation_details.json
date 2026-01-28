@@ -1,0 +1,96 @@
+{
+  "n_folds": 5,
+  "n_subjects": 57997,
+  "timestamp": "2026-01-28T03:51:43.641602",
+  "threshold_stability": {
+    "mean": 0.2449687762994431,
+    "std": 0.0002941377867686329,
+    "cv": 0.0012007154185604738,
+    "min": 0.24472727272727274,
+    "max": 0.24554263206672855,
+    "range": 0.0008153593394558123
+  },
+  "category_agreement": {
+    "agreement_rate": 0.99920685552701,
+    "perfect_agreement_rate": 0.99920685552701,
+    "subjects_evaluated": 57997
+  },
+  "ranking_correlation": {
+    "mean_correlation": 0.42017405746530434,
+    "min_correlation": 0.39745669583347704,
+    "max_correlation": 0.4511608225086436,
+    "std_correlation": 0.0163223692443408
+  },
+  "sae_capture": {
+    "fold_rates": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "mean": 1.0,
+    "all_100_pct": true
+  },
+  "cluster_stability": {
+    "stability": null,
+    "message": "No cluster column in data"
+  },
+  "fold_details": [
+    {
+      "fold": 1,
+      "train_size": 46397,
+      "test_size": 11600,
+      "threshold": 0.24492424242424243,
+      "sae_capture": 1.0,
+      "agreement": 0.9993965517241379,
+      "high_count": "1069",
+      "medium_count": "1503",
+      "low_count": "9028"
+    },
+    {
+      "fold": 2,
+      "train_size": 46397,
+      "test_size": 11600,
+      "threshold": 0.24554263206672855,
+      "sae_capture": 1.0,
+      "agreement": 0.9993965517241379,
+      "high_count": "1067",
+      "medium_count": "1505",
+      "low_count": "9028"
+    },
+    {
+      "fold": 3,
+      "train_size": 46397,
+      "test_size": 11600,
+      "threshold": 0.2447970479704797,
+      "sae_capture": 1.0,
+      "agreement": 0.9999137931034483,
+      "high_count": "1073",
+      "medium_count": "1499",
+      "low_count": "9028"
+    },
+    {
+      "fold": 4,
+      "train_size": 46398,
+      "test_size": 11599,
+      "threshold": 0.24485268630849222,
+      "sae_capture": 1.0,
+      "agreement": 0.9994827140270713,
+      "high_count": "1080",
+      "medium_count": "1491",
+      "low_count": "9028"
+    },
+    {
+      "fold": 5,
+      "train_size": 46399,
+      "test_size": 11598,
+      "threshold": 0.24472727272727274,
+      "sae_capture": 1.0,
+      "agreement": 0.9978444559406794,
+      "high_count": "1049",
+      "medium_count": "1522",
+      "low_count": "9027"
+    }
+  ]
+}

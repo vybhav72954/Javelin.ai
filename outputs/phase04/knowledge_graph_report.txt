@@ -1,0 +1,39 @@
+JAVELIN.AI - KNOWLEDGE GRAPH REPORT
+============================================================
+
+GRAPH STRUCTURE
+----------------------------------------
+Total Nodes: 61,520
+Total Edges: 64,917
+
+NODE TYPES
+----------------------------------------
+  Country: 72
+  Region: 4
+  Site: 3,424
+  Study: 23
+  Subject: 57,997
+
+EDGE TYPES
+----------------------------------------
+  ENROLLED_AT: 57,997
+  IN_REGION: 72
+  LOCATED_IN: 3,424
+  PARTICIPATES_IN: 3,424
+
+HIERARCHY
+----------------------------------------
+Region (4)
+  -> Country (72)
+       -> Site (3,424)
+            -> Subject (57,997)
+Study (23)
+  -> Site (3,424)
+       -> Subject (57,997)
+
+RISK DISTRIBUTION BY REGION
+----------------------------------------
+AMERICA: 2,157 high-risk / 21,937 total (9.8%) [Low]
+ASIA: 809 high-risk / 8,504 total (9.5%) [High]
+EMEA: 2,403 high-risk / 27,514 total (8.7%) [Medium]
+Unknown: 1 high-risk / 42 total (2.4%) [Low]

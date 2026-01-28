@@ -11,3 +11,6 @@ tabpfn==6.2.0
 tomli==2.0.1
 watchfiles==1.1.1
 websockets==15.0.1
+psutil==7.2.1
+tqdm==4.67.1
+seaborn=0.13.2

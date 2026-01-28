@@ -1,0 +1,106 @@
+{
+  "generated": "2026-01-28T04:06:16.571258",
+  "algorithm": "gmm",
+  "n_clusters": 10,
+  "total_sites": 3424,
+  "features_used": [
+    "avg_dqi_score",
+    "subject_count",
+    "high_risk_rate",
+    "issue_rate"
+  ],
+  "metrics": {
+    "silhouette_score": 0.21028041064219363,
+    "calinski_harabasz_score": 1052.8040623732434,
+    "davies_bouldin_score": 2.056283809371439
+  },
+  "convergence": {
+    "converged": true,
+    "n_iter": 29,
+    "lower_bound": 5.953391348875102,
+    "bic": -39559.988003881954,
+    "aic": -40474.63414973394
+  },
+  "cluster_summary": [
+    {
+      "cluster_id": "1",
+      "name": "Safety Concerns",
+      "sites": 291,
+      "pct": 8.5,
+      "risk_level": "Critical",
+      "priority": 1
+    },
+    {
+      "cluster_id": "3",
+      "name": "Safety Concerns",
+      "sites": 21,
+      "pct": 0.6,
+      "risk_level": "Critical",
+      "priority": 1
+    },
+    {
+      "cluster_id": "7",
+      "name": "Safety Concerns",
+      "sites": 156,
+      "pct": 4.6,
+      "risk_level": "Critical",
+      "priority": 1
+    },
+    {
+      "cluster_id": "8",
+      "name": "Safety Concerns",
+      "sites": 87,
+      "pct": 2.5,
+      "risk_level": "Critical",
+      "priority": 1
+    },
+    {
+      "cluster_id": "9",
+      "name": "Safety Concerns",
+      "sites": 670,
+      "pct": 19.6,
+      "risk_level": "Critical",
+      "priority": 1
+    },
+    {
+      "cluster_id": "0",
+      "name": "Data Laggards",
+      "sites": 568,
+      "pct": 16.6,
+      "risk_level": "High",
+      "priority": 2
+    },
+    {
+      "cluster_id": "2",
+      "name": "Data Laggards",
+      "sites": 225,
+      "pct": 6.6,
+      "risk_level": "High",
+      "priority": 2
+    },
+    {
+      "cluster_id": "5",
+      "name": "Data Laggards",
+      "sites": 630,
+      "pct": 18.4,
+      "risk_level": "High",
+      "priority": 2
+    },
+    {
+      "cluster_id": "6",
+      "name": "Moderate Performers",
+      "sites": 40,
+      "pct": 1.2,
+      "risk_level": "Low",
+      "priority": 4
+    },
+    {
+      "cluster_id": "4",
+      "name": "High Performers",
+      "sites": 736,
+      "pct": 21.5,
+      "risk_level": "Low",
+      "priority": 5
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+======================================================================
+JAVELIN.AI - DATA QUALITY DIAGNOSTICS REPORT
+======================================================================
+Generated: 2026-01-28 03:17:12
+
+ISSUE SUMMARY
+----------------------------------------------------------------------
+[OK] File errors (actual problems): 0
+[i] Empty files (legitimate): 31
+[OK] Empty categoricals: 0
+[!!] Left join data loss: 4
+[i] Duplicate records: 132
+[OK] Inconsistent metadata: 0
+[i] ID format issues: 0
+[OK] Invalid values: 0
+[i] Small sample sites: 19
+[i] Outliers detected: 18,896
+
+======================================================================
+DETAILED FINDINGS
+======================================================================
+
+--- ACTUAL FILE ERRORS (need attention) ---
+[OK] No actual file errors!
+
+--- EMPTY FILES (legitimate - no issues of this type) ---
+   visit_tracker: 8 studies have no data (OK)
+   missing_lab: 5 studies have no data (OK)
+   sae_dashboard: 6 studies have no data (OK)
+   missing_pages: 1 studies have no data (OK)
+   meddra_coding: 2 studies have no data (OK)
+   whodd_coding: 1 studies have no data (OK)
+   edrr: 8 studies have no data (OK)
+
+--- ID FORMAT ISSUES ---
+[OK] No ID format issues - all subjects match directly!
+
+--- OUTLIERS (handled by pipeline's cap_outliers) ---
+   Total outliers in raw data: 18,896
+   [OK] These are capped by the pipeline during processing
+
+======================================================================
+STATUS & RECOMMENDATIONS
+======================================================================
+
+[OK] NO CRITICAL ISSUES - Pipeline is ready to run!
+
+The following are handled automatically by the pipeline:
+  * Multi-sheet files (SAE, Missing Pages) - Combined automatically
+  * Empty categorical values - Filled with 'Unknown'
+  * Outliers - Capped using IQR * 3 method
+  * Missing site_id - Looked up from EDC baseline
+  * Small percentile samples - Uses max instead of p95
