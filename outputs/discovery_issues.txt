@@ -1,4 +1,0 @@
-JAVELIN.AI - DATA DISCOVERY ISSUES
-==================================================
-
-• MISSING COLUMNS in Study_21/Inactivated report_updated.xlsx (inactivated): ['site_id']
