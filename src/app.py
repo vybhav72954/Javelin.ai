@@ -764,7 +764,7 @@ def page_risk_landscape(data: dict):
             df['Avg DQI'] = df['Avg DQI'].round(4)
             st.dataframe(df, use_container_width=True, hide_index=True)
 
-        # ===== FIX #2a: GEOGRAPHIC INSIGHT (RESTORED) =====
+        # Geographic insight
         if not regions.empty and not sites.empty:
             worst = regions.loc[regions['avg_dqi_score'].idxmax()]
             avg = sites['avg_dqi_score'].mean() if 'avg_dqi_score' in sites.columns else 0
@@ -808,7 +808,7 @@ def page_risk_landscape(data: dict):
             df['Avg DQI'] = df['Avg DQI'].round(4)
             st.dataframe(df, use_container_width=True, hide_index=True)
 
-        # ===== FIX #2b: STUDY INSIGHT (RESTORED) =====
+        # Study insight
         if not studies.empty and 'high_risk_rate' in studies.columns:
             df = studies.copy()
             high_risk_studies = len(df[df['high_risk_rate'] >= 0.2])
@@ -1113,7 +1113,7 @@ def page_root_causes(data: dict):
             </div>
         """, unsafe_allow_html=True)
 
-        # ===== FIX #5: ROOT CAUSE ACTIONS WITH IMPACT NUMBERS (RESTORED) =====
+        # Recommended actions with impact numbers
         actions = parse_list(rc.get('recommended_actions', []))
         if actions:
             subj = rc['affected_subjects']
@@ -1165,9 +1165,8 @@ def page_root_causes(data: dict):
             </div>
         """, unsafe_allow_html=True)
 
-    # ===== FIX #6: CO-OCCURRENCE INSIGHT (NEW) =====
+    # Co-occurrence insight
     if not cooccurrence.empty:
-        # Find the strongest correlation pair
         df = cooccurrence.copy()
         first_col = df.columns[0]
         if df[first_col].dtype == 'object':
@@ -1233,31 +1232,64 @@ def page_action_center(data: dict):
                     </div>
                 """, unsafe_allow_html=True)
 
-    # Build actions
+    # =========================================================================
+    # BUILD ACTIONS FROM ALL SOURCES (FIXED - matching original 59)
+    # =========================================================================
     actions = []
     action_items = data.get('action_items', {})
 
-    # From site recommendations
-    for rec in action_items.get('site_recommendations', [])[:15]:
+    # From site recommendations (ALL)
+    for rec in action_items.get('site_recommendations', []):
         urgency = 'immediate' if rec.get('priority') == 'CRITICAL' else 'week' if rec.get('priority') == 'HIGH' else 'month'
         actions.append({
-            'title': f"Site {rec.get('site_id', '?')} ({rec.get('study', '')})",
+            'title': f"Site {rec.get('site_id', '?')} ({rec.get('study', '')}): {rec.get('site_risk_category', '')} Risk",
             'type': 'Site Action', 'urgency': urgency, 'sites': 1,
             'subjects': rec.get('subject_count', 0),
-            'steps': rec.get('recommendations', [])[:3], 'source': 'Recommendations Engine'
+            'steps': rec.get('recommendations', [])[:3], 'source': 'Phase 05 Engine'
         })
 
-    # From root causes
+    # From study recommendations (ALL)
+    for rec in action_items.get('study_recommendations', []):
+        urgency = 'immediate' if rec.get('priority') == 'CRITICAL' else 'week' if rec.get('priority') == 'HIGH' else 'month'
+        actions.append({
+            'title': f"{rec.get('study', '?')}: {rec.get('total_issues', 0)} issues across {rec.get('site_count', 0)} sites",
+            'type': 'Study Action', 'urgency': urgency,
+            'sites': rec.get('site_count', 0), 'subjects': rec.get('subject_count', 0),
+            'steps': rec.get('recommendations', [])[:3], 'source': 'Phase 05 Engine'
+        })
+
+    # From country recommendations (top 10)
+    for rec in action_items.get('country_recommendations', [])[:10]:
+        urgency = 'week' if rec.get('priority') in ['CRITICAL', 'HIGH'] else 'month'
+        actions.append({
+            'title': f"Country {rec.get('country', '?')}: {rec.get('site_count', 0)} sites need attention",
+            'type': 'Country Action', 'urgency': urgency,
+            'sites': rec.get('site_count', 0), 'subjects': rec.get('subject_count', 0),
+            'steps': rec.get('recommendations', [])[:2], 'source': 'Phase 05 Engine'
+        })
+
+    # From root causes (Phase 09)
     if not root_causes.empty:
         for _, rc in root_causes.iterrows():
             sev = rc['severity']
             urgency = 'immediate' if sev == 'Critical' else 'week' if sev == 'High' else 'month'
             actions.append({
-                'title': f"ROOT CAUSE: {rc['description'][:50]}",
+                'title': f"ROOT CAUSE: {rc['description'][:60]}",
                 'type': rc['category'], 'urgency': urgency,
                 'sites': rc['affected_sites'], 'subjects': rc['affected_subjects'],
                 'steps': parse_list(rc.get('recommended_actions', []))[:3],
                 'source': 'Root Cause Analysis'
+            })
+
+    # From multi-agent recommendations (Phase 07)
+    if not multi_agent_recs.empty:
+        for _, rec in multi_agent_recs.iterrows():
+            steps = parse_list(rec.get('recommended_actions', []))[:3]
+            actions.append({
+                'title': f"AI CONSENSUS: Site {rec.get('site_id', '?')} - {rec.get('risk_category', '')}",
+                'type': 'Multi-Agent', 'urgency': 'immediate' if rec.get('escalation_required') else 'week',
+                'sites': 1, 'subjects': 0,
+                'steps': steps, 'source': 'AI Agents'
             })
 
     immediate = [a for a in actions if a['urgency'] == 'immediate']
@@ -1308,7 +1340,7 @@ def page_action_center(data: dict):
         for a in week[:4]:
             render_action(a, 'week')
 
-    # ===== FIX #7: ACTION SUMMARY WITH CONTEXT VERBIAGE (RESTORED) =====
+    # Action Summary with context verbiage
     st.markdown("---")
     st.markdown("##### 📋 Action Summary")
 
@@ -1334,7 +1366,7 @@ def page_action_center(data: dict):
 
 
 # =============================================================================
-# PAGE 6: DEEP DIVE
+# PAGE 6: DEEP DIVE (ENHANCED)
 # =============================================================================
 
 def page_deep_dive(data: dict):
@@ -1384,7 +1416,7 @@ def page_deep_dive(data: dict):
 
     st.markdown("---")
 
-    # ===== FIX #8a: STUDY OVERVIEW WITH INSIGHT (NEW) =====
+    # Study Overview (if specific study selected)
     if selected_study != 'All Studies' and not studies.empty:
         study_data = studies[studies['study'] == selected_study].iloc[0] if len(studies[studies['study'] == selected_study]) > 0 else None
         if study_data is not None:
@@ -1420,7 +1452,7 @@ def page_deep_dive(data: dict):
                 )
             st.markdown("---")
 
-    # ===== FIX #8b: SITE PROFILE WITH INSIGHT (NEW) =====
+    # Site Profile (if specific site selected)
     if selected_site != 'All Sites' and not sites.empty:
         site_data = filtered_sites[filtered_sites['site_id'] == selected_site]
         if not site_data.empty:
@@ -1482,7 +1514,9 @@ def page_deep_dive(data: dict):
         if len(filtered_subjects) > 100:
             st.caption(f"Showing first 100 of {len(filtered_subjects):,} subjects. Export for full data.")
 
-    # Subject distribution chart
+    # =========================================================================
+    # ENHANCED VISUALIZATIONS (NEW)
+    # =========================================================================
     if not filtered_subjects.empty and 'risk_category' in filtered_subjects.columns:
         st.markdown("---")
         c1, c2 = st.columns(2)
@@ -1507,19 +1541,115 @@ def page_deep_dive(data: dict):
 
         with c2:
             st.markdown("##### DQI Score Distribution")
-            fig = go.Figure(go.Histogram(
-                x=filtered_subjects['dqi_score'],
-                nbinsx=30,
-                marker_color='#3b82f6'
-            ))
-            fig.update_layout(
-                height=300, margin=dict(l=40,r=20,t=20,b=40),
-                paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='#e2e8f0'),
-                xaxis=dict(gridcolor='#334155', title='DQI Score'),
-                yaxis=dict(gridcolor='#334155', title='Count')
-            )
-            st.plotly_chart(fig, use_container_width=True)
+            if 'dqi_score' in filtered_subjects.columns:
+                fig = go.Figure(go.Histogram(
+                    x=filtered_subjects['dqi_score'],
+                    nbinsx=30,
+                    marker_color='#3b82f6'
+                ))
+                fig.update_layout(
+                    height=300, margin=dict(l=40,r=20,t=20,b=40),
+                    paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                    font=dict(color='#e2e8f0'),
+                    xaxis=dict(gridcolor='#334155', title='DQI Score'),
+                    yaxis=dict(gridcolor='#334155', title='Count')
+                )
+                st.plotly_chart(fig, use_container_width=True)
+
+        # Additional visualizations row
+        st.markdown("---")
+        c1, c2 = st.columns(2)
+
+        with c1:
+            st.markdown("##### Top Issues Breakdown")
+            issue_cols = ['sae_pending_count', 'missing_visit_count', 'lab_issues_count',
+                         'missing_pages_count', 'uncoded_meddra_count', 'edrr_open_issues']
+            issue_cols = [c for c in issue_cols if c in filtered_subjects.columns]
+            if issue_cols:
+                issue_totals = {format_issue(c): int(filtered_subjects[c].sum()) for c in issue_cols}
+                issue_totals = {k: v for k, v in sorted(issue_totals.items(), key=lambda x: -x[1]) if v > 0}
+                if issue_totals:
+                    fig = go.Figure(go.Bar(
+                        x=list(issue_totals.values())[:8],
+                        y=list(issue_totals.keys())[:8],
+                        orientation='h',
+                        marker_color=['#ef4444' if 'Sae' in k else '#f59e0b' if 'Missing' in k else '#3b82f6'
+                                     for k in list(issue_totals.keys())[:8]],
+                        text=[f"{v:,}" for v in list(issue_totals.values())[:8]],
+                        textposition='outside',
+                        textfont=dict(color='#e2e8f0')
+                    ))
+                    fig.update_layout(
+                        height=300, margin=dict(l=20,r=60,t=20,b=40),
+                        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                        font=dict(color='#e2e8f0'),
+                        xaxis=dict(gridcolor='#334155', title='Count'),
+                        yaxis=dict(gridcolor='#334155')
+                    )
+                    st.plotly_chart(fig, use_container_width=True)
+
+        with c2:
+            st.markdown("##### DQI vs SAE Scatter")
+            if 'dqi_score' in filtered_subjects.columns and 'sae_pending_count' in filtered_subjects.columns and len(filtered_subjects) > 0:
+                # Sample for performance if too many points
+                sample_df = filtered_subjects.sample(min(500, len(filtered_subjects))) if len(filtered_subjects) > 500 else filtered_subjects
+                fig = px.scatter(
+                    sample_df, x='dqi_score', y='sae_pending_count',
+                    color='risk_category' if 'risk_category' in sample_df.columns else None,
+                    color_discrete_map={'High': '#ef4444', 'Medium': '#f59e0b', 'Low': '#10b981'},
+                    labels={'dqi_score': 'DQI Score', 'sae_pending_count': 'SAE Pending Count'},
+                    hover_data=['subject_id', 'site_id'] if 'subject_id' in sample_df.columns else None
+                )
+                fig.update_layout(
+                    height=300, margin=dict(l=40,r=20,t=20,b=40),
+                    paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                    font=dict(color='#e2e8f0'),
+                    xaxis=dict(gridcolor='#334155'), yaxis=dict(gridcolor='#334155'),
+                    legend=dict(orientation='h', y=-0.2)
+                )
+                st.plotly_chart(fig, use_container_width=True)
+
+        # Selection Insights
+        st.markdown("---")
+        st.markdown("##### 💡 Selection Insights")
+
+        # Calculate insights
+        high_risk_count = len(filtered_subjects[filtered_subjects['risk_category'] == 'High']) if 'risk_category' in filtered_subjects.columns else 0
+        high_risk_pct = high_risk_count / len(filtered_subjects) * 100 if len(filtered_subjects) > 0 else 0
+        avg_dqi = filtered_subjects['dqi_score'].mean() if 'dqi_score' in filtered_subjects.columns else 0
+        total_sae = int(filtered_subjects['sae_pending_count'].sum()) if 'sae_pending_count' in filtered_subjects.columns else 0
+
+        # Context string
+        if selected_study != 'All Studies' and selected_site != 'All Sites':
+            context_str = f"Site **{selected_site}** in study **{selected_study}**"
+        elif selected_study != 'All Studies':
+            context_str = f"Study **{selected_study}**"
+        elif selected_site != 'All Sites':
+            context_str = f"Site **{selected_site}**"
+        else:
+            context_str = "The **entire portfolio**"
+
+        ic1, ic2 = st.columns(2)
+        with ic1:
+            render_insight("Risk Analysis",
+                f"{context_str} has **{len(filtered_subjects):,} subjects** with **{high_risk_pct:.1f}%** classified as high-risk. "
+                f"Average DQI score is **{avg_dqi:.4f}**. "
+                f"{'This is above the portfolio average - prioritize for intervention.' if high_risk_pct > 15 else 'Risk levels are within acceptable range.'}")
+
+        with ic2:
+            if total_sae > 0:
+                render_insight("Safety Signal",
+                    f"**{total_sae:,} pending SAE reviews** detected in this selection. "
+                    f"SAE backlog is a critical compliance risk that requires immediate attention. "
+                    f"Consider prioritizing safety data processing for this {'site' if selected_site != 'All Sites' else 'study' if selected_study != 'All Studies' else 'portfolio segment'}.",
+                    icon="⚠️")
+            else:
+                missing_visits = int(filtered_subjects['missing_visit_count'].sum()) if 'missing_visit_count' in filtered_subjects.columns else 0
+                lab_issues = int(filtered_subjects['lab_issues_count'].sum()) if 'lab_issues_count' in filtered_subjects.columns else 0
+                render_insight("Data Quality",
+                    f"No pending SAE reviews in this selection. "
+                    f"Focus on other data quality metrics like missing visits (**{missing_visits:,}**) "
+                    f"and lab issues (**{lab_issues:,}**).")
 
 
 # =============================================================================
