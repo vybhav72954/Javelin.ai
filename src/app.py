@@ -51,9 +51,13 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    .main .block-container { padding: 1rem 2rem; max-width: 1600px; }
+    .main .block-container { padding: 1rem 2rem; max-width: 1600px; font-size: 1.1rem; }
     #MainMenu, footer, header {visibility: hidden;}
     h1, h2, h3, h4, h5 { color: #ffffff !important; }
+    
+    /* Global font size increase */
+    .stMarkdown, .stText, p, span, div { font-size: 1.1rem; }
+    .stExpander { font-size: 1.1rem; }
     
     .metric-card {
         background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
@@ -61,9 +65,9 @@ st.markdown("""
         border-radius: 12px;
         padding: 1rem;
     }
-    .metric-label { color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    .metric-value { color: #ffffff; font-size: 2rem; font-weight: 700; }
-    .metric-row { display: flex; justify-content: space-between; padding: 0.25rem 0; font-size: 0.9rem; }
+    .metric-label { color: #94a3b8; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .metric-value { color: #ffffff; font-size: 2.25rem; font-weight: 700; }
+    .metric-row { display: flex; justify-content: space-between; padding: 0.3rem 0; font-size: 1.1rem; }
     
     .alert-card {
         border-radius: 12px;
@@ -82,8 +86,8 @@ st.markdown("""
         padding: 1.25rem;
         margin: 1rem 0;
     }
-    .insight-title { color: #60a5fa; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; }
-    .insight-text { color: #e2e8f0; font-size: 0.95rem; line-height: 1.6; }
+    .insight-title { color: #60a5fa; font-weight: 600; font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .insight-text { color: #e2e8f0; font-size: 1.15rem; line-height: 1.7; }
     
     .cluster-card {
         background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
@@ -97,8 +101,8 @@ st.markdown("""
         background: rgba(239,68,68,0.08);
         border: 1px solid rgba(239,68,68,0.3);
         border-radius: 12px;
-        padding: 1rem;
-        margin-bottom: 0.5rem;
+        padding: 1.25rem;
+        margin-bottom: 0.75rem;
     }
     
     .rc-card {
@@ -446,9 +450,9 @@ def page_command_center(data: dict):
                 color = '#ef4444' if 'sae' in col else '#f59e0b' if 'missing' in col else '#3b82f6'
                 icon = '🔴' if 'sae' in col else '🟠' if 'missing' in col else '🔵'
                 st.markdown(f"""
-                    <div style="display:flex;justify-content:space-between;padding:0.6rem 1rem;background:linear-gradient(90deg,{color}15,transparent);border-left:3px solid {color};border-radius:0 8px 8px 0;margin-bottom:0.4rem">
-                        <span style="color:#e2e8f0">{icon} {format_issue(col)}</span>
-                        <span style="color:{color};font-weight:700">{total:,}</span>
+                    <div style="display:flex;justify-content:space-between;padding:0.85rem 1rem;background:linear-gradient(90deg,{color}15,transparent);border-left:3px solid {color};border-radius:0 8px 8px 0;margin-bottom:0.5rem">
+                        <span style="color:#e2e8f0;font-size:1.1rem">{icon} {format_issue(col)}</span>
+                        <span style="color:{color};font-weight:700;font-size:1.2rem">{total:,}</span>
                     </div>
                 """, unsafe_allow_html=True)
 
@@ -508,25 +512,45 @@ def page_risk_landscape(data: dict):
         with c1:
             st.markdown("##### Global Risk Distribution")
             if not countries.empty and 'country' in countries.columns:
-                fig = px.choropleth(
-                    countries,
+                # Use scatter_geo for better looking map with bubbles
+                df = countries.copy()
+                df['size'] = df['site_count'] * 3  # Scale for visibility
+                df['risk_level'] = df['avg_dqi_score'].apply(
+                    lambda x: 'High' if x > 0.1 else 'Medium' if x > 0.05 else 'Low'
+                )
+
+                fig = px.scatter_geo(
+                    df,
                     locations='country',
                     locationmode='ISO-3',
+                    size='site_count',
                     color='avg_dqi_score',
                     hover_name='country',
                     hover_data={'site_count': True, 'avg_dqi_score': ':.4f'},
-                    color_continuous_scale=['#10b981', '#fbbf24', '#ef4444'],
-                    labels={'avg_dqi_score': 'DQI Score'}
+                    color_continuous_scale='RdYlGn_r',  # Red=bad, Green=good (reversed)
+                    size_max=40,
+                    projection='natural earth',
+                    labels={'avg_dqi_score': 'DQI Score', 'site_count': 'Sites'}
                 )
                 fig.update_layout(
                     geo=dict(
-                        showframe=False, showcoastlines=True, coastlinecolor='#475569',
-                        landcolor='#1e293b', oceancolor='#0f172a', bgcolor='rgba(0,0,0,0)',
-                        projection_type='equirectangular'
+                        showframe=False,
+                        showcoastlines=True,
+                        coastlinecolor='#475569',
+                        landcolor='#1e293b',
+                        oceancolor='#0f172a',
+                        bgcolor='rgba(0,0,0,0)',
+                        showland=True,
+                        showcountries=True,
+                        countrycolor='#334155'
                     ),
-                    height=400, margin=dict(l=0,r=0,t=10,b=0),
+                    height=420,
+                    margin=dict(l=0,r=0,t=10,b=0),
                     paper_bgcolor='rgba(0,0,0,0)',
-                    coloraxis_colorbar=dict(title='DQI', tickfont=dict(color='#e2e8f0'))
+                    coloraxis_colorbar=dict(
+                        title=dict(text="DQI", font=dict(color="#e2e8f0", size=13)),
+                        tickfont=dict(color='#e2e8f0', size=12),
+                    )
                 )
                 st.plotly_chart(fig, use_container_width=True)
             else:
@@ -542,9 +566,9 @@ def page_risk_landscape(data: dict):
                     delta_text = f"↑{abs(pct):.0f}% above" if pct > 10 else f"↓{abs(pct):.0f}% below" if pct < -10 else "≈ avg"
                     st.markdown(f"""
                         <div class="region-card">
-                            <div style="color:#fff;font-weight:600">{r['region']}</div>
-                            <div style="color:#94a3b8;font-size:0.85rem">{r['site_count']:,} sites • DQI: {r['avg_dqi_score']:.4f}</div>
-                            <div style="color:{delta_color};font-weight:600;margin-top:0.25rem">{delta_text}</div>
+                            <div style="color:#fff;font-weight:600;font-size:1.15rem">{r['region']}</div>
+                            <div style="color:#94a3b8;font-size:1.05rem">{r['site_count']:,} sites • DQI: {r['avg_dqi_score']:.4f}</div>
+                            <div style="color:{delta_color};font-weight:600;margin-top:0.25rem;font-size:1.1rem">{delta_text}</div>
                         </div>
                     """, unsafe_allow_html=True)
 
@@ -641,52 +665,69 @@ def page_risk_landscape(data: dict):
             c1, c2 = st.columns([1.5, 1])
 
             with c1:
-                # Bar chart of clusters - group by cluster name
+                # Horizontal bar chart of clusters
                 cluster_grouped = cluster_profiles.groupby('cluster_name').agg({
                     'site_count': 'sum',
                     'pct_of_total': 'sum',
                     'risk_level': 'first',
                     'avg_dqi_score': 'mean'
-                }).reset_index()
+                }).reset_index().sort_values('site_count', ascending=True)
 
-                fig = go.Figure()
                 colors_map = {'Critical': '#ef4444', 'High': '#f59e0b', 'Low': '#10b981'}
-                for _, row in cluster_grouped.iterrows():
-                    color = colors_map.get(row['risk_level'], '#3b82f6')
-                    fig.add_trace(go.Bar(
-                        name=row['cluster_name'],
-                        x=[row['cluster_name']],
-                        y=[row['site_count']],
-                        marker_color=color,
-                        text=f"{row['site_count']} sites<br>({row['pct_of_total']:.0f}%)",
-                        textposition='outside',
-                        textfont=dict(size=12, color='#e2e8f0'),
-                        hovertemplate=f"<b>{row['cluster_name']}</b><br>Sites: {row['site_count']}<br>DQI: {row['avg_dqi_score']:.4f}<extra></extra>"
-                    ))
+                bar_colors = [colors_map.get(r, '#3b82f6') for r in cluster_grouped['risk_level']]
+
+                fig = go.Figure(go.Bar(
+                    y=cluster_grouped['cluster_name'],
+                    x=cluster_grouped['site_count'],
+                    orientation='h',
+                    marker_color=bar_colors,
+                    text=[f"{s:,} sites ({p:.0f}%)" for s, p in zip(cluster_grouped['site_count'], cluster_grouped['pct_of_total'])],
+                    textposition='outside',
+                    textfont=dict(size=13, color='#e2e8f0'),
+                ))
                 fig.update_layout(
-                    showlegend=False,
-                    height=350, margin=dict(l=20,r=20,t=50,b=60),
+                    height=300, margin=dict(l=20,r=100,t=20,b=40),
                     paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                    font=dict(color='#e2e8f0', size=12),
-                    xaxis=dict(gridcolor='#334155'),
-                    yaxis=dict(gridcolor='#334155', title='Sites')
+                    font=dict(color='#e2e8f0', size=13),
+                    xaxis=dict(gridcolor='#334155', title='Number of Sites'),
+                    yaxis=dict(gridcolor='#334155')
                 )
                 st.plotly_chart(fig, use_container_width=True)
 
             with c2:
-                st.markdown("##### Cluster Profiles")
-                for _, row in cluster_profiles.sort_values('intervention_priority').head(5).iterrows():
+                st.markdown("##### Cluster Metrics")
+                # Quick metrics
+                total_sites = cluster_grouped['site_count'].sum()
+                critical_sites = cluster_grouped[cluster_grouped['risk_level'] == 'Critical']['site_count'].sum()
+                healthy_sites = cluster_grouped[cluster_grouped['risk_level'] == 'Low']['site_count'].sum()
+
+                st.markdown(f"""
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:1rem">
+                        <div style="background:#1e293b;padding:0.75rem;border-radius:8px;text-align:center">
+                            <div style="color:#ef4444;font-size:1.5rem;font-weight:700">{critical_sites:,}</div>
+                            <div style="color:#94a3b8;font-size:0.85rem">Critical</div>
+                        </div>
+                        <div style="background:#1e293b;padding:0.75rem;border-radius:8px;text-align:center">
+                            <div style="color:#10b981;font-size:1.5rem;font-weight:700">{healthy_sites:,}</div>
+                            <div style="color:#94a3b8;font-size:0.85rem">Healthy</div>
+                        </div>
+                    </div>
+                """, unsafe_allow_html=True)
+
+                st.markdown("##### Top Clusters")
+                colors_map = {'Critical': '#ef4444', 'High': '#f59e0b', 'Low': '#10b981'}
+                for _, row in cluster_profiles.sort_values('intervention_priority').head(4).iterrows():
                     color = colors_map.get(row['risk_level'], '#3b82f6')
-                    issues = parse_list(row.get('dominant_issues', []))[:3]
+                    issues = parse_list(row.get('dominant_issues', []))[:2]
                     issues_str = ', '.join([i.split('(')[0].strip() for i in issues]) if issues else 'None'
                     st.markdown(f"""
                         <div class="cluster-card" style="border-left:4px solid {color}">
                             <div style="display:flex;justify-content:space-between">
-                                <span style="color:#fff;font-weight:600">{row['cluster_name']}</span>
-                                <span style="background:{color}33;color:{color};padding:0.2rem 0.5rem;border-radius:10px;font-size:0.75rem">{row['risk_level']}</span>
+                                <span style="color:#fff;font-weight:600;font-size:1rem">{row['cluster_name']}</span>
+                                <span style="background:{color}33;color:{color};padding:0.2rem 0.5rem;border-radius:10px;font-size:0.8rem">{row['risk_level']}</span>
                             </div>
-                            <div style="color:#94a3b8;font-size:0.85rem;margin-top:0.25rem">{row['site_count']} sites ({row['pct_of_total']}%)</div>
-                            <div style="color:#64748b;font-size:0.8rem;margin-top:0.25rem">Issues: {issues_str}</div>
+                            <div style="color:#94a3b8;font-size:0.95rem;margin-top:0.25rem">{row['site_count']} sites ({row['pct_of_total']}%)</div>
+                            <div style="color:#64748b;font-size:0.9rem;margin-top:0.25rem">Issues: {issues_str}</div>
                         </div>
                     """, unsafe_allow_html=True)
 
@@ -759,35 +800,33 @@ def page_root_causes(data: dict):
         color = '#ef4444' if sev == 'Critical' else '#f59e0b' if sev == 'High' else '#3b82f6'
 
         evidence = parse_list(rc.get('evidence', []))
-        evidence_html = "".join([f"<div style='color:#cbd5e1;padding:0.15rem 0;font-size:0.85rem'>• {e}</div>" for e in evidence[:3]])
+        evidence_html = "".join([f"<div style='color:#cbd5e1;padding:0.25rem 0;font-size:1.05rem'>• {e}</div>" for e in evidence[:3]])
 
         st.markdown(f"""
             <div class="rc-card" style="border-left-color:{color}">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start">
                     <div>
-                        <div style="color:#94a3b8;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px">{rc['category']}</div>
-                        <div style="color:#fff;font-size:1.1rem;font-weight:600;margin:0.25rem 0">{rc['description']}</div>
+                        <div style="color:#94a3b8;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.5px">{rc['category']}</div>
+                        <div style="color:#fff;font-size:1.2rem;font-weight:600;margin:0.25rem 0">{rc['description']}</div>
                     </div>
-                    <span style="background:{color}33;color:{color};padding:0.25rem 0.75rem;border-radius:12px;font-size:0.8rem;font-weight:600">{sev}</span>
+                    <span style="background:{color}33;color:{color};padding:0.3rem 0.85rem;border-radius:12px;font-size:0.9rem;font-weight:600">{sev}</span>
                 </div>
                 <div style="display:flex;gap:2.5rem;margin:0.75rem 0;padding:0.6rem 0.75rem;background:rgba(0,0,0,0.2);border-radius:8px">
-                    <div><div style="color:#94a3b8;font-size:0.75rem;text-transform:uppercase">Confidence</div><div style="color:#fff;font-size:1.1rem;font-weight:700">{int(rc['confidence']*100)}%</div></div>
-                    <div><div style="color:#94a3b8;font-size:0.75rem;text-transform:uppercase">Sites</div><div style="color:#fff;font-size:1.1rem;font-weight:700">{rc['affected_sites']:,}</div></div>
-                    <div><div style="color:#94a3b8;font-size:0.75rem;text-transform:uppercase">Subjects</div><div style="color:#fff;font-size:1.1rem;font-weight:700">{rc['affected_subjects']:,}</div></div>
+                    <div><div style="color:#94a3b8;font-size:0.85rem;text-transform:uppercase">Confidence</div><div style="color:#fff;font-size:1.25rem;font-weight:700">{int(rc['confidence']*100)}%</div></div>
+                    <div><div style="color:#94a3b8;font-size:0.85rem;text-transform:uppercase">Sites</div><div style="color:#fff;font-size:1.25rem;font-weight:700">{rc['affected_sites']:,}</div></div>
+                    <div><div style="color:#94a3b8;font-size:0.85rem;text-transform:uppercase">Subjects</div><div style="color:#fff;font-size:1.25rem;font-weight:700">{rc['affected_subjects']:,}</div></div>
                 </div>
-                {f"<div style='margin-top:0.5rem'><div style='color:#94a3b8;font-size:0.8rem;margin-bottom:0.25rem'>Evidence:</div>{evidence_html}</div>" if evidence_html else ""}
+                {f"<div style='margin-top:0.5rem'><div style='color:#94a3b8;font-size:0.9rem;margin-bottom:0.25rem'>Evidence:</div>{evidence_html}</div>" if evidence_html else ""}
             </div>
         """, unsafe_allow_html=True)
 
         actions = parse_list(rc.get('recommended_actions', []))
         if actions:
-            with st.expander(f"📋 {len(actions)} Recommended Actions → Expected Impact"):
+            subj = rc['affected_subjects']
+            impact_text = f" → ~{int(subj/len(actions)):,} subjects per action" if subj > 0 else ""
+            with st.expander(f"📋 {len(actions)} Recommended Actions{impact_text}"):
                 for i, a in enumerate(actions, 1):
-                    # Add expected impact context
-                    impact = f"~{int(rc['affected_subjects']/len(actions)):,} subjects improved" if rc['affected_subjects'] > 0 else ""
                     st.markdown(f"**{i}.** {a}")
-                    if impact:
-                        st.caption(f"   ↳ {impact}")
 
     st.markdown("---")
 
@@ -854,7 +893,7 @@ def page_action_center(data: dict):
     st.markdown("### ⚡ Action Center")
     st.caption("Prioritized interventions ranked by impact")
 
-    # Impact banner
+    # Impact banner - separate boxes
     if not subjects.empty and 'risk_category' in subjects.columns:
         high = len(subjects[subjects['risk_category'] == 'High'])
         med = len(subjects[subjects['risk_category'] == 'Medium'])
@@ -864,38 +903,85 @@ def page_action_center(data: dict):
         proj_high = int(high * 0.66)
         proj_health = int(100 * (1 - (proj_high * 1.0 + med * 0.3) / total))
 
-        st.markdown(f"""
-            <div class="impact-banner">
-                <div style="display:flex;justify-content:space-around;flex-wrap:wrap;gap:1.5rem">
-                    <div style="text-align:center">
-                        <div style="color:rgba(255,255,255,0.8);font-size:0.75rem;text-transform:uppercase">High-Risk Subjects</div>
-                        <div style="color:#fff;font-size:1.5rem;font-weight:700">{high:,} → {proj_high:,}</div>
-                        <div style="color:#a7f3d0;font-size:0.9rem">(-{high-proj_high:,})</div>
-                    </div>
-                    <div style="text-align:center">
-                        <div style="color:rgba(255,255,255,0.8);font-size:0.75rem;text-transform:uppercase">Portfolio Health</div>
-                        <div style="color:#fff;font-size:1.5rem;font-weight:700">{curr_health} → {proj_health}</div>
-                        <div style="color:#a7f3d0;font-size:0.9rem">(+{proj_health-curr_health} pts)</div>
-                    </div>
-                    <div style="text-align:center">
-                        <div style="color:rgba(255,255,255,0.8);font-size:0.75rem;text-transform:uppercase">Reduction</div>
-                        <div style="color:#fff;font-size:1.5rem;font-weight:700">-{int((high-proj_high)/high*100) if high > 0 else 0}%</div>
-                    </div>
+        cols = st.columns(3)
+        with cols[0]:
+            st.markdown(f"""
+                <div style="background:linear-gradient(135deg,#059669 0%,#047857 100%);border-radius:12px;padding:1.25rem;text-align:center">
+                    <div style="color:rgba(255,255,255,0.8);font-size:0.85rem;text-transform:uppercase">High-Risk Subjects</div>
+                    <div style="color:#fff;font-size:1.75rem;font-weight:700;margin:0.5rem 0">{high:,} → {proj_high:,}</div>
+                    <div style="color:#a7f3d0;font-size:1rem">-{high-proj_high:,} subjects</div>
                 </div>
-            </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
+        with cols[1]:
+            st.markdown(f"""
+                <div style="background:linear-gradient(135deg,#059669 0%,#047857 100%);border-radius:12px;padding:1.25rem;text-align:center">
+                    <div style="color:rgba(255,255,255,0.8);font-size:0.85rem;text-transform:uppercase">Portfolio Health</div>
+                    <div style="color:#fff;font-size:1.75rem;font-weight:700;margin:0.5rem 0">{curr_health} → {proj_health}</div>
+                    <div style="color:#a7f3d0;font-size:1rem">+{proj_health-curr_health} points</div>
+                </div>
+            """, unsafe_allow_html=True)
+        with cols[2]:
+            st.markdown(f"""
+                <div style="background:linear-gradient(135deg,#059669 0%,#047857 100%);border-radius:12px;padding:1.25rem;text-align:center">
+                    <div style="color:rgba(255,255,255,0.8);font-size:0.85rem;text-transform:uppercase">Risk Reduction</div>
+                    <div style="color:#fff;font-size:1.75rem;font-weight:700;margin:0.5rem 0">-{int((high-proj_high)/high*100) if high > 0 else 0}%</div>
+                    <div style="color:#a7f3d0;font-size:1rem">if actions completed</div>
+                </div>
+            """, unsafe_allow_html=True)
 
-    # Build actions from multiple sources
+    # Build actions from ALL sources
     actions = []
 
-    # From root causes
+    # From Phase 05 action_items.json (site/study/region/country recommendations)
+    action_items = data.get('action_items', {})
+
+    # Site recommendations
+    for rec in action_items.get('site_recommendations', []):
+        urgency = 'immediate' if rec.get('priority') == 'CRITICAL' else 'week' if rec.get('priority') == 'HIGH' else 'month'
+        actions.append({
+            'title': f"Site {rec.get('site_id', '?')} ({rec.get('study', '')}): {rec.get('site_risk_category', '')} Risk",
+            'type': 'Site Action',
+            'urgency': urgency,
+            'sites': 1,
+            'subjects': rec.get('subject_count', 0),
+            'steps': rec.get('recommendations', [])[:3],
+            'source': 'Phase 05 Engine'
+        })
+
+    # Study recommendations
+    for rec in action_items.get('study_recommendations', []):
+        urgency = 'immediate' if rec.get('priority') == 'CRITICAL' else 'week' if rec.get('priority') == 'HIGH' else 'month'
+        actions.append({
+            'title': f"{rec.get('study', '?')}: {rec.get('total_issues', 0)} issues across {rec.get('site_count', 0)} sites",
+            'type': 'Study Action',
+            'urgency': urgency,
+            'sites': rec.get('site_count', 0),
+            'subjects': rec.get('subject_count', 0),
+            'steps': rec.get('recommendations', [])[:3],
+            'source': 'Phase 05 Engine'
+        })
+
+    # Country recommendations
+    for rec in action_items.get('country_recommendations', [])[:10]:  # Top 10
+        urgency = 'week' if rec.get('priority') in ['CRITICAL', 'HIGH'] else 'month'
+        actions.append({
+            'title': f"Country {rec.get('country', '?')}: {rec.get('site_count', 0)} sites need attention",
+            'type': 'Country Action',
+            'urgency': urgency,
+            'sites': rec.get('site_count', 0),
+            'subjects': rec.get('subject_count', 0),
+            'steps': rec.get('recommendations', [])[:2],
+            'source': 'Phase 05 Engine'
+        })
+
+    # From root causes (Phase 09)
     if not root_causes.empty:
         for _, rc in root_causes.iterrows():
             sev = rc['severity']
             urgency = 'immediate' if sev == 'Critical' else 'week' if sev == 'High' else 'month'
             steps = parse_list(rc.get('recommended_actions', []))[:3]
             actions.append({
-                'title': rc['description'][:70],
+                'title': f"ROOT CAUSE: {rc['description'][:60]}",
                 'type': rc['category'],
                 'urgency': urgency,
                 'sites': rc['affected_sites'],
@@ -904,13 +990,13 @@ def page_action_center(data: dict):
                 'source': 'Root Cause Analysis'
             })
 
-    # From multi-agent recommendations
+    # From multi-agent recommendations (Phase 07)
     if not multi_agent_recs.empty:
-        for _, rec in multi_agent_recs.head(5).iterrows():
+        for _, rec in multi_agent_recs.iterrows():
             steps = parse_list(rec.get('recommended_actions', []))[:3]
             actions.append({
-                'title': f"Site {rec.get('site_id', '?')}: {rec.get('agent_consensus', '')[:50]}",
-                'type': 'Multi-Agent Consensus',
+                'title': f"AI CONSENSUS: Site {rec.get('site_id', '?')} - {rec.get('risk_category', '')}",
+                'type': 'Multi-Agent',
                 'urgency': 'immediate' if rec.get('escalation_required') else 'week',
                 'sites': 1,
                 'subjects': 0,
@@ -927,17 +1013,17 @@ def page_action_center(data: dict):
         if a['steps']:
             steps_html = "<div style='margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid #334155'>"
             for s in a['steps']:
-                steps_html += f"<div style='color:#cbd5e1;font-size:0.85rem;padding:0.2rem 0;padding-left:1rem'>→ {s}</div>"
+                steps_html += f"<div style='color:#cbd5e1;font-size:1.05rem;padding:0.3rem 0;padding-left:1rem'>→ {s}</div>"
             steps_html += "</div>"
 
         st.markdown(f"""
             <div class="action-card" style="border-left-color:{'#ef4444' if urgency_class == 'immediate' else '#f59e0b' if urgency_class == 'week' else '#3b82f6'}">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start">
-                    <div style="color:#fff;font-weight:600;flex:1">{a['title']}</div>
-                    <span style="color:#64748b;font-size:0.75rem;margin-left:0.5rem">{a['source']}</span>
+                    <div style="color:#fff;font-weight:600;flex:1;font-size:1.15rem">{a['title']}</div>
+                    <span style="color:#64748b;font-size:0.9rem;margin-left:0.5rem">{a['source']}</span>
                 </div>
-                <div style="color:#94a3b8;font-size:0.8rem;margin-top:0.25rem">
-                    📁 {a['type']} • 🏥 {a['sites']:,} sites • 👥 {a['subjects']:,} subjects
+                <div style="color:#94a3b8;font-size:1rem;margin-top:0.35rem">
+                    📁 {a['type']} • 🏥 {a['sites']:,} sites{f" • 👥 {a['subjects']:,} subjects" if a['subjects'] > 0 else ""}
                 </div>
                 {steps_html}
             </div>
@@ -970,16 +1056,17 @@ def page_action_center(data: dict):
         st.markdown("##### 🔬 Anomaly Drilldown")
         st.caption("Sites showing unusual patterns that require investigation")
 
-        with st.expander(f"View {len(anomaly_summary['top_sites'])} Top Anomalous Sites", expanded=False):
-            for site in anomaly_summary['top_sites'][:5]:
+        top_sites = anomaly_summary['top_sites'][:10]  # Show 10 sites
+        with st.expander(f"View {len(top_sites)} Top Anomalous Sites", expanded=False):
+            for site in top_sites:
                 st.markdown(f"""
                     <div class="anomaly-card">
-                        <div style="display:flex;justify-content:space-between">
-                            <span style="color:#fff;font-weight:600">{site['site_id']}</span>
-                            <span style="color:#ef4444;font-size:0.85rem">{site['critical_count']} critical</span>
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <span style="color:#fff;font-weight:600;font-size:1.2rem">{site['site_id']}</span>
+                            <span style="color:#ef4444;font-size:1rem;font-weight:600">{site['critical_count']} critical</span>
                         </div>
-                        <div style="color:#94a3b8;font-size:0.85rem">{site['study']}</div>
-                        <div style="color:#cbd5e1;font-size:0.85rem;margin-top:0.5rem">{site['top_anomalies'][:150]}...</div>
+                        <div style="color:#94a3b8;font-size:1.05rem">{site['study']}</div>
+                        <div style="color:#cbd5e1;font-size:1.1rem;margin-top:0.5rem;line-height:1.5">{site['top_anomalies'][:200]}...</div>
                     </div>
                 """, unsafe_allow_html=True)
 
@@ -1022,12 +1109,18 @@ def page_action_center(data: dict):
 
 # Header
 st.markdown("""
-    <div style="background:linear-gradient(135deg,#1e3a5f,#0f172a);padding:1rem 2rem;border-radius:12px;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center">
-        <div>
-            <span style="font-size:1.75rem;font-weight:700;color:#fff">⚡ JAVELIN.AI</span>
-            <span style="color:#94a3b8;margin-left:1rem">Clinical Trial Data Quality Intelligence</span>
+    <div style="background:linear-gradient(135deg,#1e3a5f 0%,#2d4a6f 50%,#0f172a 100%);padding:1.25rem 2rem;border-radius:16px;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;border:1px solid #334155;box-shadow:0 4px 20px rgba(0,0,0,0.3)">
+        <div style="display:flex;align-items:center;gap:0.75rem">
+            <span style="font-size:2.5rem">⚡</span>
+            <div>
+                <span style="font-size:2rem;font-weight:800;color:#fff;letter-spacing:-0.5px">JAVELIN.AI</span>
+                <div style="color:#94a3b8;font-size:1rem;margin-top:0.1rem">Clinical Trial Data Quality Intelligence</div>
+            </div>
         </div>
-        <span style="color:#64748b;font-size:0.85rem">NEST 2.0 | Team CWTY</span>
+        <div style="text-align:right">
+            <div style="color:#64748b;font-size:0.9rem">NEST 2.0 Innovation Challenge</div>
+            <div style="color:#94a3b8;font-size:1rem;font-weight:600">Team CWTY</div>
+        </div>
     </div>
 """, unsafe_allow_html=True)
 
