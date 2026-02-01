@@ -1,5 +1,5 @@
 # JAVELIN.AI - DQI Validation Report
-**Generated:** 2026-01-28 03:51
+**Generated:** 2026-02-01 23:09
 **Subjects Analyzed:** 57,997
 **Validation Method:** 5-Fold Stratified Cross-Validation
 

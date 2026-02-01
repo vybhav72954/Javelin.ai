@@ -1,6 +1,6 @@
 # JAVELIN.AI - Model Validation Methodology
 
-**Date:** 2026-01-28
+**Date:** 2026-02-01
 **Authors:** JAVELIN.AI Team
 
 ---

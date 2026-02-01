@@ -1,8 +1,8 @@
 # JAVELIN.AI Multi-Agent Analysis Report
 
-**Generated:** 2026-01-28 04:05:54
+**Generated:** 2026-02-01 22:31:54
 
-**Sites Analyzed:** 3
+**Sites Analyzed:** 1
 
 ## Agent Architecture
 
@@ -23,10 +23,10 @@
 
 ## Executive Summary
 
-- **Critical Risk Sites:** 3
+- **Critical Risk Sites:** 1
 - **High Risk Sites:** 0
 - **Medium Risk Sites:** 0
-- **Escalations Required:** 3
+- **Escalations Required:** 1
 
 ## Portfolio Context
 
@@ -36,20 +36,6 @@
 - Portfolio Avg SAE Pending: 1.90
 
 ## Critical Priority Sites (Immediate Action Required)
-
-### Site: Site 888 (Study_24)
-- **Risk Category:** Critical
-- **Composite Score:** 0.9157
-- **Escalation Required:** YES
-- **Consensus:** Safety concerns require immediate attention. Data quality issues affecting reliability. Performance below portfolio standards.
-- **Key Issues:**
-  - CRITICAL: 29 SAE reviews pending
-  - Uncoded adverse events: 10
-  - Uncoded drug terms: 23
-- **Recommended Actions:**
-  - Immediate SAE review completion required
-  - Escalate to Safety Officer
-  - Complete MedDRA coding for adverse events
 
 ### Site: Site 17 (Study_1)
 - **Risk Category:** Critical
@@ -65,20 +51,6 @@
   - Escalate to Safety Officer
   - Complete MedDRA coding for adverse events
 
-### Site: Site 27 (Study_1)
-- **Risk Category:** Critical
-- **Composite Score:** 0.6317
-- **Escalation Required:** YES
-- **Consensus:** Safety concerns require immediate attention. Performance below portfolio standards.
-- **Key Issues:**
-  - CRITICAL: 40 SAE reviews pending
-  - Uncoded adverse events: 2
-  - Uncoded drug terms: 2
-- **Recommended Actions:**
-  - Immediate SAE review completion required
-  - Escalate to Safety Officer
-  - Complete MedDRA coding for adverse events
-
 
 ## Action Summary by Domain
 
@@ -88,10 +60,8 @@
 - Complete MedDRA coding for adverse events
 
 ### Data Quality Domain
-- Urgent: Complete visit documentation
 - URGENT: Address long-outstanding missing pages
 - Schedule visit data entry
-- Complete external data reconciliation
 
 ---
 

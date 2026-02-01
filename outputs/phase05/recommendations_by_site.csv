@@ -1,17 +1,7 @@
 study,site_id,country,region,priority,subject_count,high_risk_count,avg_dqi_score,top_issue,top_recommendation,ai_insight
-Study_1,Site 17,ESP,EMEA,CRITICAL,3,2,0.516,sae_pending_count,Schedule urgent site quality call within 48 hours,"Given the critical risk level and DQI score of 0.516 for Site 17 in Study_1 within ESP, it is imperative to address the identified issues promptly to ensure data quality. The top priorities should focus on resolving pending SAEs (8 instances), uncoded MEDDRA terms (4 instances), and missing visit/pages (2+16 instances).
-
-Immediate next steps include:
-1. Investigate the reason for the high number of SAEs, pending or unresolved, and expedite their reporting as per study protocol.
-2. Ensure proper "
-Study_16,Site 674,DEU,EMEA,CRITICAL,2,2,0.497,sae_pending_count,Schedule urgent site quality call within 48 hours,"Given the critical DQI score of 0.497 for Site 674 in DEU during Study_16, it is essential to address the identified issues promptly to maintain data quality. The top risks include a high number of SAEs pending (6 instances), missing visits (5 instances), missing pages (12 instances), open EDRR issues (4 instances), and inactivated forms (45 instances).
-
-Immediate action should focus on ensuring all SAEs are reported promptly to avoid further delays. Site staff should prioritize data entry for v"
-Study_16,Site 759,TUR,EMEA,CRITICAL,1,1,0.444,sae_pending_count,Schedule urgent site quality call within 48 hours,"Given the CRITICAL risk level and DQI score of 0.444 for Site 759 in TUR for Study_16, it is recommended to prioritize resolving the identified issues promptly. The primary focus should be on addressing the high number of lab issues (41 instances) and EDCC open issues (8 instances).
-
-Immediate next steps include:
-1. Investigating the root causes behind the lab issues and taking corrective actions to ensure accurate data collection and reporting.
-2. Following up with the site coordinator to ensur"
+Study_1,Site 17,ESP,EMEA,CRITICAL,3,2,0.516,sae_pending_count,Schedule urgent site quality call within 48 hours,
+Study_16,Site 674,DEU,EMEA,CRITICAL,2,2,0.497,sae_pending_count,Schedule urgent site quality call within 48 hours,
+Study_16,Site 759,TUR,EMEA,CRITICAL,1,1,0.444,sae_pending_count,Schedule urgent site quality call within 48 hours,
 Study_1,Site 4,FRA,EMEA,CRITICAL,2,2,0.346,sae_pending_count,Schedule urgent site quality call within 48 hours,
 Study_1,Site 27,CHN,ASIA,CRITICAL,3,2,0.343,sae_pending_count,Schedule urgent site quality call within 48 hours,
 Study_24,Site 888,DEU,EMEA,CRITICAL,23,15,0.319,sae_pending_count,Schedule urgent site quality call within 48 hours,
@@ -60,10 +50,8 @@ Study_24,Site 113,CHN,ASIA,CRITICAL,23,2,0.117,sae_pending_count,Schedule urgent
 Study_11,Site 482,FRA,EMEA,CRITICAL,4,2,0.117,sae_pending_count,Schedule urgent site quality call within 48 hours,
 Study_22,Site 1044,USA,AMERICA,CRITICAL,2,1,0.117,sae_pending_count,Schedule urgent site quality call within 48 hours,
 Study_21,Site 1250,USA,AMERICA,CRITICAL,2,1,0.117,sae_pending_count,Schedule urgent site quality call within 48 hours,
-Study_24,Site 558,TUR,EMEA,HIGH,1,1,0.459,uncoded_meddra_count,Schedule urgent site quality call within 48 hours,"Given the high DQI score and critical risk level for Site 558 in TUR for Study_24, it is recommended to prioritize addressing the identified issues, particularly the significant lab issues (70 instances). Immediate next steps should involve a thorough review of all lab data entries, ensuring they are correctly coded according to the MedDRA dictionary. Additionally, prompt communication with the site personnel is necessary to clarify and correct any missing visit or page counts, as well as uncode"
-Study_1,Site 12,KOR,ASIA,HIGH,1,1,0.45,missing_visit_count,Schedule urgent site quality call within 48 hours,"Given the high DQI score (0.450) for Site 12 in KOR for Study_1, it is crucial to address the identified data quality issues promptly. The top issues include missing visit counts, pages, lab results, uncoded whodd instances, and open edrr issues.
-
-Immediate action should focus on correcting the missing data points across all categories. Site personnel should be notified of these discrepancies and requested to provide the required information as soon as possible. Additionally, it would be benefic"
+Study_24,Site 558,TUR,EMEA,HIGH,1,1,0.459,uncoded_meddra_count,Schedule urgent site quality call within 48 hours,
+Study_1,Site 12,KOR,ASIA,HIGH,1,1,0.45,missing_visit_count,Schedule urgent site quality call within 48 hours,
 Study_16,Site 628,CAN,AMERICA,HIGH,1,1,0.411,missing_visit_count,Schedule urgent site quality call within 48 hours,
 Study_16,Site 618,USA,AMERICA,HIGH,1,1,0.39,missing_visit_count,Schedule urgent site quality call within 48 hours,
 Study_24,Site 524,ISR,EMEA,HIGH,1,1,0.388,missing_visit_count,Schedule urgent site quality call within 48 hours,

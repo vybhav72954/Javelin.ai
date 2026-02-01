@@ -1,6 +1,6 @@
 # JAVELIN.AI Root Cause Analysis Report
 
-**Generated:** 2026-01-28 04:06:21
+**Generated:** 2026-02-01 22:32:20
 
 **Sites Analyzed:** 3,424
 **Root Causes Identified:** 3

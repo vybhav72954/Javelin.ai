@@ -1,7 +1,6 @@
 # Javelin.AI - Data Quality Recommendations Report
 
-*Generated: 2026-01-28 04:01:13*
-*Enhanced with AI Analysis (mistral)*
+*Generated: 2026-02-01 22:31:47*
 
 ## Executive Summary
 
@@ -9,7 +8,7 @@
 
 ================================================================================
 JAVELIN.AI - DATA QUALITY EXECUTIVE SUMMARY
-Generated: 2026-01-28 04:01:13
+Generated: 2026-02-01 22:31:47
 ================================================================================
 
 OVERVIEW
@@ -62,14 +61,6 @@ COUNTRIES REQUIRING ATTENTION
   [CRITICAL] JPN (ASIA): 105 sites, DQI=0.071, High-risk=5.1%
         → URGENT: 9 pending SAE reviews in JPN
 
-AI-GENERATED INSIGHT
---------------------
-Executive Summary:
-
-The clinical trial portfolio under review comprises 57,997 subjects across 3424 sites, spanning 23 studies. Notably, 9.3% of the total subject population is classified as high risk, with 51 critical sites identified. The portfolio is confronted by several significant issues: Max Days Outstanding (27,640), Lab Issues Count (6,846), and Pending SAE Reviews (6,496).
-
-To address these challenges, immediate priority should be given to resolving the Max Days Outstanding issue by ensuring timely data entry and follow-up at site level. Simultaneously, increased focus is required on lab management, with prompt resolution of identified issues to maintain data integrity. Lastly, an accelerated review process for Pending SAEs is recommended to mitigate potential risks associated with adverse events.
-
 CRITICAL ITEMS REQUIRING IMMEDIATE ACTION
 -----------------------------------------
 [!] PENDING SAE REVIEWS: 6496 subjects have SAE records awaiting review
@@ -82,15 +73,15 @@ TOP PRIORITIES THIS WEEK
 ------------------------
 1. [CRITICAL] Study_1 - Site 17 (ESP)
    DQI Score: 0.516 | High-risk subjects: 2
-   AI Insight: Given the critical risk level and DQI score of 0.516 for Site 17 in Study_1 within ESP, it is imperative to address the identified issues promptly to ensure data quality. The top priorities should foc...
+   Action: Schedule urgent site quality call within 48 hours
 
 2. [CRITICAL] Study_16 - Site 674 (DEU)
    DQI Score: 0.497 | High-risk subjects: 2
-   AI Insight: Given the critical DQI score of 0.497 for Site 674 in DEU during Study_16, it is essential to address the identified issues promptly to maintain data quality. The top risks include a high number of SA...
+   Action: Schedule urgent site quality call within 48 hours
 
 3. [CRITICAL] Study_16 - Site 759 (TUR)
    DQI Score: 0.444 | High-risk subjects: 1
-   AI Insight: Given the CRITICAL risk level and DQI score of 0.444 for Site 759 in TUR for Study_16, it is recommended to prioritize resolving the identified issues promptly. The primary focus should be on addressi...
+   Action: Schedule urgent site quality call within 48 hours
 
 4. [CRITICAL] Study_1 - Site 4 (FRA)
    DQI Score: 0.346 | High-risk subjects: 2
@@ -145,7 +136,6 @@ RECOMMENDATIONS BY CATEGORY
 - **Recommendations:**
   - CRITICAL: 838 pending SAE reviews across ASIA
   - Address 307 missing visits - may indicate regional protocol compliance issues
-- **AI Insight:** In the Asian region, with a high coverage of 13 countries and over 8,500 subjects across 689 sites, the Disease Quality of Information (DQI) score is relatively lower than the portfolio average, indicating potential data quality concerns. Notably, there's an increased high-risk rate of 9.5% compared to the portfolio average of 9.3%, with a significant portion of sites (19.4%) posing high risk. Actionable steps could involve enhancing data collection and monitoring procedures in these high-risk sites for improved data quality.
 
 ### EMEA
 - **Coverage:** 49 countries, 1478 sites, 27,514 subjects
@@ -156,7 +146,6 @@ RECOMMENDATIONS BY CATEGORY
 - **Recommendations:**
   - CRITICAL: 2868 pending SAE reviews across EMEA
   - Address 725 missing visits - may indicate regional protocol compliance issues
-- **AI Insight:** In the EMEA region, with a portfolio average DQI score of 0.050 across 49 countries and 1478 sites involving 27,514 subjects, there is a relatively low risk profile. However, it's worth noting that 167 sites (11.3%) still present high-risk rates (8.7%), indicating potential issues at certain locations. A targeted review and rectification of these problematic sites could help improve the overall quality and consistency in this region.
 
 ### AMERICA
 - **Coverage:** 7 countries, 1232 sites, 21,937 subjects
@@ -167,7 +156,6 @@ RECOMMENDATIONS BY CATEGORY
 - **Recommendations:**
   - CRITICAL: 2790 pending SAE reviews across AMERICA
   - Address 574 missing visits - may indicate regional protocol compliance issues
-- **AI Insight:** In the American region, the Disease Quality Index (DQI) score is lower than the portfolio average at 0.042, indicating improved health outcomes compared to the global benchmark. However, a high-risk rate of 9.8% and 101 high-risk sites (8.2%) suggest that targeted interventions are necessary to address persistent health issues in certain locations. Strategies could include improving access to quality healthcare services, implementing disease prevention programs, or enhancing health education initiatives in these high-risk areas.
 
 ### Unknown
 - **Coverage:** 3 countries, 25 sites, 42 subjects
@@ -177,7 +165,6 @@ RECOMMENDATIONS BY CATEGORY
 - **Priority:** LOW
 - **Recommendations:**
   - Unknown performing within acceptable range
-- **AI Insight:** In the unspecified region with a DQI score of 0.012, there is a significant improvement in data quality compared to the portfolio average (0.050). This could be due to lower high-risk rates (2.4%) and fewer high-risk sites (1 out of 25 or 4.0%), indicating better data management practices. To maintain this positive trend, continuous monitoring and enhancement of data quality processes are recommended for sustainable results in the region.
 
 ## Countries Requiring Attention
 
@@ -575,17 +562,6 @@ Priority: CRITICAL
 Subjects: 3 | High-Risk: 2
 Average DQI: 0.516 | Max DQI: 0.720
 
-AI Analysis:
-Given the critical risk level and DQI score of 0.516 for Site 17 in Study_1 within ESP, it is imperative to address the identified issues promptly to ensure data quality. The top priorities should focus on resolving pending SAEs (8 instances), uncoded MEDDRA terms (4 instances), and missing visit/pages (2+16 instances).
-
-Immediate next steps include:
-1. Investigate the reason for the high number of SAEs, pending or unresolved, and expedite their reporting as per study protocol.
-2. Ensure proper coding of MEDDRA terms to maintain consistency and facilitate analysis.
-3. Identify the reasons behind missing visit/pages data and implement corrective measures to minimize future occurrences.
-4. Address any lab issues identified to avoid further complications in the trial's results.
-
-By addressing these critical issues, we can improve the overall
-
 Issues Identified:
   * Sae Pending Count: 8 instances [CRITICAL]
     Action: Immediate SAE review and regulatory submission required
@@ -616,11 +592,6 @@ Priority: CRITICAL
 Subjects: 2 | High-Risk: 2
 Average DQI: 0.497 | Max DQI: 0.612
 
-AI Analysis:
-Given the critical DQI score of 0.497 for Site 674 in DEU during Study_16, it is essential to address the identified issues promptly to maintain data quality. The top risks include a high number of SAEs pending (6 instances), missing visits (5 instances), missing pages (12 instances), open EDRR issues (4 instances), and inactivated forms (45 instances).
-
-Immediate action should focus on ensuring all SAEs are reported promptly to avoid further delays. Site staff should prioritize data entry for visits, pages, and EDRR to reduce the current backlog. Additionally, it is crucial to reactivate the inactivated forms to minimize data loss and maintain a complete dataset. Regular follow-ups with the site personnel are recommended to monitor progress and address any ongoing concerns.
-
 Issues Identified:
   * Sae Pending Count: 6 instances [CRITICAL]
     Action: Immediate SAE review and regulatory submission required
@@ -650,15 +621,6 @@ Recommended Actions:
 Priority: CRITICAL
 Subjects: 1 | High-Risk: 1
 Average DQI: 0.444 | Max DQI: 0.444
-
-AI Analysis:
-Given the CRITICAL risk level and DQI score of 0.444 for Site 759 in TUR for Study_16, it is recommended to prioritize resolving the identified issues promptly. The primary focus should be on addressing the high number of lab issues (41 instances) and EDCC open issues (8 instances).
-
-Immediate next steps include:
-1. Investigating the root causes behind the lab issues and taking corrective actions to ensure accurate data collection and reporting.
-2. Following up with the site coordinator to ensure all EDCC open issues are addressed and resolved in a timely manner.
-3. Monitoring the SAE pending count (2 instances) closely, ensuring that any pending SAEs are reported and resolved promptly according to study protocols.
-4. Ensuring complete and accurate documentation for all forms, addressing the 4 instances of inactivated forms and the missing pages issue
 
 Issues Identified:
   * Sae Pending Count: 2 instances [CRITICAL]

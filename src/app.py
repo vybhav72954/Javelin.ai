@@ -65,7 +65,7 @@ except ImportError:
 
 st.set_page_config(
     page_title="Javelin.AI",
-    page_icon="⚡",
+    page_icon="🎯",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -1711,7 +1711,7 @@ def page_deep_dive(data: dict):
 st.markdown("""
     <div style="background:linear-gradient(135deg,#1e3a5f 0%,#2d4a6f 50%,#0f172a 100%);padding:1.25rem 2rem;border-radius:16px;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;border:1px solid #334155;box-shadow:0 4px 20px rgba(0,0,0,0.3)">
         <div style="display:flex;align-items:center;gap:0.75rem">
-            <span style="font-size:2.5rem">⚡</span>
+            <span style="font-size:2.5rem">🎯</span>
             <div>
                 <span style="font-size:1.75rem;font-weight:800;color:#fff;letter-spacing:-0.5px">Javelin.AI</span>
                 <div style="color:#94a3b8;font-size:0.9rem;margin-top:0.1rem">Clinical Trial Data Quality Intelligence</div>

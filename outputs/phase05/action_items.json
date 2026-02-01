@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-01-28T04:01:13.476794",
-  "ai_model": "mistral",
+  "generated_at": "2026-02-01T22:31:47.398285",
+  "ai_model": null,
   "summary": {
     "total_subjects": 57997,
     "total_sites": 3424,
@@ -75,7 +75,7 @@
         "Review site training records and re-train if needed",
         "Implement enhanced oversight procedures"
       ],
-      "ai_insight": "Given the critical risk level and DQI score of 0.516 for Site 17 in Study_1 within ESP, it is imperative to address the identified issues promptly to ensure data quality. The top priorities should focus on resolving pending SAEs (8 instances), uncoded MEDDRA terms (4 instances), and missing visit/pages (2+16 instances).\n\nImmediate next steps include:\n1. Investigate the reason for the high number of SAEs, pending or unresolved, and expedite their reporting as per study protocol.\n2. Ensure proper coding of MEDDRA terms to maintain consistency and facilitate analysis.\n3. Identify the reasons behind missing visit/pages data and implement corrective measures to minimize future occurrences.\n4. Address any lab issues identified to avoid further complications in the trial's results.\n\nBy addressing these critical issues, we can improve the overall",
+      "ai_insight": null,
       "priority": "CRITICAL"
     },
     {
@@ -131,7 +131,7 @@
         "Review site training records and re-train if needed",
         "Implement enhanced oversight procedures"
       ],
-      "ai_insight": "Given the critical DQI score of 0.497 for Site 674 in DEU during Study_16, it is essential to address the identified issues promptly to maintain data quality. The top risks include a high number of SAEs pending (6 instances), missing visits (5 instances), missing pages (12 instances), open EDRR issues (4 instances), and inactivated forms (45 instances).\n\nImmediate action should focus on ensuring all SAEs are reported promptly to avoid further delays. Site staff should prioritize data entry for visits, pages, and EDRR to reduce the current backlog. Additionally, it is crucial to reactivate the inactivated forms to minimize data loss and maintain a complete dataset. Regular follow-ups with the site personnel are recommended to monitor progress and address any ongoing concerns.",
+      "ai_insight": null,
       "priority": "CRITICAL"
     },
     {
@@ -187,7 +187,7 @@
         "Review site training records and re-train if needed",
         "Implement enhanced oversight procedures"
       ],
-      "ai_insight": "Given the CRITICAL risk level and DQI score of 0.444 for Site 759 in TUR for Study_16, it is recommended to prioritize resolving the identified issues promptly. The primary focus should be on addressing the high number of lab issues (41 instances) and EDCC open issues (8 instances).\n\nImmediate next steps include:\n1. Investigating the root causes behind the lab issues and taking corrective actions to ensure accurate data collection and reporting.\n2. Following up with the site coordinator to ensure all EDCC open issues are addressed and resolved in a timely manner.\n3. Monitoring the SAE pending count (2 instances) closely, ensuring that any pending SAEs are reported and resolved promptly according to study protocols.\n4. Ensuring complete and accurate documentation for all forms, addressing the 4 instances of inactivated forms and the missing pages issue",
+      "ai_insight": null,
       "priority": "CRITICAL"
     },
     {
@@ -1098,7 +1098,7 @@
         "Address 15 missing visits across sites",
         "Clear 6 uncoded adverse event terms"
       ],
-      "ai_insight": "The data quality status of Study_1 indicates a relatively low average Data Quality Index (DQI) of 0.154, suggesting potential issues. With 24 high-risk subjects identified, it is crucial to prioritize comprehensive data verification and quality control measures at the participating sites to ensure accurate results.\n\nKey action item: Conduct a thorough review of data collected from high-risk subjects and implement targeted training for involved sites to address identified issues and improve overall data quality.",
+      "ai_insight": null,
       "priority": "CRITICAL"
     },
     {
@@ -1117,7 +1117,7 @@
       "recommendations": [
         "Clear 8 uncoded adverse event terms"
       ],
-      "ai_insight": "The data quality status for Study_10 indicates a relatively low data quality issue (DQI of 0.075), with only three high-risk subjects identified. This suggests that the study's overall data integrity is generally good. However, it's crucial to closely monitor and address the remaining high-risk cases promptly to maintain data quality standards.\n\nKey action item: Conduct a thorough review of the data from the three high-risk subjects to identify and resolve any underlying issues that may impact study outcomes.",
+      "ai_insight": null,
       "priority": "MEDIUM"
     },
     {
@@ -1137,7 +1137,7 @@
         "URGENT: 63 pending SAE reviews require immediate attention",
         "Address 12 missing visits across sites"
       ],
-      "ai_insight": "The data quality status of Study_11 appears to be high, with an average Data Quality Index (DQI) of 0.035, indicating minimal issues. However, the presence of 16 high-risk subjects suggests a need for increased vigilance and potential targeted interventions at these sites to ensure consistent data quality across all participating locations.\n\nKey action item: Conduct thorough investigations at sites with high-risk subjects to identify and address underlying issues, aiming to maintain the overall high data quality of Study_11.",
+      "ai_insight": null,
       "priority": "CRITICAL"
     },
     {
@@ -1154,7 +1154,7 @@
         "uncoded_ae": 1
       },
       "recommendations": [],
-      "ai_insight": "The data quality status of Study_13 indicates a relatively low data quality, as evidenced by the high Data Quality Index (DQI) of 0.127. To improve data quality, it is crucial to address the two high-risk subjects and provide additional training or support to ensure accurate data collection and entry at these sites.",
+      "ai_insight": null,
       "priority": "MEDIUM"
     },
     {
@@ -1173,7 +1173,7 @@
       "recommendations": [
         "High-risk subject rate (25.0%) exceeds threshold"
       ],
-      "ai_insight": "The data quality status of Study_14 indicates a low data quality, as evidenced by the high Data Quality Index (DQI) score of 0.100. This suggests that only 10% of the data collected meets the required quality standards. A key action item to improve this is implementing stricter data validation and quality control measures at the participating sites, particularly focusing on the subject who has been identified as high risk. Additionally, it may be beneficial to review and possibly increase the number of subjects in the study to enhance the reliability of the results.",
+      "ai_insight": null,
       "priority": "HIGH"
     },
     {
@@ -1190,7 +1190,7 @@
         "uncoded_ae": 1
       },
       "recommendations": [],
-      "ai_insight": "The data quality status of Study_15 appears to be high, with an average Data Quality Index (DQI) of 0.068, indicating minimal issues. However, it's concerning that there is one high-risk subject. A key action item would be to closely monitor and address the data quality concerns of this particular subject to maintain overall study integrity.",
+      "ai_insight": null,
       "priority": "MEDIUM"
     },
     {
@@ -1211,7 +1211,7 @@
         "Address 327 missing visits across sites",
         "Clear 8 uncoded adverse event terms"
       ],
-      "ai_insight": "The data quality status for Study_16 is relatively low, with an average Data Quality Index (DQI) of 0.166, indicating potential issues at approximately one-sixth of the data points. A significant number of subjects, 182 or around 27%, are classified as high risk.\n\nTo improve the data quality, it's crucial to focus on enhancing the training and oversight provided to participating sites, with a specific emphasis on addressing issues identified in the high-risk subject group.",
+      "ai_insight": null,
       "priority": "CRITICAL"
     },
     {
@@ -1230,7 +1230,7 @@
       "recommendations": [
         "High-risk subject rate (18.4%) exceeds threshold"
       ],
-      "ai_insight": "The data quality status for Study_17 indicates a relatively low data quality, as evidenced by the high Data Quality Index (DQI) of 0.196. Nine out of 49 subjects are classified as high-risk, suggesting a need for increased monitoring and intervention to ensure accurate data collection.\n\nA key action item would be to prioritize quality control measures at sites with the highest number of high-risk subjects, focusing on training staff, improving procedures, and implementing stricter data validation checks to reduce errors and improve overall study data quality.",
+      "ai_insight": null,
       "priority": "HIGH"
     },
     {
@@ -1249,7 +1249,7 @@
       "recommendations": [
         "Clear 12 uncoded adverse event terms"
       ],
-      "ai_insight": "The data quality status of Study_18 appears to be high, with an average Data Quality Index (DQI) of 0.035, indicating minimal issues. However, the presence of two high-risk subjects suggests a need for increased monitoring and potential reevaluation of data collection processes at these specific sites.\n\nA key action item would be to conduct a thorough review of data from the high-risk subjects and corresponding sites to identify any patterns or root causes of the issues, with the aim of implementing corrective measures to maintain data quality standards.",
+      "ai_insight": null,
       "priority": "MEDIUM"
     },
     {
@@ -1270,7 +1270,7 @@
         "Address 15 missing visits across sites",
         "Clear 8 uncoded adverse event terms"
       ],
-      "ai_insight": "The data quality status for Study_19 indicates a moderate concern, with an average Data Quality Index (DQI) of 0.219. This suggests that approximately 22% of the data may require validation or correction. A key action item would be to conduct thorough data quality checks on the high-risk subjects (representing about 35% of the total subjects), and consider implementing stricter data entry procedures at the participating sites to improve overall data quality in future collections.",
+      "ai_insight": null,
       "priority": "HIGH"
     },
     {
@@ -1555,7 +1555,7 @@
         "CRITICAL: 838 pending SAE reviews across ASIA",
         "Address 307 missing visits - may indicate regional protocol compliance issues"
       ],
-      "ai_insight": "In the Asian region, with a high coverage of 13 countries and over 8,500 subjects across 689 sites, the Disease Quality of Information (DQI) score is relatively lower than the portfolio average, indicating potential data quality concerns. Notably, there's an increased high-risk rate of 9.5% compared to the portfolio average of 9.3%, with a significant portion of sites (19.4%) posing high risk. Actionable steps could involve enhancing data collection and monitoring procedures in these high-risk sites for improved data quality.",
+      "ai_insight": null,
       "priority": "CRITICAL"
     },
     {
@@ -1584,7 +1584,7 @@
         "CRITICAL: 2868 pending SAE reviews across EMEA",
         "Address 725 missing visits - may indicate regional protocol compliance issues"
       ],
-      "ai_insight": "In the EMEA region, with a portfolio average DQI score of 0.050 across 49 countries and 1478 sites involving 27,514 subjects, there is a relatively low risk profile. However, it's worth noting that 167 sites (11.3%) still present high-risk rates (8.7%), indicating potential issues at certain locations. A targeted review and rectification of these problematic sites could help improve the overall quality and consistency in this region.",
+      "ai_insight": null,
       "priority": "CRITICAL"
     },
     {
@@ -1613,7 +1613,7 @@
         "CRITICAL: 2790 pending SAE reviews across AMERICA",
         "Address 574 missing visits - may indicate regional protocol compliance issues"
       ],
-      "ai_insight": "In the American region, the Disease Quality Index (DQI) score is lower than the portfolio average at 0.042, indicating improved health outcomes compared to the global benchmark. However, a high-risk rate of 9.8% and 101 high-risk sites (8.2%) suggest that targeted interventions are necessary to address persistent health issues in certain locations. Strategies could include improving access to quality healthcare services, implementing disease prevention programs, or enhancing health education initiatives in these high-risk areas.",
+      "ai_insight": null,
       "priority": "CRITICAL"
     },
     {
@@ -1641,7 +1641,7 @@
       "recommendations": [
         "Unknown performing within acceptable range"
       ],
-      "ai_insight": "In the unspecified region with a DQI score of 0.012, there is a significant improvement in data quality compared to the portfolio average (0.050). This could be due to lower high-risk rates (2.4%) and fewer high-risk sites (1 out of 25 or 4.0%), indicating better data management practices. To maintain this positive trend, continuous monitoring and enhancement of data quality processes are recommended for sustainable results in the region.",
+      "ai_insight": null,
       "priority": "LOW"
     }
   ],

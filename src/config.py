@@ -148,16 +148,21 @@ OUTPUT_FILES = {
 # Default arguments for phases that support CLI options
 
 PIPELINE_DEFAULTS = {
+    # Enable these lines for an easily viewable knowledge graph, but this gives lesser output files
+    # '04':{
+    #    'high_risk_only':True, # Change this to False for complete Knowledge Graph
+    # },
+
     # Phase 05: Recommendations Engine
     '05': {
         'model': 'mistral',
-        'top_sites': 5,
+        'top_sites': 2,
     },
 
     # Phase 07: Multi-Agent System
     '07': {
         'model': 'mistral',
-        'top_sites': 3,
+        'top_sites': 1,
         'fast': False,
     },
 
