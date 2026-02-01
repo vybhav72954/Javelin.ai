@@ -1,5 +1,5 @@
 """
-JAVELIN.AI - Clinical Trial Data Quality Dashboard
+Javelin.AI - Clinical Trial Data Quality Dashboard
 ==============================================================
 
 INSIGHT-DRIVEN dashboard using ALL 9 phases of pipeline output.
@@ -1713,7 +1713,7 @@ st.markdown("""
         <div style="display:flex;align-items:center;gap:0.75rem">
             <span style="font-size:2.5rem">⚡</span>
             <div>
-                <span style="font-size:1.75rem;font-weight:800;color:#fff;letter-spacing:-0.5px">JAVELIN.AI</span>
+                <span style="font-size:1.75rem;font-weight:800;color:#fff;letter-spacing:-0.5px">Javelin.AI</span>
                 <div style="color:#94a3b8;font-size:0.9rem;margin-top:0.1rem">Clinical Trial Data Quality Intelligence</div>
             </div>
         </div>
@@ -1767,7 +1767,7 @@ with tabs[5]: page_deep_dive(data)
 # Footer
 st.markdown("""
     <div style='text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid #334155;color:#64748b;font-size:0.8rem'>
-        JAVELIN.AI | Built for NEST 2.0 Innovation Challenge | Team CWTY<br>
-        <span style='font-size:0.75rem'>57,997 subjects • 3,424 sites • 23 studies • 9-phase intelligence pipeline</span>
+        JAVELIN.AI | Built on Hopes, Dreams and Prayers | Team CWTY<br>
+        <span style='font-size:0.75rem'> LLM-enabled • 9-phase intelligence pipeline</span>
     </div>
 """, unsafe_allow_html=True)
