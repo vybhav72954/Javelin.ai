@@ -64,7 +64,7 @@ except ImportError:
 # =============================================================================
 
 st.set_page_config(
-    page_title="JAVELIN.AI",
+    page_title="Javelin.AI",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -80,10 +80,10 @@ st.markdown("""
     .main .block-container { padding: 1rem 2rem; max-width: 1800px; }
     #MainMenu, footer, header { visibility: hidden; }
     h1, h2, h3, h4, h5 { color: #ffffff !important; }
-    
+
     /* Typography */
     .stMarkdown, .stText, p, span, div { font-size: 1.05rem; }
-    
+
     /* Metric Cards - Enhanced */
     .metric-card {
         background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
@@ -101,7 +101,7 @@ st.markdown("""
     .metric-delta { font-size: 0.85rem; margin-top: 0.25rem; }
     .metric-row { display: flex; justify-content: space-between; padding: 0.3rem 0; }
     .metric-context { color: #64748b; font-size: 0.8rem; margin-top: 0.35rem; }
-    
+
     /* Alert Cards */
     .alert-card {
         border-radius: 12px;
@@ -115,7 +115,7 @@ st.markdown("""
     .alert-warning { background: rgba(245,158,11,0.1); border-color: #f59e0b; }
     .alert-info { background: rgba(59,130,246,0.1); border-color: #3b82f6; }
     .alert-success { background: rgba(16,185,129,0.1); border-color: #10b981; }
-    
+
     /* Insight Boxes */
     .insight-box {
         background: linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(6,182,212,0.1) 100%);
@@ -126,7 +126,7 @@ st.markdown("""
     }
     .insight-title { color: #60a5fa; font-weight: 600; font-size: 1rem; margin-bottom: 0.5rem; }
     .insight-text { color: #e2e8f0; font-size: 1.05rem; line-height: 1.6; }
-    
+
     /* Cards */
     .cluster-card, .site-card, .region-card {
         background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
@@ -137,7 +137,7 @@ st.markdown("""
         transition: all 0.2s ease;
     }
     .cluster-card:hover, .site-card:hover { border-color: #475569; }
-    
+
     .anomaly-card {
         background: rgba(239,68,68,0.08);
         border: 1px solid rgba(239,68,68,0.3);
@@ -145,7 +145,7 @@ st.markdown("""
         padding: 1.25rem;
         margin-bottom: 0.75rem;
     }
-    
+
     .rc-card {
         background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
         border: 1px solid #334155;
@@ -154,7 +154,7 @@ st.markdown("""
         margin-bottom: 0.75rem;
         border-left: 4px solid;
     }
-    
+
     .action-card {
         background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
         border: 1px solid #334155;
@@ -165,7 +165,7 @@ st.markdown("""
         transition: all 0.2s ease;
     }
     .action-card:hover { border-color: #475569; transform: translateX(2px); }
-    
+
     /* Agent Insights */
     .agent-insight {
         background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(59,130,246,0.1) 100%);
@@ -174,7 +174,7 @@ st.markdown("""
         padding: 1rem;
         margin: 0.75rem 0;
     }
-    
+
     /* Deep Dive Cards */
     .profile-card {
         background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
@@ -193,7 +193,7 @@ st.markdown("""
     }
     .profile-title { color: #fff; font-size: 1.5rem; font-weight: 700; }
     .profile-subtitle { color: #94a3b8; font-size: 0.95rem; margin-top: 0.25rem; }
-    
+
     /* Status Badges */
     .badge {
         padding: 0.35rem 0.85rem;
@@ -206,7 +206,7 @@ st.markdown("""
     .badge-high { background: rgba(249,115,22,0.2); color: #f97316; }
     .badge-medium { background: rgba(245,158,11,0.2); color: #f59e0b; }
     .badge-low { background: rgba(16,185,129,0.2); color: #10b981; }
-    
+
     /* Navigation Enhancement */
     .nav-indicator {
         display: flex;
@@ -220,7 +220,7 @@ st.markdown("""
         background: #334155;
     }
     .nav-dot.active { background: #3b82f6; }
-    
+
     /* Export Button */
     .export-btn {
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
@@ -233,14 +233,14 @@ st.markdown("""
         transition: all 0.2s ease;
     }
     .export-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,130,246,0.4); }
-    
+
     /* Comparison View */
     .comparison-container {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1.5rem;
     }
-    
+
     /* Stat Grid */
     .stat-grid {
         display: grid;
@@ -255,7 +255,7 @@ st.markdown("""
     }
     .stat-value { color: #fff; font-size: 1.5rem; font-weight: 700; }
     .stat-label { color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; }
-    
+
     /* Progress Bar */
     .progress-bar {
         background: #1e293b;
@@ -268,7 +268,7 @@ st.markdown("""
         border-radius: 4px;
         transition: width 0.5s ease;
     }
-    
+
     /* Align Download Button to the right */
     [data-testid="stDownloadButton"] {
         width: 100%;
@@ -278,7 +278,7 @@ st.markdown("""
         display: block;
         margin-left: auto;
     }
-    
+
     /* Ensure the header aligns vertically with the button */
     .export-header {
         margin-bottom: 0 !important;
@@ -286,7 +286,7 @@ st.markdown("""
         align-items: center;
         height: 100%;
     }
-    
+
     /* Tabs Enhancement */
     .stTabs [data-baseweb="tab-list"] { gap: 8px; }
     .stTabs [data-baseweb="tab"] {
@@ -495,12 +495,19 @@ def render_metric_card(icon: str, label: str, value, breakdown: dict = None, del
 
 
 def render_gauge(score: int, status: str):
-    colors = {'HEALTHY': '#10b981', 'MODERATE': '#f59e0b', 'AT RISK': '#f97316', 'CRITICAL': '#ef4444', 'UNKNOWN': '#6b7280'}
+    colors = {
+        'HEALTHY': '#10b981',
+        'MODERATE': '#f59e0b',
+        'AT RISK': '#f97316',
+        'CRITICAL': '#ef4444',
+        'UNKNOWN': '#6b7280'
+    }
     color = colors.get(status, '#6b7280')
+
+    # ---- Gauge ONLY (no number) ----
     fig = go.Figure(go.Indicator(
-        mode="gauge+number",
+        mode="gauge",
         value=score,
-        number={'font': {'size': 56, 'color': color, 'family': 'Arial Black'}},
         gauge={
             'axis': {'range': [0, 100], 'tickcolor': '#475569'},
             'bar': {'color': color, 'thickness': 0.8},
@@ -515,9 +522,53 @@ def render_gauge(score: int, status: str):
             ],
         }
     ))
-    fig.update_layout(height=240, margin=dict(l=20,r=20,t=40,b=20), paper_bgcolor='rgba(0,0,0,0)', font=dict(color='#fff'))
+
+    fig.update_layout(
+        height=240,
+        margin=dict(l=20, r=20, t=20, b=20),
+        paper_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='#fff')
+    )
+
+    # ---- Render gauge ----
     st.plotly_chart(fig, use_container_width=True)
-    st.markdown(f"<div style='text-align:center;margin-top:-15px'><span style='background:{color}33;color:{color};padding:0.4rem 1.25rem;border-radius:20px;font-weight:700;font-size:0.9rem'>{status}</span></div>", unsafe_allow_html=True)
+
+    # ---- Stable number overlay (NO DRIFT) ----
+    st.markdown(
+        f"""
+        <div style="
+            text-align:center;
+            margin-top:-140px;
+            font-size:56px;
+            font-weight:900;
+            color:{color};
+            line-height:1;
+        ">
+            {score}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # ---- Status badge ----
+    st.markdown(
+        f"""
+        <div style="text-align:center;margin-top:10px">
+            <span style="
+                background:{color}33;
+                color:{color};
+                padding:0.4rem 1.25rem;
+                border-radius:20px;
+                font-weight:700;
+                font-size:0.9rem
+            ">
+                {status}
+            </span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 
 
 def render_site_profile_card(site_data: dict, show_actions: bool = True):
